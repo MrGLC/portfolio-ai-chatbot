@@ -1,0 +1,60 @@
+version: '3.8'
+
+services:
+  redis:
+    image: redis:7-alpine
+    container_name: portfolio_redis
+    ports:
+      - "6380:6379"
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes
+    networks:
+      - portfolio_network
+    sysctls:
+      - net.core.somaxconn=511
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: portfolio_backend
+    ports:
+      - "8000:8000"
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    depends_on:
+      - redis
+    volumes:
+      - ./backend:/app
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    networks:
+      - portfolio_network
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: portfolio_frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - REACT_APP_API_URL=http://localhost:8000
+      - REACT_APP_CHATBOT_API_URL=http://localhost:5002
+      - REACT_APP_WS_URL=ws://localhost:5002
+    depends_on:
+      - backend
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    command: npm start
+    networks:
+      - portfolio_network
+
+volumes:
+  redis_data:
+
+networks:
+  portfolio_network:
+    driver: bridge
