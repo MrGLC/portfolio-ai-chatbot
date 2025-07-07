@@ -27,91 +27,131 @@ import {
 } from '@chakra-ui/react';
 import { ExternalLinkIcon, ViewIcon, ChevronRightIcon } from '@chakra-ui/icons';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
+import { durations, easings, delays, variants, transitions, createHoverAnimation } from '../theme/animations';
 
 const MotionCard = motion(Card);
 const MotionBox = motion(Box);
 
 interface Project {
   id: number;
-  title: string;
-  description: string;
-  fullDescription?: string;
-  technologies: string[];
+  titleKey: string;
+  descriptionKey: string;
+  fullDescriptionKey: string;
+  technologiesKeys: string[];
   category: string;
-  image?: string;
+  categoryKey: string;
   gradient: string;
   techStack: string[];
 }
 
-const projects: Project[] = [
-  {
-    id: 1,
-    title: 'AI Chatbot Platform',
-    description: 'Advanced conversational AI platform with natural language understanding and multi-channel support.',
-    fullDescription: 'This platform leverages state-of-the-art NLP models to provide intelligent conversational experiences. Built with transformer-based architectures, it supports multiple languages and can be deployed across various channels including web, mobile, and voice assistants.',
-    technologies: ['Natural Language Processing', 'Conversational AI', 'Multi-lingual'],
-    category: 'NLP',
-    gradient: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-    techStack: ['Python', 'Transformers', 'FastAPI', 'Redis', 'Docker'],
-  },
-  {
-    id: 2,
-    title: 'Medical Image Analysis',
-    description: 'Deep learning system for automated medical image diagnosis with high accuracy and explainability.',
-    fullDescription: 'A sophisticated computer vision system designed for medical professionals. It uses convolutional neural networks to analyze X-rays, MRIs, and CT scans, providing detailed analysis and highlighting areas of concern with explainable AI techniques.',
-    technologies: ['Medical AI', 'Deep Learning', 'Diagnostic Imaging'],
-    category: 'Computer Vision',
-    gradient: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
-    techStack: ['PyTorch', 'OpenCV', 'DICOM', 'AWS HealthLake', 'Kubernetes'],
-  },
-  {
-    id: 3,
-    title: 'Sales Prediction Model',
-    description: 'Machine learning model for accurate sales forecasting using historical data and market indicators.',
-    fullDescription: 'This predictive analytics solution combines time series analysis with external market indicators to forecast sales with high accuracy. It includes automated feature engineering and model retraining pipelines.',
-    technologies: ['Predictive Analytics', 'Time Series', 'AutoML'],
-    category: 'Machine Learning',
-    gradient: 'linear-gradient(135deg, #fa709a 0%, #fee140 100%)',
-    techStack: ['Scikit-learn', 'XGBoost', 'Airflow', 'PostgreSQL', 'Grafana'],
-  },
-  {
-    id: 4,
-    title: 'Document Processing System',
-    description: 'Intelligent document understanding system for automated data extraction and classification.',
-    fullDescription: 'An end-to-end document processing pipeline that uses OCR, NLP, and machine learning to extract, classify, and validate information from various document types including invoices, contracts, and forms.',
-    technologies: ['Document AI', 'OCR', 'Information Extraction'],
-    category: 'NLP',
-    gradient: 'linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)',
-    techStack: ['Tesseract', 'spaCy', 'TensorFlow', 'MongoDB', 'RabbitMQ'],
-  },
-  {
-    id: 5,
-    title: 'Inventory Optimization',
-    description: 'AI-driven inventory management system reducing costs while maintaining optimal stock levels.',
-    fullDescription: 'This system uses reinforcement learning and demand forecasting to optimize inventory levels across multiple warehouses. It considers factors like seasonality, lead times, and storage costs to minimize holding costs while preventing stockouts.',
-    technologies: ['Reinforcement Learning', 'Supply Chain', 'Optimization'],
-    category: 'Machine Learning',
-    gradient: 'linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%)',
-    techStack: ['TensorFlow', 'OR-Tools', 'Apache Spark', 'Cassandra', 'Tableau'],
-  },
-  {
-    id: 6,
-    title: 'Customer Segmentation',
-    description: 'Advanced clustering algorithms for precise customer segmentation and personalized marketing.',
-    fullDescription: 'Using unsupervised learning techniques, this system analyzes customer behavior patterns to create meaningful segments. It integrates with marketing platforms to enable personalized campaigns and improve customer engagement.',
-    technologies: ['Clustering', 'Behavioral Analytics', 'Marketing AI'],
-    category: 'Data Analysis',
-    gradient: 'linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%)',
-    techStack: ['Python', 'Pandas', 'Plotly', 'BigQuery', 'Looker'],
-  },
-];
-
-const categories = ['All', 'Machine Learning', 'Computer Vision', 'NLP', 'Data Analysis', 'Full Stack'];
-
 export const ProjectsPage: React.FC = () => {
+  const { t } = useTranslation();
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const { isOpen, onOpen, onClose } = useDisclosure();
+
+  const projects: Project[] = [
+    {
+      id: 1,
+      titleKey: 'projects.projectList.aiChatbot.title',
+      descriptionKey: 'projects.projectList.aiChatbot.description',
+      fullDescriptionKey: 'projects.projectList.aiChatbot.fullDescription',
+      technologiesKeys: [
+        'projects.projectList.aiChatbot.technologies.nlp',
+        'projects.projectList.aiChatbot.technologies.conversationalAi',
+        'projects.projectList.aiChatbot.technologies.multilingual'
+      ],
+      category: 'NLP',
+      categoryKey: 'projects.filters.nlp',
+      gradient: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+      techStack: ['Python', 'Transformers', 'FastAPI', 'Redis', 'Docker'],
+    },
+    {
+      id: 2,
+      titleKey: 'projects.projectList.medicalImage.title',
+      descriptionKey: 'projects.projectList.medicalImage.description',
+      fullDescriptionKey: 'projects.projectList.medicalImage.fullDescription',
+      technologiesKeys: [
+        'projects.projectList.medicalImage.technologies.medicalAi',
+        'projects.projectList.medicalImage.technologies.deepLearning',
+        'projects.projectList.medicalImage.technologies.diagnosticImaging'
+      ],
+      category: 'Computer Vision',
+      categoryKey: 'projects.filters.computerVision',
+      gradient: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
+      techStack: ['PyTorch', 'OpenCV', 'DICOM', 'AWS HealthLake', 'Kubernetes'],
+    },
+    {
+      id: 3,
+      titleKey: 'projects.projectList.salesPrediction.title',
+      descriptionKey: 'projects.projectList.salesPrediction.description',
+      fullDescriptionKey: 'projects.projectList.salesPrediction.fullDescription',
+      technologiesKeys: [
+        'projects.projectList.salesPrediction.technologies.predictiveAnalytics',
+        'projects.projectList.salesPrediction.technologies.timeSeries',
+        'projects.projectList.salesPrediction.technologies.autoML'
+      ],
+      category: 'Machine Learning',
+      categoryKey: 'projects.filters.machineLearning',
+      gradient: 'linear-gradient(135deg, #fa709a 0%, #fee140 100%)',
+      techStack: ['Scikit-learn', 'XGBoost', 'Airflow', 'PostgreSQL', 'Grafana'],
+    },
+    {
+      id: 4,
+      titleKey: 'projects.projectList.documentProcessing.title',
+      descriptionKey: 'projects.projectList.documentProcessing.description',
+      fullDescriptionKey: 'projects.projectList.documentProcessing.fullDescription',
+      technologiesKeys: [
+        'projects.projectList.documentProcessing.technologies.documentAi',
+        'projects.projectList.documentProcessing.technologies.ocr',
+        'projects.projectList.documentProcessing.technologies.informationExtraction'
+      ],
+      category: 'NLP',
+      categoryKey: 'projects.filters.nlp',
+      gradient: 'linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)',
+      techStack: ['Tesseract', 'spaCy', 'TensorFlow', 'MongoDB', 'RabbitMQ'],
+    },
+    {
+      id: 5,
+      titleKey: 'projects.projectList.inventoryOptimization.title',
+      descriptionKey: 'projects.projectList.inventoryOptimization.description',
+      fullDescriptionKey: 'projects.projectList.inventoryOptimization.fullDescription',
+      technologiesKeys: [
+        'projects.projectList.inventoryOptimization.technologies.reinforcementLearning',
+        'projects.projectList.inventoryOptimization.technologies.supplyChain',
+        'projects.projectList.inventoryOptimization.technologies.optimization'
+      ],
+      category: 'Machine Learning',
+      categoryKey: 'projects.filters.machineLearning',
+      gradient: 'linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%)',
+      techStack: ['TensorFlow', 'OR-Tools', 'Apache Spark', 'Cassandra', 'Tableau'],
+    },
+    {
+      id: 6,
+      titleKey: 'projects.projectList.customerSegmentation.title',
+      descriptionKey: 'projects.projectList.customerSegmentation.description',
+      fullDescriptionKey: 'projects.projectList.customerSegmentation.fullDescription',
+      technologiesKeys: [
+        'projects.projectList.customerSegmentation.technologies.clustering',
+        'projects.projectList.customerSegmentation.technologies.behavioralAnalytics',
+        'projects.projectList.customerSegmentation.technologies.marketingAi'
+      ],
+      category: 'Data Analysis',
+      categoryKey: 'projects.filters.dataAnalysis',
+      gradient: 'linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%)',
+      techStack: ['Python', 'Pandas', 'Plotly', 'BigQuery', 'Looker'],
+    },
+  ];
+
+  const categories = [
+    { value: 'All', key: 'projects.filters.all' },
+    { value: 'Machine Learning', key: 'projects.filters.machineLearning' },
+    { value: 'Computer Vision', key: 'projects.filters.computerVision' },
+    { value: 'NLP', key: 'projects.filters.nlp' },
+    { value: 'Data Analysis', key: 'projects.filters.dataAnalysis' },
+    { value: 'Full Stack', key: 'projects.filters.fullStack' }
+  ];
 
   const filteredProjects = selectedCategory === 'All' 
     ? projects 
@@ -137,7 +177,7 @@ export const ProjectsPage: React.FC = () => {
             <MotionBox
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
+              transition={{ duration: durations.slow, ease: easings.smooth }}
             >
               <Heading
                 size={{ base: "2xl", md: "4xl" }}
@@ -145,13 +185,13 @@ export const ProjectsPage: React.FC = () => {
                 fontWeight="bold"
                 letterSpacing="tight"
               >
-                Royal AI Solutions Portfolio
+                {t('projects.hero.title')}
               </Heading>
             </MotionBox>
             <MotionBox
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
+              transition={{ duration: durations.slow, delay: delays.staggerNormal * 2, ease: easings.smooth }}
             >
               <Text
                 fontSize={{ base: "lg", md: "xl" }}
@@ -159,8 +199,7 @@ export const ProjectsPage: React.FC = () => {
                 maxW="800px"
                 mx="auto"
               >
-                Transforming businesses with cutting-edge artificial intelligence solutions. 
-                Explore our collection of innovative projects across multiple domains.
+                {t('projects.hero.description')}
               </Text>
             </MotionBox>
           </VStack>
@@ -172,23 +211,23 @@ export const ProjectsPage: React.FC = () => {
         <Container maxW="7xl">
           <Wrap spacing={4} justify="center">
             {categories.map((category) => (
-              <WrapItem key={category}>
+              <WrapItem key={category.value}>
                 <Button
                   size="md"
-                  variant={selectedCategory === category ? 'solid' : 'outline'}
-                  colorScheme={selectedCategory === category ? 'red' : 'gray'}
-                  bg={selectedCategory === category ? 'red.600' : 'transparent'}
-                  color={selectedCategory === category ? 'white' : 'gray.700'}
+                  variant={selectedCategory === category.value ? 'solid' : 'outline'}
+                  colorScheme={selectedCategory === category.value ? 'red' : 'gray'}
+                  bg={selectedCategory === category.value ? 'red.600' : 'transparent'}
+                  color={selectedCategory === category.value ? 'white' : 'gray.700'}
                   borderColor="gray.300"
-                  onClick={() => setSelectedCategory(category)}
+                  onClick={() => setSelectedCategory(category.value)}
                   _hover={{
-                    bg: selectedCategory === category ? 'red.700' : 'gray.100',
+                    bg: selectedCategory === category.value ? 'red.700' : 'gray.100',
                     transform: 'translateY(-2px)',
                   }}
-                  transition="all 0.2s"
+                  transition={transitions.fast}
                   fontWeight="600"
                 >
-                  {category}
+                  {t(category.key)}
                 </Button>
               </WrapItem>
             ))}
@@ -205,7 +244,7 @@ export const ProjectsPage: React.FC = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.3 }}
+              transition={{ duration: durations.normal, ease: easings.smooth }}
             >
               <SimpleGrid
                 columns={{ base: 1, md: 2, lg: 3 }}
@@ -222,13 +261,13 @@ export const ProjectsPage: React.FC = () => {
                     onClick={() => handleProjectClick(project)}
                     initial={{ opacity: 0, y: 30 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: index * 0.1 }}
+                    transition={{ delay: index * delays.staggerNormal, duration: durations.normal, ease: easings.smooth }}
                     _hover={{
                       transform: 'translateY(-8px) scale(1.02)',
                       boxShadow: '2xl',
                     }}
                     position="relative"
-                    transitionDuration="0.3s"
+                    style={{ transition: transitions.normal }}
                   >
                     {/* Gradient Placeholder Image */}
                     <Box
@@ -241,7 +280,7 @@ export const ProjectsPage: React.FC = () => {
                         inset={0}
                         bg="blackAlpha.200"
                         opacity={0}
-                        transition="opacity 0.3s"
+                        transition={transitions.opacity}
                         _hover={{ opacity: 1 }}
                       />
                       <Badge
@@ -257,7 +296,7 @@ export const ProjectsPage: React.FC = () => {
                         fontSize="xs"
                         fontWeight="bold"
                       >
-                        {project.category}
+                        {t(project.categoryKey)}
                       </Badge>
                     </Box>
 
@@ -265,10 +304,10 @@ export const ProjectsPage: React.FC = () => {
                       <VStack align="stretch" spacing={4}>
                         <Box>
                           <Heading size="md" color="gray.800" mb={2}>
-                            {project.title}
+                            {t(project.titleKey)}
                           </Heading>
                           <Text color="gray.600" fontSize="sm" lineHeight="tall">
-                            {project.description}
+                            {t(project.descriptionKey)}
                           </Text>
                         </Box>
 
@@ -298,7 +337,7 @@ export const ProjectsPage: React.FC = () => {
                                 borderRadius="full"
                                 px={3}
                               >
-                                +{project.techStack.length - 3} more
+                                {t('projects.techStack.more', { count: project.techStack.length - 3 })}
                               </Tag>
                             </WrapItem>
                           )}
@@ -312,7 +351,7 @@ export const ProjectsPage: React.FC = () => {
                           fontWeight="600"
                           _hover={{ bg: 'red.50' }}
                         >
-                          View Details
+                          {t('projects.buttons.viewDetails')}
                         </Button>
                       </VStack>
                     </CardBody>
@@ -345,11 +384,10 @@ export const ProjectsPage: React.FC = () => {
             <CardBody p={{ base: 8, md: 12 }} textAlign="center">
               <VStack spacing={6}>
                 <Heading size="xl" color="gray.800">
-                  Ready to Transform Your Business?
+                  {t('projects.cta.title')}
                 </Heading>
                 <Text fontSize="lg" color="gray.600" maxW="600px">
-                  Let's explore how these proven AI methodologies can be tailored 
-                  to solve your unique challenges and drive exceptional results.
+                  {t('projects.cta.description')}
                 </Text>
                 <HStack spacing={4}>
                   <Button
@@ -359,7 +397,7 @@ export const ProjectsPage: React.FC = () => {
                     _hover={{ bg: 'red.700' }}
                     rightIcon={<ExternalLinkIcon />}
                   >
-                    Schedule Consultation
+                    {t('projects.cta.scheduleConsultation')}
                   </Button>
                   <Button
                     size="lg"
@@ -367,7 +405,7 @@ export const ProjectsPage: React.FC = () => {
                     colorScheme="gray"
                     borderWidth={2}
                   >
-                    Download Portfolio
+                    {t('projects.cta.downloadPortfolio')}
                   </Button>
                 </HStack>
               </VStack>
@@ -405,26 +443,26 @@ export const ProjectsPage: React.FC = () => {
                     fontSize="xs"
                     fontWeight="bold"
                   >
-                    {selectedProject.category}
+                    {t(selectedProject.categoryKey)}
                   </Badge>
                   <Heading size="xl" color="gray.800">
-                    {selectedProject.title}
+                    {t(selectedProject.titleKey)}
                   </Heading>
                 </VStack>
               </ModalHeader>
               <ModalBody pb={8}>
                 <VStack align="stretch" spacing={6}>
                   <Text color="gray.600" fontSize="md" lineHeight="tall">
-                    {selectedProject.fullDescription || selectedProject.description}
+                    {t(selectedProject.fullDescriptionKey)}
                   </Text>
 
                   <Box>
                     <Heading size="sm" color="gray.700" mb={3}>
-                      Key Technologies
+                      {t('projects.modal.keyTechnologies')}
                     </Heading>
                     <Wrap spacing={3}>
-                      {selectedProject.technologies.map((tech) => (
-                        <WrapItem key={tech}>
+                      {selectedProject.technologiesKeys.map((techKey) => (
+                        <WrapItem key={techKey}>
                           <Tag
                             size="md"
                             bg="gray.100"
@@ -433,7 +471,7 @@ export const ProjectsPage: React.FC = () => {
                             px={4}
                             py={2}
                           >
-                            {tech}
+                            {t(techKey)}
                           </Tag>
                         </WrapItem>
                       ))}
@@ -442,7 +480,7 @@ export const ProjectsPage: React.FC = () => {
 
                   <Box>
                     <Heading size="sm" color="gray.700" mb={3}>
-                      Technical Stack
+                      {t('projects.modal.technicalStack')}
                     </Heading>
                     <Wrap spacing={2}>
                       {selectedProject.techStack.map((tech) => (
@@ -469,7 +507,7 @@ export const ProjectsPage: React.FC = () => {
                       size="lg"
                       flex={1}
                     >
-                      Request Case Study
+                      {t('projects.buttons.requestCaseStudy')}
                     </Button>
                     <Button
                       variant="outline"
@@ -477,7 +515,7 @@ export const ProjectsPage: React.FC = () => {
                       size="lg"
                       flex={1}
                     >
-                      View Demo
+                      {t('projects.buttons.viewDemo')}
                     </Button>
                   </Flex>
                 </VStack>

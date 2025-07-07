@@ -1,0 +1,683 @@
+{
+  "nav": {
+    "home": "Inicio",
+    "about": "Acerca de",
+    "consulting": "Consultoría",
+    "projects": "Proyectos",
+    "contact": "Contacto",
+    "openMenu": "Abrir menú"
+  },
+  "hero": {
+    "title": "Consultoría en IA",
+    "subtitle": "Excelencia",
+    "luxurySubtitle": "Lujo Redefinido",
+    "modernRoyalty": "Realeza Moderna",
+    "description": "Transforma tu negocio con soluciones de inteligencia artificial de vanguardia",
+    "cta": {
+      "primary": "Comenzar",
+      "secondary": "Saber Más",
+      "getInTouch": "Contáctanos"
+    }
+  },
+  "home": {
+    "hero": {
+      "luxurySubtitle": "Soluciones de IA de Lujo Redefinidas",
+      "modernTitle": "Excelencia Moderna en IA",
+      "description": "Transforma tu negocio con soluciones de inteligencia artificial de vanguardia. Obtén un MVP listo para producción en solo 2 semanas.",
+      "viewPortfolio": "Ver Portafolio",
+      "getInTouch": "Contáctanos"
+    },
+    "services": {
+      "subtitle": "Lo Que Ofrecemos",
+      "title": "Servicios Reales",
+      "learnMore": "Saber Más",
+      "strategy": {
+        "title": "Estrategia de IA",
+        "description": "Creando estrategias integrales de IA que se alinean con tus objetivos empresariales e impulsan ventaja competitiva."
+      },
+      "brandStrategy": {
+        "title": "Estrategia de Marca",
+        "description": "Creando narrativas de marca convincentes que resuenan con tu audiencia y establecen dominio en el mercado."
+      },
+      "webDesign": {
+        "title": "Diseño Web",
+        "description": "Creando experiencias digitales impresionantes que cautivan a los visitantes y los convierten en clientes leales."
+      },
+      "uiux": {
+        "title": "Diseño UI/UX",
+        "description": "Diseñando interfaces intuitivas que deleitan a los usuarios e impulsan el compromiso a través de interacciones pensadas."
+      },
+      "uiuxDesign": {
+        "title": "Diseño UI/UX",
+        "description": "Diseñando interfaces intuitivas que deleitan a los usuarios e impulsan el compromiso a través de interacciones pensadas."
+      },
+      "marketing": {
+        "title": "Marketing Digital",
+        "description": "Amplificando la voz de tu marca a través de canales digitales para alcanzar y comprometer a tu audiencia objetivo."
+      },
+      "digitalMarketing": {
+        "title": "Marketing Digital",
+        "description": "Amplificando la voz de tu marca a través de canales digitales para alcanzar y comprometer a tu audiencia objetivo."
+      },
+      "consulting": {
+        "title": "Consultoría",
+        "description": "Brindando perspectivas estratégicas y orientación experta para transformar tu visión empresarial en realidad."
+      },
+      "development": {
+        "title": "Desarrollo",
+        "description": "Construyendo soluciones robustas y escalables que potencian tu presencia digital con tecnología de vanguardia."
+      }
+    },
+    "portfolio": {
+      "subtitle": "Trabajo Reciente",
+      "title": "Portafolio Real",
+      "branding": "Branding",
+      "webDesign": "Diseño Web",
+      "marketing": "Marketing",
+      "project": "Proyecto",
+      "viewAll": "Ver Todos los Proyectos"
+    },
+    "cta": {
+      "title": "¿Listo para Transformar tu Negocio?",
+      "description": "Creemos algo extraordinario juntos. Disponible para comenzar de inmediato con entrega de MVP en 2 semanas.",
+      "button": "Comienza tu Proyecto"
+    }
+  },
+  "about": {
+    "title": "Sobre Mí",
+    "subtitle": "Consultor y Desarrollador de IA",
+    "intro": "Apasionado por aprovechar la inteligencia artificial para resolver desafíos empresariales complejos",
+    "hero": {
+      "role": "INGENIERO DE MACHINE LEARNING",
+      "name": "Luis Alberto Gomez Celaya",
+      "description": "Construyendo soluciones inteligentes que entregan valor empresarial real a través de ingeniería ML moderna y desarrollo rápido de MVP",
+      "badges": {
+        "location": "Basado en México",
+        "english": "Inglés Nivel C1"
+      },
+      "getInTouch": "Contáctame",
+      "viewProjects": "Ver Proyectos"
+    },
+    "bio": {
+      "title": "Sobre Mí",
+      "paragraphs": [
+        "Soy un Ingeniero de Machine Learning con 3 años de experiencia construyendo sistemas inteligentes que resuelven problemas del mundo real. Con experiencia en Ingeniería Biomédica y experiencia práctica en empresas como ScaleAI y SoldaAI, me especializo en transformar conceptos complejos de ML en soluciones listas para producción.",
+        "Mi experiencia abarca desde el desarrollo de sistemas ML hospitalarios hasta la creación de aplicaciones NLP de vanguardia con frameworks modernos. He publicado investigaciones en el campo y tengo un historial comprobado de entregar MVPs en solo 2 semanas por $2-3k, haciendo la IA avanzada accesible para empresas de todos los tamaños.",
+        "Lo que me distingue es mi compromiso con la entrega rápida sin comprometer la calidad. Creo en ser altamente receptivo y estar disponible durante todo el ciclo de vida del proyecto, asegurando una comunicación clara y resultados excepcionales."
+      ]
+    },
+    "contact": {
+      "title": "Conectemos",
+      "email": {
+        "label": "Correo",
+        "value": "ingbmluisgomez@gmail.com"
+      },
+      "phone": {
+        "label": "Teléfono",
+        "value": "+52 614 344 7013"
+      },
+      "linkedin": {
+        "label": "LinkedIn",
+        "value": "/in/gomezgg/"
+      },
+      "github": {
+        "label": "GitHub",
+        "value": "/MrGLC"
+      },
+      "website": {
+        "label": "Sitio Web",
+        "value": "la-realeza.com"
+      }
+    },
+    "technicalExpertise": {
+      "title": "Experiencia Técnica",
+      "categories": {
+        "machineLearning": {
+          "title": "Machine Learning",
+          "skills": [
+            "Modelos ML Tradicionales",
+            "Scikit-learn",
+            "XGBoost",
+            "Ingeniería de Características",
+            "Optimización de Modelos"
+          ]
+        },
+        "nlpAiAgents": {
+          "title": "PLN y Agentes de IA",
+          "skills": [
+            "LangChain",
+            "LangGraph",
+            "Pydantic",
+            "Integración GPT",
+            "Sistemas RAG"
+          ]
+        },
+        "orchestrationDeployment": {
+          "title": "Orquestación y Despliegue",
+          "skills": [
+            "Docker",
+            "FastAPI",
+            "Flask",
+            "APIs REST",
+            "Despliegue en la Nube"
+          ]
+        },
+        "frontendDevelopment": {
+          "title": "Desarrollo Frontend",
+          "skills": [
+            "React",
+            "TypeScript",
+            "Flutter",
+            "Diseño Responsivo",
+            "UI/UX"
+          ]
+        }
+      }
+    },
+    "valueProposition": {
+      "title": "Por Qué Trabajar Conmigo",
+      "subtitle": "Entrego soluciones ML de alta calidad con velocidad y valor inigualables",
+      "items": {
+        "fastDelivery": {
+          "title": "Entrega Rápida",
+          "description": "MVPs de 2 semanas desde el concepto hasta el despliegue"
+        },
+        "costEffective": {
+          "title": "Costo-Efectivo",
+          "description": "MVPs completos por inversión de $2-3k"
+        },
+        "responsive": {
+          "title": "Receptivo",
+          "description": "Disponible y comunicativo durante los proyectos"
+        },
+        "timeEfficient": {
+          "title": "Eficiente en Tiempo",
+          "description": "Entrega rápida sin comprometer la calidad"
+        }
+      }
+    },
+    "finalCta": {
+      "title": "¿Listo para Construir tu MVP?",
+      "description": "Transformemos tus ideas en soluciones ML listas para producción. Obtén un MVP completamente funcional en solo 2 semanas por $2-3k.",
+      "startProject": "Inicia tu Proyecto",
+      "connectLinkedIn": "Conecta en LinkedIn"
+    },
+    "experience": {
+      "title": "Experiencia",
+      "years": "Años de Experiencia",
+      "description": "Especializado en implementación de IA, aprendizaje automático y transformación empresarial"
+    },
+    "skills": {
+      "title": "Habilidades y Experiencia",
+      "ai": "IA y Aprendizaje Automático",
+      "nlp": "Procesamiento de Lenguaje Natural",
+      "cv": "Visión por Computadora",
+      "data": "Ciencia de Datos",
+      "cloud": "Arquitectura en la Nube",
+      "strategy": "Estrategia de IA"
+    },
+    "approach": {
+      "title": "Mi Enfoque",
+      "analyze": {
+        "title": "Analizar",
+        "description": "Comprender tus desafíos empresariales únicos"
+      },
+      "design": {
+        "title": "Diseñar",
+        "description": "Crear soluciones de IA personalizadas"
+      },
+      "implement": {
+        "title": "Implementar",
+        "description": "Desplegar tecnología de vanguardia"
+      },
+      "optimize": {
+        "title": "Optimizar",
+        "description": "Mejora continua y escalamiento"
+      }
+    }
+  },
+  "consulting": {
+    "hero": {
+      "title": "Servicios de Consultoría en IA",
+      "description": "Transforma tu negocio con soluciones de IA de vanguardia. Desde la estrategia hasta la implementación, entregamos resultados medibles rápidamente.",
+      "getStartedButton": "Comienza Hoy",
+      "viewPricingButton": "Ver Precios"
+    },
+    "servicesSection": {
+      "title": "Nuestros Servicios",
+      "subtitle": "Soluciones integrales de IA adaptadas a las necesidades de tu negocio"
+    },
+    "services": {
+      "aiStrategy": {
+        "title": "Consultoría de Estrategia de IA",
+        "description": "Ayudamos a las empresas a integrar la IA de manera efectiva en sus operaciones",
+        "features": {
+          "readiness": "Evaluación de preparación para IA",
+          "roadmap": "Desarrollo de hoja de ruta estratégica",
+          "roi": "Análisis y proyecciones de ROI",
+          "techStack": "Recomendaciones de stack tecnológico",
+          "riskMitigation": "Planificación de mitigación de riesgos"
+        }
+      },
+      "mlDevelopment": {
+        "title": "Desarrollo de Modelos ML Personalizados",
+        "description": "Construimos soluciones a medida específicas para tus necesidades empresariales",
+        "features": {
+          "algorithm": "Desarrollo de algoritmos personalizados",
+          "training": "Entrenamiento y optimización de modelos",
+          "benchmarking": "Evaluación comparativa de rendimiento",
+          "integration": "Integración con sistemas existentes",
+          "maintenance": "Mantenimiento continuo de modelos"
+        }
+      },
+      "computerVision": {
+        "title": "Soluciones de Visión por Computadora",
+        "description": "Análisis avanzado de imágenes y videos para aplicaciones del mundo real",
+        "features": {
+          "detection": "Detección y seguimiento de objetos",
+          "classification": "Clasificación de imágenes",
+          "ocr": "OCR y procesamiento de documentos",
+          "videoAnalytics": "Análisis de video",
+          "qualityInspection": "Sistemas de inspección de calidad"
+        }
+      },
+      "nlp": {
+        "title": "Implementación de PLN",
+        "description": "Soluciones de lenguaje impulsadas por LangChain, LangGraph y Pydantic",
+        "features": {
+          "chatbot": "Desarrollo de chatbots",
+          "documentUnderstanding": "Comprensión de documentos",
+          "sentiment": "Análisis de sentimientos",
+          "translation": "Traducción de idiomas",
+          "textGeneration": "Generación y resumen de texto"
+        }
+      },
+      "dataAnalysis": {
+        "title": "Análisis de Datos e Insights",
+        "description": "Extrae valor accionable de tus datos",
+        "features": {
+          "predictive": "Análisis predictivo",
+          "dashboards": "Dashboards de inteligencia empresarial",
+          "pipeline": "Desarrollo de pipelines de datos",
+          "statistical": "Modelado estadístico",
+          "realtime": "Análisis en tiempo real"
+        }
+      },
+      "training": {
+        "title": "Capacitación y Talleres",
+        "description": "Mejora las habilidades de tu equipo con capacitación práctica en IA",
+        "features": {
+          "curriculum": "Desarrollo de currículum personalizado",
+          "workshops": "Talleres prácticos de programación",
+          "literacy": "Programas de alfabetización en IA",
+          "toolSpecific": "Capacitación específica en herramientas",
+          "bestPractices": "Seminarios de mejores prácticas"
+        }
+      },
+      "mcp": {
+        "title": "Desarrollo MCP",
+        "description": "Haz que tu empresa sea compatible con IA mediante el Protocolo de Contexto de Modelo",
+        "features": {
+          "integration": "Integración con ChatGPT/Claude",
+          "serverDev": "Desarrollo de servidor MCP personalizado",
+          "apiWrapper": "Creación de wrapper de API",
+          "security": "Implementación de seguridad",
+          "documentation": "Documentación y capacitación"
+        }
+      },
+      "platformDev": {
+        "title": "Desarrollo de Plataforma Completa",
+        "description": "Construir desde cero con IA en mente",
+        "features": {
+          "architecture": "Diseño de arquitectura IA-first",
+          "fullstack": "Desarrollo full-stack",
+          "cloud": "Configuración de infraestructura en la nube",
+          "devops": "DevOps y MLOps",
+          "deployment": "Despliegue escalable"
+        }
+      }
+    },
+    "learnMoreButton": "Saber Más",
+    "process": {
+      "title": "Nuestro Proceso Optimizado",
+      "subtitle": "De la idea a la implementación en semanas, no meses",
+      "steps": {
+        "discovery": {
+          "step": "Paso 1",
+          "title": "Llamada de Descubrimiento",
+          "description": "Entender tus necesidades a través de una consulta pagada",
+          "duration": "1 hora"
+        },
+        "mvp": {
+          "step": "Paso 2",
+          "title": "Desarrollo de MVP",
+          "description": "Prototipo rápido de 2 semanas para validar tu idea",
+          "duration": "2 semanas"
+        },
+        "deployment": {
+          "step": "Paso 3",
+          "title": "Despliegue y Soporte",
+          "description": "Implementación y desarrollo continuo",
+          "duration": "Continuo"
+        }
+      }
+    },
+    "pricing": {
+      "title": "Precios Transparentes",
+      "subtitle": "Opciones flexibles diseñadas para adaptarse a tu presupuesto y cronograma",
+      "customQuote": {
+        "title": "Cotización Personalizada",
+        "subtitle": "Todos los servicios son personalizables según tus necesidades",
+        "mvpTitle": "Desarrollo de MVP",
+        "mvpPrice": "$2,000 - $3,000",
+        "mvpDescription": "Prototipo rápido de 2 semanas con documentación completa y soporte de despliegue",
+        "features": {
+          "turnaround": "Entrega rápida - Comienza inmediatamente",
+          "costEffective": "Soluciones rentables",
+          "flexiblePayment": "Términos de pago flexibles",
+          "satisfaction": "Satisfacción garantizada"
+        },
+        "button": "Obtén tu Cotización Personalizada"
+      }
+    },
+    "finalCta": {
+      "title": "¿Listo para Transformar tu Negocio con IA?",
+      "description": "Disponible para inicio inmediato. Construyamos algo increíble juntos.",
+      "scheduleButton": "Agendar Llamada de Descubrimiento",
+      "contactButton": "Contactar Ahora",
+      "consultationNote": "Primera consulta: $150/hora - Se aplica al costo del proyecto si procedemos"
+    }
+  },
+  "projects": {
+    "hero": {
+      "title": "Portafolio de Soluciones de IA Reales",
+      "description": "Transformando negocios con soluciones de inteligencia artificial de vanguardia. Explora nuestra colección de proyectos innovadores en múltiples dominios."
+    },
+    "filters": {
+      "all": "Todos",
+      "machineLearning": "Aprendizaje Automático",
+      "computerVision": "Visión por Computadora",
+      "nlp": "PLN",
+      "dataAnalysis": "Análisis de Datos",
+      "fullStack": "Full Stack"
+    },
+    "projectList": {
+      "aiChatbot": {
+        "title": "Plataforma de Chatbot IA",
+        "description": "Plataforma avanzada de IA conversacional con comprensión del lenguaje natural y soporte multicanal.",
+        "fullDescription": "Esta plataforma aprovecha modelos de PLN de última generación para proporcionar experiencias conversacionales inteligentes. Construida con arquitecturas basadas en transformers, admite múltiples idiomas y se puede implementar en varios canales, incluidos web, móvil y asistentes de voz.",
+        "technologies": {
+          "nlp": "Procesamiento de Lenguaje Natural",
+          "conversationalAi": "IA Conversacional",
+          "multilingual": "Multilingüe"
+        }
+      },
+      "medicalImage": {
+        "title": "Análisis de Imágenes Médicas",
+        "description": "Sistema de aprendizaje profundo para diagnóstico automatizado de imágenes médicas con alta precisión y explicabilidad.",
+        "fullDescription": "Un sofisticado sistema de visión por computadora diseñado para profesionales médicos. Utiliza redes neuronales convolucionales para analizar rayos X, resonancias magnéticas y tomografías computarizadas, proporcionando análisis detallados y destacando áreas de interés con técnicas de IA explicable.",
+        "technologies": {
+          "medicalAi": "IA Médica",
+          "deepLearning": "Aprendizaje Profundo",
+          "diagnosticImaging": "Imágenes de Diagnóstico"
+        }
+      },
+      "salesPrediction": {
+        "title": "Modelo de Predicción de Ventas",
+        "description": "Modelo de aprendizaje automático para pronóstico preciso de ventas usando datos históricos e indicadores de mercado.",
+        "fullDescription": "Esta solución de análisis predictivo combina análisis de series temporales con indicadores externos del mercado para pronosticar ventas con alta precisión. Incluye ingeniería de características automatizada y pipelines de reentrenamiento de modelos.",
+        "technologies": {
+          "predictiveAnalytics": "Análisis Predictivo",
+          "timeSeries": "Series Temporales",
+          "autoML": "AutoML"
+        }
+      },
+      "documentProcessing": {
+        "title": "Sistema de Procesamiento de Documentos",
+        "description": "Sistema inteligente de comprensión de documentos para extracción y clasificación automatizada de datos.",
+        "fullDescription": "Un pipeline de procesamiento de documentos de extremo a extremo que utiliza OCR, PLN y aprendizaje automático para extraer, clasificar y validar información de varios tipos de documentos, incluidas facturas, contratos y formularios.",
+        "technologies": {
+          "documentAi": "IA de Documentos",
+          "ocr": "OCR",
+          "informationExtraction": "Extracción de Información"
+        }
+      },
+      "inventoryOptimization": {
+        "title": "Optimización de Inventario",
+        "description": "Sistema de gestión de inventario impulsado por IA que reduce costos mientras mantiene niveles óptimos de stock.",
+        "fullDescription": "Este sistema utiliza aprendizaje por refuerzo y pronóstico de demanda para optimizar los niveles de inventario en múltiples almacenes. Considera factores como la estacionalidad, los plazos de entrega y los costos de almacenamiento para minimizar los costos de mantenimiento mientras previene la escasez de existencias.",
+        "technologies": {
+          "reinforcementLearning": "Aprendizaje por Refuerzo",
+          "supplyChain": "Cadena de Suministro",
+          "optimization": "Optimización"
+        }
+      },
+      "customerSegmentation": {
+        "title": "Segmentación de Clientes",
+        "description": "Algoritmos de clustering avanzados para segmentación precisa de clientes y marketing personalizado.",
+        "fullDescription": "Utilizando técnicas de aprendizaje no supervisado, este sistema analiza patrones de comportamiento del cliente para crear segmentos significativos. Se integra con plataformas de marketing para permitir campañas personalizadas y mejorar el compromiso del cliente.",
+        "technologies": {
+          "clustering": "Clustering",
+          "behavioralAnalytics": "Análisis de Comportamiento",
+          "marketingAi": "IA de Marketing"
+        }
+      }
+    },
+    "techStack": {
+      "more": "+{{count}} más"
+    },
+    "buttons": {
+      "viewDetails": "Ver Detalles",
+      "requestCaseStudy": "Solicitar Caso de Estudio",
+      "viewDemo": "Ver Demo"
+    },
+    "modal": {
+      "keyTechnologies": "Tecnologías Clave",
+      "technicalStack": "Stack Técnico"
+    },
+    "cta": {
+      "title": "¿Listo para Transformar tu Negocio?",
+      "description": "Exploremos cómo estas metodologías de IA probadas pueden adaptarse para resolver tus desafíos únicos y generar resultados excepcionales.",
+      "scheduleConsultation": "Agendar Consulta",
+      "downloadPortfolio": "Descargar Portafolio"
+    },
+    "title": "Proyectos Destacados",
+    "subtitle": "Soluciones de IA del mundo real entregadas",
+    "viewDetails": "Ver Detalles",
+    "technologies": "Tecnologías",
+    "category": {
+      "all": "Todos los Proyectos",
+      "nlp": "PLN",
+      "cv": "Visión por Computadora",
+      "ml": "Aprendizaje Automático",
+      "automation": "Automatización"
+    }
+  },
+  "contact": {
+    "title": "Ponte en Contacto",
+    "subtitle": "Hablemos sobre tu transformación con IA",
+    "hero": {
+      "subtitle": "Comienza Hoy",
+      "title": "Construyamos tu Solución de IA",
+      "description": "Agenda una consulta pagada para discutir tus necesidades. Entrega de MVP en 2 semanas por $2-3k. La tarifa de consulta se aplica al costo del proyecto.",
+      "badge1": "Disponible para Inicio Inmediato",
+      "badge2": "Respuesta en 24 horas"
+    },
+    "form": {
+      "title": "Solicitar Consulta",
+      "description": "Completa este formulario para agendar tu consulta pagada. Discutiremos tu proyecto y crearemos una propuesta personalizada.",
+      "labels": {
+        "name": "Nombre",
+        "email": "Correo",
+        "company": "Empresa",
+        "companyOptional": "(opcional)",
+        "service": "Servicio de Interés",
+        "budget": "Rango de Presupuesto",
+        "timeline": "Plazo",
+        "message": "Mensaje"
+      },
+      "placeholders": {
+        "fullName": "Tu nombre completo",
+        "email": "tu@correo.com",
+        "companyName": "El nombre de tu empresa",
+        "selectService": "Selecciona un servicio",
+        "selectBudget": "Selecciona presupuesto",
+        "selectTimeline": "Selecciona plazo",
+        "message": "Cuéntame sobre los objetivos de tu proyecto, desafíos actuales y cómo se ve el éxito para ti..."
+      },
+      "submit": "Agendar Consulta Pagada",
+      "consultationNote": "La tarifa de consulta se acreditará hacia el costo de tu proyecto",
+      "sending": "Enviando...",
+      "success": "¡Mensaje enviado con éxito!",
+      "error": "Error al enviar el mensaje. Por favor intenta de nuevo."
+    },
+    "services": {
+      "aiConsulting": "Consultoría y Estrategia de IA",
+      "computerVision": "Desarrollo de Visión por Computadora",
+      "machineLearning": "Soluciones de Aprendizaje Automático",
+      "medicalAI": "Aplicaciones de IA Médica",
+      "nlp": "Procesamiento de Lenguaje Natural",
+      "aiWorkflow": "Automatización de Flujos de Trabajo con IA",
+      "customTraining": "Entrenamiento de Modelos de IA Personalizados",
+      "mvpDevelopment": "Desarrollo Rápido de MVP",
+      "other": "Otro (por favor especifica)"
+    },
+    "budgetRanges": {
+      "under3k": "Menos de $3,000 (alcance MVP)",
+      "3kTo10k": "$3,000 - $10,000",
+      "10kTo25k": "$10,000 - $25,000",
+      "25kTo50k": "$25,000 - $50,000",
+      "over50k": "$50,000+"
+    },
+    "timelines": {
+      "immediate": "Inicio inmediato (esta semana)",
+      "2weeks": "Sprint MVP de 2 semanas",
+      "1month": "Dentro de 1 mes",
+      "1to3months": "1-3 meses",
+      "over3months": "3+ meses"
+    },
+    "methods": {
+      "email": {
+        "title": "Correo",
+        "description": "Comunicación directa",
+        "responseTime": "< 24 horas"
+      },
+      "phone": {
+        "title": "Teléfono",
+        "description": "Consulta rápida",
+        "responseTime": "Horario laboral"
+      },
+      "linkedin": {
+        "title": "LinkedIn",
+        "description": "Red profesional",
+        "responseTime": "Activo diariamente"
+      },
+      "github": {
+        "title": "GitHub",
+        "description": "Portafolio de código",
+        "responseTime": "Código abierto"
+      }
+    },
+    "info": {
+      "title": "Ponte en Contacto",
+      "email": "Correo",
+      "phone": "Teléfono",
+      "location": "Ubicación",
+      "availability": "Disponible para consultas en todo el mundo",
+      "locationAvailability": {
+        "title": "Ubicación y Disponibilidad",
+        "location": "Ubicación",
+        "locationValue": "México (Remoto Disponible)",
+        "timezone": "Zona Horaria",
+        "timezoneValue": "CST (UTC-6)",
+        "workingHours": "Horario de Trabajo",
+        "workingHoursValue": "9 AM - 6 PM CST",
+        "responseTime": "Tiempo de Respuesta",
+        "responseTimeValue": "En 24 horas"
+      },
+      "portfolio": {
+        "title": "Portafolio y Proyectos",
+        "description": "Visita mi sitio web de portafolio para ver proyectos completados y casos de estudio"
+      }
+    },
+    "nextSteps": {
+      "title": "¿Qué Sucede Después?",
+      "steps": [
+        "Revisaré tus requerimientos y responderé en 24 horas",
+        "Agendaremos una consulta pagada para discutir tus necesidades en detalle",
+        "Recibirás una propuesta personalizada con cronograma e inversión",
+        "Al aprobar, comenzamos tu sprint MVP de 2 semanas inmediatamente"
+      ],
+      "consultationFee": "Tarifa de consulta: $150 (Se aplica al costo del proyecto cuando procedes)"
+    },
+    "cta": {
+      "title": "¿Listo para Transformar tu Negocio con IA?",
+      "description": "No esperes para aprovechar el poder de la IA. Con nuestra entrega de MVP en 2 semanas, puedes comenzar a ver resultados más rápido de lo que piensas.",
+      "emailButton": "Envíame un Correo Ahora",
+      "callButton": "Llamar Directamente",
+      "quote": "\"El mejor momento para implementar IA fue ayer. El segundo mejor momento es ahora.\""
+    }
+  },
+  "chat": {
+    "messages": {
+      "initial": "¡Hola! Soy el asistente IA de Luis. Puedo ayudarte a conocer sus servicios de consultoría en IA. ¿Qué te gustaría saber?",
+      "demoResponse": "¡Gracias por tu pregunta! Esta es una respuesta de demostración. Luis se especializa en consultoría estratégica de IA, implementación de aprendizaje automático y soluciones de IA personalizadas. ¿Te gustaría agendar una consulta?"
+    },
+    "assistant": {
+      "name": "Asistente IA de Luis",
+      "status": "En línea",
+      "avatar": "IA"
+    },
+    "typingIndicator": "Escribiendo...",
+    "placeholder": "Pregunta sobre consultoría en IA...",
+    "sendButton": "Enviar",
+    "ariaLabels": {
+      "close": "Cerrar chat",
+      "open": "Abrir chat"
+    }
+  },
+  "footer": {
+    "brand": {
+      "name": "Portafolio Real",
+      "tagline": "Soluciones de IA de Lujo",
+      "description": "Donde la elegancia contemporánea se encuentra con la sofisticación atemporal en inteligencia artificial y consultoría estratégica."
+    },
+    "sections": {
+      "services": "Servicios",
+      "gallery": "Galería",
+      "resources": "Recursos"
+    },
+    "links": {
+      "royalStrategy": "Estrategia Real",
+      "aiExcellence": "Excelencia en IA",
+      "visionSystems": "Sistemas de Visión",
+      "naturalIntelligence": "Inteligencia Natural",
+      "medicalInnovations": "Innovaciones Médicas",
+      "businessIntelligence": "Inteligencia de Negocios",
+      "automationLuxury": "Automatización de Lujo",
+      "researchExcellence": "Excelencia en Investigación",
+      "royalAssessment": "Evaluación Real",
+      "caseStudies": "Casos de Estudio",
+      "royalBlog": "Blog Real",
+      "whitepapers": "Documentos Técnicos",
+      "privacyPolicy": "Política de Privacidad",
+      "termsOfService": "Términos de Servicio",
+      "regalExcellence": "excelencia real"
+    },
+    "copyright": "© 2024 Portafolio Real. Creado con excelencia real.",
+    "quickLinks": "Enlaces Rápidos",
+    "connect": "Conectar",
+    "rights": "Todos los derechos reservados",
+    "tagline": "Transformando negocios con inteligencia artificial"
+  },
+  "common": {
+    "learnMore": "Saber Más",
+    "getStarted": "Comenzar",
+    "viewAll": "Ver Todo",
+    "close": "Cerrar",
+    "loading": "Cargando...",
+    "error": "Error",
+    "success": "Éxito",
+    "scrollToTop": "Subir al inicio"
+  }
+}

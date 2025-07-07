@@ -1,0 +1,683 @@
+{
+  "nav": {
+    "home": "Home",
+    "about": "About",
+    "consulting": "Consulting",
+    "projects": "Projects",
+    "contact": "Contact",
+    "openMenu": "Open menu"
+  },
+  "hero": {
+    "title": "AI Consulting",
+    "subtitle": "Excellence",
+    "luxurySubtitle": "Luxury Redefined",
+    "modernRoyalty": "Modern Royalty",
+    "description": "Transform your business with cutting-edge artificial intelligence solutions",
+    "cta": {
+      "primary": "Get Started",
+      "secondary": "Learn More",
+      "getInTouch": "Get in Touch"
+    }
+  },
+  "home": {
+    "hero": {
+      "luxurySubtitle": "Luxury AI Solutions Redefined",
+      "modernTitle": "Modern AI Excellence",
+      "description": "Transform your business with cutting-edge artificial intelligence solutions. Get a production-ready MVP in just 2 weeks.",
+      "viewPortfolio": "View Portfolio",
+      "getInTouch": "Get in Touch"
+    },
+    "services": {
+      "subtitle": "What We Offer",
+      "title": "Royal Services",
+      "learnMore": "Learn More",
+      "strategy": {
+        "title": "AI Strategy",
+        "description": "Crafting comprehensive AI strategies that align with your business goals and drive competitive advantage."
+      },
+      "brandStrategy": {
+        "title": "Brand Strategy",
+        "description": "Crafting compelling brand narratives that resonate with your audience and establish market dominance."
+      },
+      "webDesign": {
+        "title": "Web Design",
+        "description": "Creating stunning digital experiences that captivate visitors and convert them into loyal customers."
+      },
+      "uiux": {
+        "title": "UI/UX Design",
+        "description": "Designing intuitive interfaces that delight users and drive engagement through thoughtful interaction."
+      },
+      "uiuxDesign": {
+        "title": "UI/UX Design",
+        "description": "Designing intuitive interfaces that delight users and drive engagement through thoughtful interaction."
+      },
+      "marketing": {
+        "title": "Digital Marketing",
+        "description": "Amplifying your brand's voice across digital channels to reach and engage your target audience."
+      },
+      "digitalMarketing": {
+        "title": "Digital Marketing",
+        "description": "Amplifying your brand's voice across digital channels to reach and engage your target audience."
+      },
+      "consulting": {
+        "title": "Consulting",
+        "description": "Providing strategic insights and expert guidance to transform your business vision into reality."
+      },
+      "development": {
+        "title": "Development",
+        "description": "Building robust, scalable solutions that power your digital presence with cutting-edge technology."
+      }
+    },
+    "portfolio": {
+      "subtitle": "Recent Work",
+      "title": "Royal Portfolio",
+      "branding": "Branding",
+      "webDesign": "Web Design",
+      "marketing": "Marketing",
+      "project": "Project",
+      "viewAll": "View All Projects"
+    },
+    "cta": {
+      "title": "Ready to Transform Your Business?",
+      "description": "Let's create something extraordinary together. Available for immediate start with 2-week MVP delivery.",
+      "button": "Start Your Project"
+    }
+  },
+  "about": {
+    "title": "About Me",
+    "subtitle": "AI Consultant & Developer",
+    "intro": "Passionate about leveraging artificial intelligence to solve complex business challenges",
+    "hero": {
+      "role": "MACHINE LEARNING ENGINEER",
+      "name": "Luis Alberto Gomez Celaya",
+      "description": "Building intelligent solutions that deliver real business value through modern ML engineering and rapid MVP development",
+      "badges": {
+        "location": "Mexico Based",
+        "english": "English C1 Level"
+      },
+      "getInTouch": "Get in Touch",
+      "viewProjects": "View Projects"
+    },
+    "bio": {
+      "title": "About Me",
+      "paragraphs": [
+        "I'm a Machine Learning Engineer with 3 years of experience building intelligent systems that solve real-world problems. With a background in Biomedical Engineering and hands-on experience at companies like ScaleAI and SoldaAI, I specialize in transforming complex ML concepts into production-ready solutions.",
+        "My expertise spans from developing hospital ML systems to creating cutting-edge NLP applications with modern frameworks. I've published research in the field and have a proven track record of delivering MVPs in just 2 weeks for $2-3k, making advanced AI accessible to businesses of all sizes.",
+        "What sets me apart is my commitment to rapid delivery without compromising quality. I believe in being highly responsive and available throughout the project lifecycle, ensuring clear communication and exceptional results."
+      ]
+    },
+    "contact": {
+      "title": "Let's Connect",
+      "email": {
+        "label": "Email",
+        "value": "ingbmluisgomez@gmail.com"
+      },
+      "phone": {
+        "label": "Phone",
+        "value": "+52 614 344 7013"
+      },
+      "linkedin": {
+        "label": "LinkedIn",
+        "value": "/in/gomezgg/"
+      },
+      "github": {
+        "label": "GitHub",
+        "value": "/MrGLC"
+      },
+      "website": {
+        "label": "Website",
+        "value": "la-realeza.com"
+      }
+    },
+    "technicalExpertise": {
+      "title": "Technical Expertise",
+      "categories": {
+        "machineLearning": {
+          "title": "Machine Learning",
+          "skills": [
+            "Traditional ML Models",
+            "Scikit-learn",
+            "XGBoost",
+            "Feature Engineering",
+            "Model Optimization"
+          ]
+        },
+        "nlpAiAgents": {
+          "title": "NLP & AI Agents",
+          "skills": [
+            "LangChain",
+            "LangGraph",
+            "Pydantic",
+            "GPT Integration",
+            "RAG Systems"
+          ]
+        },
+        "orchestrationDeployment": {
+          "title": "Orchestration & Deployment",
+          "skills": [
+            "Docker",
+            "FastAPI",
+            "Flask",
+            "REST APIs",
+            "Cloud Deployment"
+          ]
+        },
+        "frontendDevelopment": {
+          "title": "Frontend Development",
+          "skills": [
+            "React",
+            "TypeScript",
+            "Flutter",
+            "Responsive Design",
+            "UI/UX"
+          ]
+        }
+      }
+    },
+    "valueProposition": {
+      "title": "Why Work With Me",
+      "subtitle": "I deliver high-quality ML solutions with unmatched speed and value",
+      "items": {
+        "fastDelivery": {
+          "title": "Fast Delivery",
+          "description": "2-week MVPs from concept to deployment"
+        },
+        "costEffective": {
+          "title": "Cost-Effective",
+          "description": "Complete MVPs for $2-3k investment"
+        },
+        "responsive": {
+          "title": "Responsive",
+          "description": "Available and communicative throughout projects"
+        },
+        "timeEfficient": {
+          "title": "Time-Efficient",
+          "description": "Quick turnaround without compromising quality"
+        }
+      }
+    },
+    "finalCta": {
+      "title": "Ready to Build Your MVP?",
+      "description": "Let's transform your ideas into production-ready ML solutions. Get a fully functional MVP in just 2 weeks for $2-3k.",
+      "startProject": "Start Your Project",
+      "connectLinkedIn": "Connect on LinkedIn"
+    },
+    "experience": {
+      "title": "Experience",
+      "years": "Years of Experience",
+      "description": "Specialized in AI implementation, machine learning, and business transformation"
+    },
+    "skills": {
+      "title": "Skills & Expertise",
+      "ai": "AI & Machine Learning",
+      "nlp": "Natural Language Processing",
+      "cv": "Computer Vision",
+      "data": "Data Science",
+      "cloud": "Cloud Architecture",
+      "strategy": "AI Strategy"
+    },
+    "approach": {
+      "title": "My Approach",
+      "analyze": {
+        "title": "Analyze",
+        "description": "Understanding your unique business challenges"
+      },
+      "design": {
+        "title": "Design",
+        "description": "Creating tailored AI solutions"
+      },
+      "implement": {
+        "title": "Implement",
+        "description": "Deploying cutting-edge technology"
+      },
+      "optimize": {
+        "title": "Optimize",
+        "description": "Continuous improvement and scaling"
+      }
+    }
+  },
+  "consulting": {
+    "hero": {
+      "title": "AI Consulting Services",
+      "description": "Transform your business with cutting-edge AI solutions. From strategy to deployment, we deliver measurable results fast.",
+      "getStartedButton": "Get Started Today",
+      "viewPricingButton": "View Pricing"
+    },
+    "servicesSection": {
+      "title": "Our Services",
+      "subtitle": "Comprehensive AI solutions tailored to your business needs"
+    },
+    "services": {
+      "aiStrategy": {
+        "title": "AI Strategy Consulting",
+        "description": "Help businesses integrate AI effectively into their operations",
+        "features": {
+          "readiness": "AI readiness assessment",
+          "roadmap": "Strategic roadmap development",
+          "roi": "ROI analysis and projections",
+          "techStack": "Technology stack recommendations",
+          "riskMitigation": "Risk mitigation planning"
+        }
+      },
+      "mlDevelopment": {
+        "title": "Custom ML Model Development",
+        "description": "Build tailored solutions specific to your business needs",
+        "features": {
+          "algorithm": "Custom algorithm development",
+          "training": "Model training and optimization",
+          "benchmarking": "Performance benchmarking",
+          "integration": "Integration with existing systems",
+          "maintenance": "Ongoing model maintenance"
+        }
+      },
+      "computerVision": {
+        "title": "Computer Vision Solutions",
+        "description": "Advanced image and video analysis for real-world applications",
+        "features": {
+          "detection": "Object detection and tracking",
+          "classification": "Image classification",
+          "ocr": "OCR and document processing",
+          "videoAnalytics": "Video analytics",
+          "qualityInspection": "Quality inspection systems"
+        }
+      },
+      "nlp": {
+        "title": "NLP Implementation",
+        "description": "LangChain, LangGraph, Pydantic-powered language solutions",
+        "features": {
+          "chatbot": "Chatbot development",
+          "documentUnderstanding": "Document understanding",
+          "sentiment": "Sentiment analysis",
+          "translation": "Language translation",
+          "textGeneration": "Text generation and summarization"
+        }
+      },
+      "dataAnalysis": {
+        "title": "Data Analysis & Insights",
+        "description": "Extract actionable value from your data",
+        "features": {
+          "predictive": "Predictive analytics",
+          "dashboards": "Business intelligence dashboards",
+          "pipeline": "Data pipeline development",
+          "statistical": "Statistical modeling",
+          "realtime": "Real-time analytics"
+        }
+      },
+      "training": {
+        "title": "Training & Workshops",
+        "description": "Upskill your team with hands-on AI training",
+        "features": {
+          "curriculum": "Custom curriculum development",
+          "workshops": "Hands-on coding workshops",
+          "literacy": "AI literacy programs",
+          "toolSpecific": "Tool-specific training",
+          "bestPractices": "Best practices seminars"
+        }
+      },
+      "mcp": {
+        "title": "MCP Development",
+        "description": "Make your company AI-compatible with Model Context Protocol",
+        "features": {
+          "integration": "ChatGPT/Claude integration",
+          "serverDev": "Custom MCP server development",
+          "apiWrapper": "API wrapper creation",
+          "security": "Security implementation",
+          "documentation": "Documentation and training"
+        }
+      },
+      "platformDev": {
+        "title": "Full Platform Development",
+        "description": "Build from scratch with AI in mind",
+        "features": {
+          "architecture": "AI-first architecture design",
+          "fullstack": "Full-stack development",
+          "cloud": "Cloud infrastructure setup",
+          "devops": "DevOps and MLOps",
+          "deployment": "Scalable deployment"
+        }
+      }
+    },
+    "learnMoreButton": "Learn More",
+    "process": {
+      "title": "Our Streamlined Process",
+      "subtitle": "From idea to implementation in weeks, not months",
+      "steps": {
+        "discovery": {
+          "step": "Step 1",
+          "title": "Discovery Call",
+          "description": "Understand your needs through a paid consultation",
+          "duration": "1 hour"
+        },
+        "mvp": {
+          "step": "Step 2",
+          "title": "MVP Development",
+          "description": "2-week rapid prototype to validate your idea",
+          "duration": "2 weeks"
+        },
+        "deployment": {
+          "step": "Step 3",
+          "title": "Deployment & Support",
+          "description": "Implementation and ongoing development",
+          "duration": "Ongoing"
+        }
+      }
+    },
+    "pricing": {
+      "title": "Transparent Pricing",
+      "subtitle": "Flexible options designed to fit your budget and timeline",
+      "customQuote": {
+        "title": "Custom Quote",
+        "subtitle": "All services are customizable to your needs",
+        "mvpTitle": "MVP Development",
+        "mvpPrice": "$2,000 - $3,000",
+        "mvpDescription": "2-week rapid prototype with full documentation and deployment support",
+        "features": {
+          "turnaround": "Quick turnaround - Start immediately",
+          "costEffective": "Cost-effective solutions",
+          "flexiblePayment": "Flexible payment terms",
+          "satisfaction": "Satisfaction guaranteed"
+        },
+        "button": "Get Your Custom Quote"
+      }
+    },
+    "finalCta": {
+      "title": "Ready to Transform Your Business with AI?",
+      "description": "Available for immediate start. Let's build something amazing together.",
+      "scheduleButton": "Schedule Discovery Call",
+      "contactButton": "Contact Now",
+      "consultationNote": "First consultation: $150/hour - Applied to project cost if we proceed"
+    }
+  },
+  "projects": {
+    "hero": {
+      "title": "Royal AI Solutions Portfolio",
+      "description": "Transforming businesses with cutting-edge artificial intelligence solutions. Explore our collection of innovative projects across multiple domains."
+    },
+    "filters": {
+      "all": "All",
+      "machineLearning": "Machine Learning",
+      "computerVision": "Computer Vision",
+      "nlp": "NLP",
+      "dataAnalysis": "Data Analysis",
+      "fullStack": "Full Stack"
+    },
+    "projectList": {
+      "aiChatbot": {
+        "title": "AI Chatbot Platform",
+        "description": "Advanced conversational AI platform with natural language understanding and multi-channel support.",
+        "fullDescription": "This platform leverages state-of-the-art NLP models to provide intelligent conversational experiences. Built with transformer-based architectures, it supports multiple languages and can be deployed across various channels including web, mobile, and voice assistants.",
+        "technologies": {
+          "nlp": "Natural Language Processing",
+          "conversationalAi": "Conversational AI",
+          "multilingual": "Multi-lingual"
+        }
+      },
+      "medicalImage": {
+        "title": "Medical Image Analysis",
+        "description": "Deep learning system for automated medical image diagnosis with high accuracy and explainability.",
+        "fullDescription": "A sophisticated computer vision system designed for medical professionals. It uses convolutional neural networks to analyze X-rays, MRIs, and CT scans, providing detailed analysis and highlighting areas of concern with explainable AI techniques.",
+        "technologies": {
+          "medicalAi": "Medical AI",
+          "deepLearning": "Deep Learning",
+          "diagnosticImaging": "Diagnostic Imaging"
+        }
+      },
+      "salesPrediction": {
+        "title": "Sales Prediction Model",
+        "description": "Machine learning model for accurate sales forecasting using historical data and market indicators.",
+        "fullDescription": "This predictive analytics solution combines time series analysis with external market indicators to forecast sales with high accuracy. It includes automated feature engineering and model retraining pipelines.",
+        "technologies": {
+          "predictiveAnalytics": "Predictive Analytics",
+          "timeSeries": "Time Series",
+          "autoML": "AutoML"
+        }
+      },
+      "documentProcessing": {
+        "title": "Document Processing System",
+        "description": "Intelligent document understanding system for automated data extraction and classification.",
+        "fullDescription": "An end-to-end document processing pipeline that uses OCR, NLP, and machine learning to extract, classify, and validate information from various document types including invoices, contracts, and forms.",
+        "technologies": {
+          "documentAi": "Document AI",
+          "ocr": "OCR",
+          "informationExtraction": "Information Extraction"
+        }
+      },
+      "inventoryOptimization": {
+        "title": "Inventory Optimization",
+        "description": "AI-driven inventory management system reducing costs while maintaining optimal stock levels.",
+        "fullDescription": "This system uses reinforcement learning and demand forecasting to optimize inventory levels across multiple warehouses. It considers factors like seasonality, lead times, and storage costs to minimize holding costs while preventing stockouts.",
+        "technologies": {
+          "reinforcementLearning": "Reinforcement Learning",
+          "supplyChain": "Supply Chain",
+          "optimization": "Optimization"
+        }
+      },
+      "customerSegmentation": {
+        "title": "Customer Segmentation",
+        "description": "Advanced clustering algorithms for precise customer segmentation and personalized marketing.",
+        "fullDescription": "Using unsupervised learning techniques, this system analyzes customer behavior patterns to create meaningful segments. It integrates with marketing platforms to enable personalized campaigns and improve customer engagement.",
+        "technologies": {
+          "clustering": "Clustering",
+          "behavioralAnalytics": "Behavioral Analytics",
+          "marketingAi": "Marketing AI"
+        }
+      }
+    },
+    "techStack": {
+      "more": "+{{count}} more"
+    },
+    "buttons": {
+      "viewDetails": "View Details",
+      "requestCaseStudy": "Request Case Study",
+      "viewDemo": "View Demo"
+    },
+    "modal": {
+      "keyTechnologies": "Key Technologies",
+      "technicalStack": "Technical Stack"
+    },
+    "cta": {
+      "title": "Ready to Transform Your Business?",
+      "description": "Let's explore how these proven AI methodologies can be tailored to solve your unique challenges and drive exceptional results.",
+      "scheduleConsultation": "Schedule Consultation",
+      "downloadPortfolio": "Download Portfolio"
+    },
+    "title": "Featured Projects",
+    "subtitle": "Real-world AI solutions delivered",
+    "viewDetails": "View Details",
+    "technologies": "Technologies",
+    "category": {
+      "all": "All Projects",
+      "nlp": "NLP",
+      "cv": "Computer Vision",
+      "ml": "Machine Learning",
+      "automation": "Automation"
+    }
+  },
+  "contact": {
+    "title": "Get in Touch",
+    "subtitle": "Let's discuss your AI transformation",
+    "hero": {
+      "subtitle": "Get Started Today",
+      "title": "Let's Build Your AI Solution",
+      "description": "Schedule a paid consultation to discuss your needs. 2-week MVP delivery for $2-3k. Consultation fee applied to project cost.",
+      "badge1": "Available for Immediate Start",
+      "badge2": "Response within 24 hours"
+    },
+    "form": {
+      "title": "Request Consultation",
+      "description": "Fill out this form to schedule your paid consultation. We'll discuss your project and create a custom proposal.",
+      "labels": {
+        "name": "Name",
+        "email": "Email",
+        "company": "Company",
+        "companyOptional": "(optional)",
+        "service": "Service Interested In",
+        "budget": "Budget Range",
+        "timeline": "Timeline",
+        "message": "Message"
+      },
+      "placeholders": {
+        "fullName": "Your full name",
+        "email": "your@email.com",
+        "companyName": "Your company name",
+        "selectService": "Select a service",
+        "selectBudget": "Select budget",
+        "selectTimeline": "Select timeline",
+        "message": "Tell me about your project goals, current challenges, and what success looks like for you..."
+      },
+      "submit": "Schedule Paid Consultation",
+      "consultationNote": "Consultation fee will be credited towards your project cost",
+      "sending": "Sending...",
+      "success": "Message sent successfully!",
+      "error": "Error sending message. Please try again."
+    },
+    "services": {
+      "aiConsulting": "AI Consulting & Strategy",
+      "computerVision": "Computer Vision Development",
+      "machineLearning": "Machine Learning Solutions",
+      "medicalAI": "Medical AI Applications",
+      "nlp": "Natural Language Processing",
+      "aiWorkflow": "AI Workflow Automation",
+      "customTraining": "Custom AI Model Training",
+      "mvpDevelopment": "Rapid MVP Development",
+      "other": "Other (please specify)"
+    },
+    "budgetRanges": {
+      "under3k": "Under $3,000 (MVP scope)",
+      "3kTo10k": "$3,000 - $10,000",
+      "10kTo25k": "$10,000 - $25,000",
+      "25kTo50k": "$25,000 - $50,000",
+      "over50k": "$50,000+"
+    },
+    "timelines": {
+      "immediate": "Immediate start (this week)",
+      "2weeks": "2-week MVP sprint",
+      "1month": "Within 1 month",
+      "1to3months": "1-3 months",
+      "over3months": "3+ months"
+    },
+    "methods": {
+      "email": {
+        "title": "Email",
+        "description": "Direct communication",
+        "responseTime": "< 24 hours"
+      },
+      "phone": {
+        "title": "Phone",
+        "description": "Quick consultation",
+        "responseTime": "Business hours"
+      },
+      "linkedin": {
+        "title": "LinkedIn",
+        "description": "Professional network",
+        "responseTime": "Active daily"
+      },
+      "github": {
+        "title": "GitHub",
+        "description": "Code portfolio",
+        "responseTime": "Open source"
+      }
+    },
+    "info": {
+      "title": "Get in Touch",
+      "email": "Email",
+      "phone": "Phone",
+      "location": "Location",
+      "availability": "Available for consultations worldwide",
+      "locationAvailability": {
+        "title": "Location & Availability",
+        "location": "Location",
+        "locationValue": "Mexico (Remote Available)",
+        "timezone": "Time Zone",
+        "timezoneValue": "CST (UTC-6)",
+        "workingHours": "Working Hours",
+        "workingHoursValue": "9 AM - 6 PM CST",
+        "responseTime": "Response Time",
+        "responseTimeValue": "Within 24 hours"
+      },
+      "portfolio": {
+        "title": "Portfolio & Projects",
+        "description": "View my portfolio website to see completed projects and case studies"
+      }
+    },
+    "nextSteps": {
+      "title": "What Happens Next?",
+      "steps": [
+        "I'll review your requirements and respond within 24 hours",
+        "We'll schedule a paid consultation to discuss your needs in detail",
+        "You'll receive a custom proposal with timeline and investment",
+        "Upon approval, we begin your 2-week MVP sprint immediately"
+      ],
+      "consultationFee": "Consultation fee: $150 (Applied to project cost when you proceed)"
+    },
+    "cta": {
+      "title": "Ready to Transform Your Business with AI?",
+      "description": "Don't wait to leverage the power of AI. With our 2-week MVP delivery, you can start seeing results faster than you think.",
+      "emailButton": "Email Me Now",
+      "callButton": "Call Directly",
+      "quote": "\"The best time to implement AI was yesterday. The second best time is now.\""
+    }
+  },
+  "chat": {
+    "messages": {
+      "initial": "Hi! I'm Luis's AI assistant. I can help you learn about his AI consulting services. What would you like to know?",
+      "demoResponse": "Thanks for your question! This is a demo response. Luis specializes in AI strategy consulting, machine learning implementation, and custom AI solutions. Would you like to schedule a consultation?"
+    },
+    "assistant": {
+      "name": "Luis's AI Assistant",
+      "status": "Online",
+      "avatar": "AI"
+    },
+    "typingIndicator": "Typing...",
+    "placeholder": "Ask about AI consulting...",
+    "sendButton": "Send",
+    "ariaLabels": {
+      "close": "Close chat",
+      "open": "Open chat"
+    }
+  },
+  "footer": {
+    "brand": {
+      "name": "Royal Portfolio",
+      "tagline": "Luxury AI Solutions",
+      "description": "Where contemporary elegance meets timeless sophistication in artificial intelligence and strategic consulting."
+    },
+    "sections": {
+      "services": "Services",
+      "gallery": "Gallery",
+      "resources": "Resources"
+    },
+    "links": {
+      "royalStrategy": "Royal Strategy",
+      "aiExcellence": "AI Excellence",
+      "visionSystems": "Vision Systems",
+      "naturalIntelligence": "Natural Intelligence",
+      "medicalInnovations": "Medical Innovations",
+      "businessIntelligence": "Business Intelligence",
+      "automationLuxury": "Automation Luxury",
+      "researchExcellence": "Research Excellence",
+      "royalAssessment": "Royal Assessment",
+      "caseStudies": "Case Studies",
+      "royalBlog": "Royal Blog",
+      "whitepapers": "Whitepapers",
+      "privacyPolicy": "Privacy Policy",
+      "termsOfService": "Terms of Service",
+      "regalExcellence": "regal excellence"
+    },
+    "copyright": "© 2024 Royal Portfolio. Crafted with regal excellence.",
+    "quickLinks": "Quick Links",
+    "connect": "Connect",
+    "rights": "All rights reserved",
+    "tagline": "Transforming businesses with artificial intelligence"
+  },
+  "common": {
+    "learnMore": "Learn More",
+    "getStarted": "Get Started",
+    "viewAll": "View All",
+    "close": "Close",
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "scrollToTop": "Scroll to top"
+  }
+}

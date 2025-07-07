@@ -4,6 +4,7 @@
 
 /* Global styles - Royal Portfolio Theme */
 
+/* Optimized animations with consistent timing and GPU acceleration */
 @keyframes shimmer {
   0% {
     transform: translateX(-100%);
@@ -16,37 +17,37 @@
 @keyframes fadeInUp {
   from {
     opacity: 0;
-    transform: translateY(30px);
+    transform: translate3d(0, 20px, 0);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: translate3d(0, 0, 0);
   }
 }
 
 @keyframes slideInLeft {
   from {
     opacity: 0;
-    transform: translateX(-50px);
+    transform: translate3d(-30px, 0, 0);
   }
   to {
     opacity: 1;
-    transform: translateX(0);
+    transform: translate3d(0, 0, 0);
   }
 }
 
 @keyframes float {
   0%, 100% {
-    transform: translateY(0) translateX(0);
+    transform: translate3d(0, 0, 0);
   }
   25% {
-    transform: translateY(-20px) translateX(10px);
+    transform: translate3d(10px, -15px, 0);
   }
   50% {
-    transform: translateY(-10px) translateX(-10px);
+    transform: translate3d(-10px, -8px, 0);
   }
   75% {
-    transform: translateY(-30px) translateX(5px);
+    transform: translate3d(5px, -20px, 0);
   }
 }
 
@@ -55,13 +56,15 @@
 }
 
 .fade-in-up {
-  animation: fadeInUp 0.8s ease-out forwards;
+  animation: fadeInUp 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
   opacity: 0;
+  will-change: transform, opacity;
 }
 
 .slide-in-left {
-  animation: slideInLeft 0.8s ease-out forwards;
+  animation: slideInLeft 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
   opacity: 0;
+  will-change: transform, opacity;
 }
 
 /* Custom scrollbar - Royal Theme */
@@ -147,12 +150,7 @@
   transform: translateX(0);
 }
 
-/* Smooth transitions for all interactive elements */
-* {
-  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
-  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-  transition-duration: 150ms;
-}
+/* Removed global transition to prevent conflicts with component-specific animations */
 
 /* Antialiasing for better text rendering */
 body {
@@ -177,4 +175,63 @@ body {
     transparent
   );
   animation: shimmer 2s infinite;
+}
+
+/* Royal gradient patterns from design system */
+.royal-gradient {
+  background: linear-gradient(135deg, #F5E6D3 0%, #DC143C 50%, #FFD700 100%);
+}
+
+.royal-gradient-subtle {
+  background: linear-gradient(135deg, #F5E6D3 0%, #FFFAED 100%);
+}
+
+.royal-gradient-accent {
+  background: linear-gradient(90deg, #DC143C 0%, #FFD700 100%);
+}
+
+/* Pixelated effect */
+.pixelated {
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
+  filter: contrast(1.1) saturate(1.2);
+  transition: filter 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.pixelated:hover {
+  filter: contrast(1.2) saturate(1.3);
+}
+
+/* Enhanced micro-interactions with optimized performance */
+.hover-lift {
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform;
+}
+
+.hover-lift:hover {
+  transform: translate3d(0, -2px, 0);
+  box-shadow: 0 8px 32px rgba(220, 20, 60, 0.15);
+}
+
+.hover-glow {
+  transition: box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.hover-glow:hover {
+  animation: pulse-glow 2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 40px rgba(255, 215, 0, 0.5);
+  }
+}
+
+/* Accessibility - Minimum touch targets */
+button, a, input, textarea, select {
+  min-height: 44px;
 }

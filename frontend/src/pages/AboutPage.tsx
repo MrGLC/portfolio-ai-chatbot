@@ -18,6 +18,7 @@ import {
   WrapItem,
 } from '@chakra-ui/react';
 import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import { 
   ArrowForwardIcon,
   EmailIcon,
@@ -27,73 +28,71 @@ import {
   CheckCircleIcon,
   StarIcon
 } from '@chakra-ui/icons';
+import { durations, easings, delays, variants, transitions } from '../theme/animations';
 
 const MotionBox = motion(Box);
 const MotionCard = motion(Card);
 
-const skills = {
-  'Machine Learning': [
-    'Traditional ML Models',
-    'Scikit-learn',
-    'XGBoost',
-    'Feature Engineering',
-    'Model Optimization'
-  ],
-  'NLP & AI Agents': [
-    'LangChain',
-    'LangGraph', 
-    'Pydantic',
-    'GPT Integration',
-    'RAG Systems'
-  ],
-  'Orchestration & Deployment': [
-    'Docker',
-    'FastAPI',
-    'Flask',
-    'REST APIs',
-    'Cloud Deployment'
-  ],
-  'Frontend Development': [
-    'React',
-    'TypeScript',
-    'Flutter',
-    'Responsive Design',
-    'UI/UX'
-  ]
-};
 
-const contactInfo = [
-  { icon: EmailIcon, label: 'Email', value: 'ingbmluisgomez@gmail.com', href: 'mailto:ingbmluisgomez@gmail.com' },
-  { icon: PhoneIcon, label: 'Phone', value: '+52 614 344 7013', href: 'tel:+526143447013' },
-  { icon: ExternalLinkIcon, label: 'LinkedIn', value: '/in/gomezgg/', href: 'https://linkedin.com/in/gomezgg/' },
-  { icon: ExternalLinkIcon, label: 'GitHub', value: '/MrGLC', href: 'https://github.com/MrGLC' },
-  { icon: ExternalLinkIcon, label: 'Website', value: 'la-realeza.com', href: 'https://la-realeza.com' },
-];
 
-const valueProps = [
-  {
-    icon: StarIcon,
-    title: 'Fast Delivery',
-    description: '2-week MVPs from concept to deployment',
-  },
-  {
-    icon: StarIcon,
-    title: 'Cost-Effective',
-    description: 'Complete MVPs for $2-3k investment',
-  },
-  {
-    icon: CheckCircleIcon,
-    title: 'Responsive',
-    description: 'Available and communicative throughout projects',
-  },
-  {
-    icon: TimeIcon,
-    title: 'Time-Efficient',
-    description: 'Quick turnaround without compromising quality',
-  },
-];
 
 export const AboutPage: React.FC = () => {
+  const { t } = useTranslation();
+
+  const contactInfo = [
+    { icon: EmailIcon, label: t('about.contact.email.label'), value: t('about.contact.email.value'), href: `mailto:${t('about.contact.email.value')}` },
+    { icon: PhoneIcon, label: t('about.contact.phone.label'), value: t('about.contact.phone.value'), href: 'tel:+526143447013' },
+    { icon: ExternalLinkIcon, label: t('about.contact.linkedin.label'), value: t('about.contact.linkedin.value'), href: 'https://linkedin.com/in/gomezgg/' },
+    { icon: ExternalLinkIcon, label: t('about.contact.github.label'), value: t('about.contact.github.value'), href: 'https://github.com/MrGLC' },
+    { icon: ExternalLinkIcon, label: t('about.contact.website.label'), value: t('about.contact.website.value'), href: 'https://la-realeza.com' },
+  ];
+
+  const valueProps = [
+    {
+      icon: StarIcon,
+      title: t('about.valueProposition.items.fastDelivery.title'),
+      description: t('about.valueProposition.items.fastDelivery.description'),
+    },
+    {
+      icon: StarIcon,
+      title: t('about.valueProposition.items.costEffective.title'),
+      description: t('about.valueProposition.items.costEffective.description'),
+    },
+    {
+      icon: CheckCircleIcon,
+      title: t('about.valueProposition.items.responsive.title'),
+      description: t('about.valueProposition.items.responsive.description'),
+    },
+    {
+      icon: TimeIcon,
+      title: t('about.valueProposition.items.timeEfficient.title'),
+      description: t('about.valueProposition.items.timeEfficient.description'),
+    },
+  ];
+
+  const skillCategories = [
+    {
+      key: 'machineLearning',
+      title: t('about.technicalExpertise.categories.machineLearning.title'),
+      skills: t('about.technicalExpertise.categories.machineLearning.skills', { returnObjects: true }) as string[]
+    },
+    {
+      key: 'nlpAiAgents',
+      title: t('about.technicalExpertise.categories.nlpAiAgents.title'),
+      skills: t('about.technicalExpertise.categories.nlpAiAgents.skills', { returnObjects: true }) as string[]
+    },
+    {
+      key: 'orchestrationDeployment',
+      title: t('about.technicalExpertise.categories.orchestrationDeployment.title'),
+      skills: t('about.technicalExpertise.categories.orchestrationDeployment.skills', { returnObjects: true }) as string[]
+    },
+    {
+      key: 'frontendDevelopment',
+      title: t('about.technicalExpertise.categories.frontendDevelopment.title'),
+      skills: t('about.technicalExpertise.categories.frontendDevelopment.skills', { returnObjects: true }) as string[]
+    }
+  ];
+
   return (
     <Box>
       {/* Hero Section with Royal Red Background */}
@@ -106,11 +105,11 @@ export const AboutPage: React.FC = () => {
           <MotionBox
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
+            transition={{ duration: durations.slower, ease: easings.smooth }}
           >
             <VStack spacing={6} textAlign="center">
               <Text variant="luxury" color="brand.accent" fontSize="sm">
-                MACHINE LEARNING ENGINEER
+                {t('about.hero.role')}
               </Text>
               <Heading 
                 size="4xl" 
@@ -118,7 +117,7 @@ export const AboutPage: React.FC = () => {
                 fontWeight="800"
                 letterSpacing="-0.03em"
               >
-                Luis Alberto Gomez Celaya
+                {t('about.hero.name')}
               </Heading>
               <Text 
                 fontSize="xl" 
@@ -126,8 +125,7 @@ export const AboutPage: React.FC = () => {
                 maxW="700px"
                 lineHeight="1.8"
               >
-                Building intelligent solutions that deliver real business value through
-                modern ML engineering and rapid MVP development
+                {t('about.hero.description')}
               </Text>
               <HStack spacing={6} pt={4}>
                 <Badge 
@@ -139,7 +137,7 @@ export const AboutPage: React.FC = () => {
                   fontSize="md"
                   fontWeight="600"
                 >
-                  Mexico Based
+                  {t('about.hero.badges.location')}
                 </Badge>
                 <Badge 
                   px={4} 
@@ -150,7 +148,7 @@ export const AboutPage: React.FC = () => {
                   fontSize="md"
                   fontWeight="600"
                 >
-                  English C1 Level
+                  {t('about.hero.badges.english')}
                 </Badge>
               </HStack>
               <HStack spacing={4} pt={4}>
@@ -161,7 +159,7 @@ export const AboutPage: React.FC = () => {
                   as="a"
                   href="mailto:ingbmluisgomez@gmail.com"
                 >
-                  Get in Touch
+                  {t('about.hero.getInTouch')}
                 </Button>
                 <Button
                   variant="outline"
@@ -175,7 +173,7 @@ export const AboutPage: React.FC = () => {
                   as="a"
                   href="#projects"
                 >
-                  View Projects
+                  {t('about.hero.viewProjects')}
                 </Button>
               </HStack>
             </VStack>
@@ -201,13 +199,13 @@ export const AboutPage: React.FC = () => {
           <MotionBox
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
+            transition={{ duration: durations.slow, ease: easings.smooth }}
           >
             <VStack spacing={16} align="stretch">
               {/* Bio Section */}
               <Box textAlign="center">
                 <Heading size="3xl" color="brand.text" mb={6}>
-                  About Me
+                  {t('about.bio.title')}
                 </Heading>
                 <Card 
                   bg="brand.surface" 
@@ -216,26 +214,11 @@ export const AboutPage: React.FC = () => {
                 >
                   <CardBody p={{ base: 6, md: 10 }}>
                     <VStack spacing={6} align="stretch">
-                      <Text color="brand.textSecondary" lineHeight="1.8" fontSize="lg">
-                        I'm a Machine Learning Engineer with 3 years of experience building 
-                        intelligent systems that solve real-world problems. With a background in 
-                        Biomedical Engineering and hands-on experience at companies like ScaleAI 
-                        and SoldaAI, I specialize in transforming complex ML concepts into 
-                        production-ready solutions.
-                      </Text>
-                      <Text color="brand.textSecondary" lineHeight="1.8" fontSize="lg">
-                        My expertise spans from developing hospital ML systems to creating 
-                        cutting-edge NLP applications with modern frameworks. I've published 
-                        research in the field and have a proven track record of delivering 
-                        MVPs in just 2 weeks for $2-3k, making advanced AI accessible to 
-                        businesses of all sizes.
-                      </Text>
-                      <Text color="brand.textSecondary" lineHeight="1.8" fontSize="lg">
-                        What sets me apart is my commitment to rapid delivery without 
-                        compromising quality. I believe in being highly responsive and 
-                        available throughout the project lifecycle, ensuring clear 
-                        communication and exceptional results.
-                      </Text>
+                      {(t('about.bio.paragraphs', { returnObjects: true }) as string[]).map((paragraph, index) => (
+                        <Text key={index} color="brand.textSecondary" lineHeight="1.8" fontSize="lg">
+                          {paragraph}
+                        </Text>
+                      ))}
                     </VStack>
                   </CardBody>
                 </Card>
@@ -244,7 +227,7 @@ export const AboutPage: React.FC = () => {
               {/* Contact Information */}
               <Box>
                 <Heading size="2xl" color="brand.text" mb={8} textAlign="center">
-                  Let's Connect
+                  {t('about.contact.title')}
                 </Heading>
                 <Card 
                   bg="brand.surface" 
@@ -258,7 +241,7 @@ export const AboutPage: React.FC = () => {
                           key={index}
                           initial={{ opacity: 0, y: 20 }}
                           animate={{ opacity: 1, y: 0 }}
-                          transition={{ delay: index * 0.1 }}
+                          transition={{ delay: index * delays.staggerNormal, duration: durations.normal, ease: easings.smooth }}
                         >
                           <Link 
                             href={contact.href}
@@ -270,7 +253,7 @@ export const AboutPage: React.FC = () => {
                               p={4} 
                               borderRadius="12px"
                               bg="brand.cream"
-                              transition="all 0.3s ease"
+                              transition={transitions.normal}
                               _hover={{
                                 bg: 'brand.creamDark',
                                 transform: 'translateY(-2px)',
@@ -320,27 +303,27 @@ export const AboutPage: React.FC = () => {
         <Container maxW="6xl">
           <VStack spacing={12} align="stretch">
             <Heading size="3xl" color="brand.text" textAlign="center">
-              Technical Expertise
+              {t('about.technicalExpertise.title')}
             </Heading>
             
             <SimpleGrid columns={{ base: 1, md: 2 }} spacing={8}>
-              {Object.entries(skills).map(([category, skillList], index) => (
+              {skillCategories.map((category, index) => (
                 <MotionCard
-                  key={category}
+                  key={category.key}
                   bg="brand.cream"
                   boxShadow="0 4px 16px rgba(0, 0, 0, 0.06)"
                   borderRadius="16px"
                   initial={{ opacity: 0, x: index % 2 === 0 ? -20 : 20 }}
                   animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: index * 0.1 }}
+                  transition={{ delay: index * delays.staggerNormal, duration: durations.normal, ease: easings.smooth }}
                 >
                   <CardBody p={{ base: 6, md: 8 }}>
                     <VStack align="stretch" spacing={4}>
                       <Heading size="md" color="brand.secondary">
-                        {category}
+                        {category.title}
                       </Heading>
                       <Wrap spacing={3}>
-                        {skillList.map((skill) => (
+                        {category.skills.map((skill) => (
                           <WrapItem key={skill}>
                             <Badge 
                               px={3} 
@@ -385,10 +368,10 @@ export const AboutPage: React.FC = () => {
           <VStack spacing={12} align="stretch">
             <Box textAlign="center">
               <Heading size="3xl" color="brand.text" mb={4}>
-                Why Work With Me
+                {t('about.valueProposition.title')}
               </Heading>
               <Text fontSize="xl" color="brand.textSecondary" maxW="700px" mx="auto">
-                I deliver high-quality ML solutions with unmatched speed and value
+                {t('about.valueProposition.subtitle')}
               </Text>
             </Box>
             
@@ -401,7 +384,7 @@ export const AboutPage: React.FC = () => {
                   borderRadius="16px"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.1 }}
+                  transition={{ delay: index * delays.staggerNormal, duration: durations.normal, ease: easings.smooth }}
                 >
                   <CardBody p={{ base: 6, md: 8 }}>
                     <HStack spacing={4} align="start">
@@ -437,11 +420,10 @@ export const AboutPage: React.FC = () => {
               <CardBody p={{ base: 8, md: 12 }}>
                 <VStack spacing={6} textAlign="center">
                   <Heading size="2xl" color="white">
-                    Ready to Build Your MVP?
+                    {t('about.finalCta.title')}
                   </Heading>
                   <Text fontSize="lg" color="whiteAlpha.900" maxW="600px">
-                    Let's transform your ideas into production-ready ML solutions. 
-                    Get a fully functional MVP in just 2 weeks for $2-3k.
+                    {t('about.finalCta.description')}
                   </Text>
                   <HStack spacing={4}>
                     <Button
@@ -453,11 +435,12 @@ export const AboutPage: React.FC = () => {
                         transform: 'translateY(-2px)',
                         boxShadow: '0 8px 24px rgba(255, 215, 0, 0.4)',
                       }}
+                      transition={transitions.normal}
                       rightIcon={<EmailIcon />}
                       as="a"
                       href="mailto:ingbmluisgomez@gmail.com"
                     >
-                      Start Your Project
+                      {t('about.finalCta.startProject')}
                     </Button>
                     <Link href="https://linkedin.com/in/gomezgg/" isExternal _hover={{ textDecoration: 'none' }}>
                       <Button
@@ -470,7 +453,7 @@ export const AboutPage: React.FC = () => {
                           borderColor: 'white',
                         }}
                       >
-                        Connect on LinkedIn
+                        {t('about.finalCta.connectLinkedIn')}
                       </Button>
                     </Link>
                   </HStack>

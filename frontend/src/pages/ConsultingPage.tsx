@@ -36,134 +36,66 @@ import {
   ExternalLinkIcon
 } from '@chakra-ui/icons';
 import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 
 const MotionCard = motion(Card);
 const MotionBox = motion(Box);
 
-const services = [
-  {
-    title: 'AI Strategy Consulting',
-    icon: InfoIcon,
-    description: 'Help businesses integrate AI effectively into their operations',
-    features: [
-      'AI readiness assessment',
-      'Strategic roadmap development',
-      'ROI analysis and projections',
-      'Technology stack recommendations',
-      'Risk mitigation planning',
-    ],
-  },
-  {
-    title: 'Custom ML Model Development',
-    icon: SettingsIcon,
-    description: 'Build tailored solutions specific to your business needs',
-    features: [
-      'Custom algorithm development',
-      'Model training and optimization',
-      'Performance benchmarking',
-      'Integration with existing systems',
-      'Ongoing model maintenance',
-    ],
-  },
-  {
-    title: 'Computer Vision Solutions',
-    icon: ViewIcon,
-    description: 'Advanced image and video analysis for real-world applications',
-    features: [
-      'Object detection and tracking',
-      'Image classification',
-      'OCR and document processing',
-      'Video analytics',
-      'Quality inspection systems',
-    ],
-  },
-  {
-    title: 'NLP Implementation',
-    icon: ChatIcon,
-    description: 'LangChain, LangGraph, Pydantic-powered language solutions',
-    features: [
-      'Chatbot development',
-      'Document understanding',
-      'Sentiment analysis',
-      'Language translation',
-      'Text generation and summarization',
-    ],
-  },
-  {
-    title: 'Data Analysis & Insights',
-    icon: StarIcon,
-    description: 'Extract actionable value from your data',
-    features: [
-      'Predictive analytics',
-      'Business intelligence dashboards',
-      'Data pipeline development',
-      'Statistical modeling',
-      'Real-time analytics',
-    ],
-  },
-  {
-    title: 'Training & Workshops',
-    icon: CalendarIcon,
-    description: 'Upskill your team with hands-on AI training',
-    features: [
-      'Custom curriculum development',
-      'Hands-on coding workshops',
-      'AI literacy programs',
-      'Tool-specific training',
-      'Best practices seminars',
-    ],
-  },
-  {
-    title: 'MCP Development',
-    icon: ExternalLinkIcon,
-    description: 'Make your company AI-compatible with Model Context Protocol',
-    features: [
-      'ChatGPT/Claude integration',
-      'Custom MCP server development',
-      'API wrapper creation',
-      'Security implementation',
-      'Documentation and training',
-    ],
-  },
-  {
-    title: 'Full Platform Development',
-    icon: ArrowForwardIcon,
-    description: 'Build from scratch with AI in mind',
-    features: [
-      'AI-first architecture design',
-      'Full-stack development',
-      'Cloud infrastructure setup',
-      'DevOps and MLOps',
-      'Scalable deployment',
-    ],
-  },
-];
-
-const process = [
-  {
-    step: 1,
-    title: 'Discovery Call',
-    description: 'Understand your needs through a paid consultation',
-    icon: InfoIcon,
-    duration: '1 hour',
-  },
-  {
-    step: 2,
-    title: 'MVP Development',
-    description: '2-week rapid prototype to validate your idea',
-    icon: SettingsIcon,
-    duration: '2 weeks',
-  },
-  {
-    step: 3,
-    title: 'Deployment & Support',
-    description: 'Implementation and ongoing development',
-    icon: CheckCircleIcon,
-    duration: 'Ongoing',
-  },
-];
-
 export const ConsultingPage: React.FC = () => {
+  const { t } = useTranslation();
+
+  const services = [
+    {
+      key: 'aiStrategy',
+      icon: InfoIcon,
+    },
+    {
+      key: 'mlDevelopment',
+      icon: SettingsIcon,
+    },
+    {
+      key: 'computerVision',
+      icon: ViewIcon,
+    },
+    {
+      key: 'nlp',
+      icon: ChatIcon,
+    },
+    {
+      key: 'dataAnalysis',
+      icon: StarIcon,
+    },
+    {
+      key: 'training',
+      icon: CalendarIcon,
+    },
+    {
+      key: 'mcp',
+      icon: ExternalLinkIcon,
+    },
+    {
+      key: 'platformDev',
+      icon: ArrowForwardIcon,
+    },
+  ];
+
+  const process = [
+    {
+      step: 1,
+      key: 'discovery',
+      icon: InfoIcon,
+    },
+    {
+      step: 2,
+      key: 'mvp',
+      icon: SettingsIcon,
+    },
+    {
+      step: 3,
+      key: 'deployment',
+      icon: CheckCircleIcon,
+    },
+  ];
   return (
     <Box>
       {/* Hero Section with Red Background */}
@@ -181,11 +113,10 @@ export const ConsultingPage: React.FC = () => {
               transition={{ duration: 0.6 }}
             >
               <Heading size="4xl" mb={4}>
-                AI Consulting Services
+                {t('consulting.hero.title')}
               </Heading>
               <Text fontSize="xl" maxW="800px" mx="auto" opacity={0.95}>
-                Transform your business with cutting-edge AI solutions. 
-                From strategy to deployment, we deliver measurable results fast.
+                {t('consulting.hero.description')}
               </Text>
             </MotionBox>
             
@@ -197,7 +128,7 @@ export const ConsultingPage: React.FC = () => {
                 _hover={{ bg: 'whiteAlpha.900', transform: 'translateY(-2px)' }}
                 transition="all 0.2s"
               >
-                Get Started Today
+                {t('consulting.hero.getStartedButton')}
               </Button>
               <Button
                 size="lg"
@@ -206,7 +137,7 @@ export const ConsultingPage: React.FC = () => {
                 borderColor="white"
                 _hover={{ bg: 'whiteAlpha.200' }}
               >
-                View Pricing
+                {t('consulting.hero.viewPricingButton')}
               </Button>
             </HStack>
           </VStack>
@@ -231,10 +162,10 @@ export const ConsultingPage: React.FC = () => {
           <VStack spacing={12}>
             <Box textAlign="center">
               <Heading size="3xl" color="#1A1A1A" mb={4}>
-                Our Services
+                {t('consulting.servicesSection.title')}
               </Heading>
               <Text fontSize="lg" color="#666666" maxW="600px" mx="auto">
-                Comprehensive AI solutions tailored to your business needs
+                {t('consulting.servicesSection.subtitle')}
               </Text>
             </Box>
 
@@ -271,18 +202,18 @@ export const ConsultingPage: React.FC = () => {
                       </Box>
                       
                       <Heading size="md" color="#1A1A1A">
-                        {service.title}
+                        {t(`consulting.services.${service.key}.title`)}
                       </Heading>
                       
                       <Text color="#666666" fontSize="sm" minH="60px">
-                        {service.description}
+                        {t(`consulting.services.${service.key}.description`)}
                       </Text>
                       
                       <List spacing={2}>
-                        {service.features.slice(0, 3).map((feature, i) => (
+                        {Object.keys(t(`consulting.services.${service.key}.features`, { returnObjects: true })).slice(0, 3).map((featureKey, i) => (
                           <ListItem key={i} fontSize="xs" color="#666666">
                             <Icon as={CheckCircleIcon} color="#C41E3A" mr={2} />
-                            {feature}
+                            {t(`consulting.services.${service.key}.features.${featureKey}`)}
                           </ListItem>
                         ))}
                       </List>
@@ -293,7 +224,7 @@ export const ConsultingPage: React.FC = () => {
                         rightIcon={<ChevronRightIcon />}
                         mt={2}
                       >
-                        Learn More
+                        {t('consulting.learnMoreButton')}
                       </Button>
                     </VStack>
                   </CardBody>
@@ -322,10 +253,10 @@ export const ConsultingPage: React.FC = () => {
           <VStack spacing={12}>
             <Box textAlign="center">
               <Heading size="3xl" color="#1A1A1A" mb={4}>
-                Our Streamlined Process
+                {t('consulting.process.title')}
               </Heading>
               <Text fontSize="lg" color="#666666" maxW="600px" mx="auto">
-                From idea to implementation in weeks, not months
+                {t('consulting.process.subtitle')}
               </Text>
             </Box>
 
@@ -372,16 +303,16 @@ export const ConsultingPage: React.FC = () => {
                     
                     <VStack spacing={2} textAlign="center">
                       <Badge bg="#C41E3A" color="white" px={3} py={1} borderRadius="full">
-                        Step {step.step}
+                        {t(`consulting.process.steps.${step.key}.step`)}
                       </Badge>
                       <Heading size="lg" color="#1A1A1A">
-                        {step.title}
+                        {t(`consulting.process.steps.${step.key}.title`)}
                       </Heading>
                       <Text color="#666666" fontSize="sm">
-                        {step.description}
+                        {t(`consulting.process.steps.${step.key}.description`)}
                       </Text>
                       <Text color="#C41E3A" fontWeight="bold" fontSize="sm">
-                        {step.duration}
+                        {t(`consulting.process.steps.${step.key}.duration`)}
                       </Text>
                     </VStack>
                   </VStack>
@@ -416,10 +347,10 @@ export const ConsultingPage: React.FC = () => {
           <VStack spacing={12}>
             <Box textAlign="center">
               <Heading size="3xl" mb={4}>
-                Transparent Pricing
+                {t('consulting.pricing.title')}
               </Heading>
               <Text fontSize="lg" opacity={0.95} maxW="600px" mx="auto">
-                Flexible options designed to fit your budget and timeline
+                {t('consulting.pricing.subtitle')}
               </Text>
             </Box>
 
@@ -437,10 +368,10 @@ export const ConsultingPage: React.FC = () => {
                 <VStack spacing={8}>
                   <Box textAlign="center">
                     <Heading size="2xl" mb={2}>
-                      Custom Quote
+                      {t('consulting.pricing.customQuote.title')}
                     </Heading>
                     <Text fontSize="lg" opacity={0.9}>
-                      All services are customizable to your needs
+                      {t('consulting.pricing.customQuote.subtitle')}
                     </Text>
                   </Box>
 
@@ -452,11 +383,11 @@ export const ConsultingPage: React.FC = () => {
                   >
                     <VStack spacing={4}>
                       <HStack justify="space-between" width="full">
-                        <Text fontWeight="bold">MVP Development</Text>
-                        <Text fontWeight="bold" fontSize="xl">$2,000 - $3,000</Text>
+                        <Text fontWeight="bold">{t('consulting.pricing.customQuote.mvpTitle')}</Text>
+                        <Text fontWeight="bold" fontSize="xl">{t('consulting.pricing.customQuote.mvpPrice')}</Text>
                       </HStack>
                       <Text fontSize="sm" opacity={0.9}>
-                        2-week rapid prototype with full documentation and deployment support
+                        {t('consulting.pricing.customQuote.mvpDescription')}
                       </Text>
                     </VStack>
                   </Box>
@@ -464,19 +395,19 @@ export const ConsultingPage: React.FC = () => {
                   <List spacing={3} width="full">
                     <ListItem>
                       <Icon as={CheckCircleIcon} mr={2} />
-                      Quick turnaround - Start immediately
+                      {t('consulting.pricing.customQuote.features.turnaround')}
                     </ListItem>
                     <ListItem>
                       <Icon as={CheckCircleIcon} mr={2} />
-                      Cost-effective solutions
+                      {t('consulting.pricing.customQuote.features.costEffective')}
                     </ListItem>
                     <ListItem>
                       <Icon as={CheckCircleIcon} mr={2} />
-                      Flexible payment terms
+                      {t('consulting.pricing.customQuote.features.flexiblePayment')}
                     </ListItem>
                     <ListItem>
                       <Icon as={CheckCircleIcon} mr={2} />
-                      Satisfaction guaranteed
+                      {t('consulting.pricing.customQuote.features.satisfaction')}
                     </ListItem>
                   </List>
 
@@ -488,7 +419,7 @@ export const ConsultingPage: React.FC = () => {
                     _hover={{ bg: 'whiteAlpha.900', transform: 'translateY(-2px)' }}
                     transition="all 0.2s"
                   >
-                    Get Your Custom Quote
+                    {t('consulting.pricing.customQuote.button')}
                   </Button>
                 </VStack>
               </CardBody>
@@ -509,10 +440,10 @@ export const ConsultingPage: React.FC = () => {
             <CardBody p={{ base: 8, md: 12 }}>
               <VStack spacing={8} textAlign="center">
                 <Heading size="2xl" color="#1A1A1A">
-                  Ready to Transform Your Business with AI?
+                  {t('consulting.finalCta.title')}
                 </Heading>
                 <Text fontSize="lg" color="#666666" maxW="600px">
-                  Available for immediate start. Let's build something amazing together.
+                  {t('consulting.finalCta.description')}
                 </Text>
                 
                 <HStack spacing={4}>
@@ -524,7 +455,7 @@ export const ConsultingPage: React.FC = () => {
                     _hover={{ transform: 'translateY(-2px)' }}
                     transition="all 0.2s"
                   >
-                    Schedule Discovery Call
+                    {t('consulting.finalCta.scheduleButton')}
                   </Button>
                   <Button
                     size="lg"
@@ -534,12 +465,12 @@ export const ConsultingPage: React.FC = () => {
                     leftIcon={<PhoneIcon />}
                     _hover={{ bg: '#C41E3A', color: 'white' }}
                   >
-                    Contact Now
+                    {t('consulting.finalCta.contactButton')}
                   </Button>
                 </HStack>
 
                 <Text fontSize="sm" color="#666666" fontStyle="italic">
-                  First consultation: $150/hour - Applied to project cost if we proceed
+                  {t('consulting.finalCta.consultationNote')}
                 </Text>
               </VStack>
             </CardBody>

@@ -18,16 +18,24 @@ import {
 import { HamburgerIcon } from '@chakra-ui/icons';
 import { Link as RouterLink, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
+import { LanguageSwitcher } from '../LanguageSwitcher';
+import { durations, easings, transitions } from '../../theme/animations';
 
 const MotionBox = motion(Box);
 const MotionButton = motion(Button);
 
-const navItems = [
-  { name: 'Home', path: '/', section: 'Luxury Solutions' },
-  { name: 'Services', path: '/consulting', section: 'Services' },
-  { name: 'Portfolio', path: '/projects', section: 'Royal Gallery' },
-  { name: 'About', path: '/about', section: 'Expertise' },
-  { name: 'Contact', path: '/contact', section: 'Royal Connection' },
+interface NavItem {
+  key: string;
+  path: string;
+}
+
+const navItems: NavItem[] = [
+  { key: 'home', path: '/' },
+  { key: 'consulting', path: '/consulting' },
+  { key: 'projects', path: '/projects' },
+  { key: 'about', path: '/about' },
+  { key: 'contact', path: '/contact' },
 ];
 
 export const Navigation: React.FC = () => {
@@ -35,6 +43,7 @@ export const Navigation: React.FC = () => {
   const location = useLocation();
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
   const [scrolled, setScrolled] = useState(false);
+  const { t } = useTranslation();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -44,7 +53,7 @@ export const Navigation: React.FC = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const NavLink: React.FC<{ item: typeof navItems[0], isMobile?: boolean }> = ({ 
+  const NavLink: React.FC<{ item: NavItem, isMobile?: boolean }> = ({ 
     item, 
     isMobile = false 
   }) => {
@@ -53,7 +62,7 @@ export const Navigation: React.FC = () => {
     return (
       <MotionBox
         position="relative"
-        onMouseEnter={() => setHoveredItem(item.name)}
+        onMouseEnter={() => setHoveredItem(item.key)}
         onMouseLeave={() => setHoveredItem(null)}
       >
         <Button
@@ -80,11 +89,11 @@ export const Navigation: React.FC = () => {
             width: isActive ? '100%' : '0',
             height: '2px',
             bg: 'brand.accent',
-            transition: 'width 0.3s ease',
+            transition: `width ${durations.normal}s cubic-bezier(${easings.smooth.join(',')})`,
           }}
           _active={{ transform: 'none' }}
         >
-          {item.name}
+          {t(`nav.${item.key}`)}
         </Button>
         
         {/* Hover effect for non-active items */}
@@ -99,7 +108,7 @@ export const Navigation: React.FC = () => {
             initial={{ scaleX: 0 }}
             whileHover={{ scaleX: 1 }}
             style={{ originX: 0 }}
-            transition={{ duration: 0.3 }}
+            transition={{ duration: durations.normal, ease: easings.smooth }}
           />
         )}
       </MotionBox>
@@ -107,7 +116,7 @@ export const Navigation: React.FC = () => {
   };
 
   return (
-    <MotionBox
+    <Box
       position="fixed"
       top={0}
       left={0}
@@ -116,17 +125,15 @@ export const Navigation: React.FC = () => {
       bg={scrolled ? "rgba(220, 20, 60, 0.95)" : "linear-gradient(to bottom, #DC143C, rgba(220, 20, 60, 0.95))"}
       backdropFilter="blur(10px)"
       boxShadow={scrolled ? "0 4px 20px rgba(0, 0, 0, 0.1)" : "none"}
-      initial={{ y: -100 }}
-      animate={{ y: 0 }}
-      transition={{ duration: 0.5 }}
       py={scrolled ? 3 : 4}
+      transition={`all ${durations.normal}s cubic-bezier(${easings.smooth.join(',')})`}
     >
       <Container maxW="1400px">
-        <Flex h={scrolled ? "50px" : "60px"} alignItems="center" justifyContent="space-between" transition="all 0.3s">
+        <Flex h={scrolled ? "50px" : "60px"} alignItems="center" justifyContent="space-between" transition={transitions.normal}>
           {/* Logo/Brand */}
           <MotionBox
             whileHover={{ scale: 1.05 }}
-            transition={{ duration: 0.2 }}
+            transition={{ duration: durations.fast, ease: easings.smooth }}
           >
             <RouterLink to="/">
               <Text
@@ -136,7 +143,7 @@ export const Navigation: React.FC = () => {
                 fontFamily="heading"
                 letterSpacing="0.5px"
                 _hover={{ color: 'brand.accent' }}
-                transition="color 0.3s"
+                transition={transitions.colors}
               >
                 Royal Portfolio
               </Text>
@@ -144,13 +151,13 @@ export const Navigation: React.FC = () => {
           </MotionBox>
 
           {/* Desktop Navigation */}
-          <HStack spacing={6} display={{ base: 'none', md: 'flex' }}>
+          <HStack spacing={6} display={{ base: 'none', md: 'flex' }} flex={1} justify="center">
             {navItems.map((item) => (
-              <NavLink key={item.name} item={item} />
+              <NavLink key={item.key} item={item} />
             ))}
           </HStack>
 
-          {/* CTA Button */}
+          {/* Right side items */}
           <HStack spacing={4}>
             <Button
               as={RouterLink}
@@ -159,8 +166,13 @@ export const Navigation: React.FC = () => {
               size="sm"
               display={{ base: 'none', md: 'flex' }}
             >
-              Get Started
+              {t('common.getStarted')}
             </Button>
+
+            {/* Language Switcher - Desktop */}
+            <Box display={{ base: 'none', md: 'flex' }}>
+              <LanguageSwitcher />
+            </Box>
 
             {/* Mobile Menu Button */}
             <IconButton
@@ -184,8 +196,12 @@ export const Navigation: React.FC = () => {
           <DrawerBody pt={16}>
             <VStack spacing={6} align="stretch">
               {navItems.map((item) => (
-                <NavLink key={item.name} item={item} isMobile />
+                <NavLink key={item.key} item={item} isMobile />
               ))}
+              
+              <Box pt={4}>
+                <LanguageSwitcher />
+              </Box>
               
               <Box pt={8}>
                 <Button
@@ -196,19 +212,19 @@ export const Navigation: React.FC = () => {
                   width="full"
                   onClick={onClose}
                 >
-                  Get Started
+                  {t('common.getStarted')}
                 </Button>
               </Box>
               
               <Box pt={4}>
                 <Text fontSize="sm" color="brand.textSecondary" textAlign="center">
-                  Where contemporary elegance meets timeless sophistication
+                  {t('footer.tagline')}
                 </Text>
               </Box>
             </VStack>
           </DrawerBody>
         </DrawerContent>
       </Drawer>
-    </MotionBox>
+    </Box>
   );
 };

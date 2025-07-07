@@ -14,29 +14,9 @@ import {
 import { ExternalLinkIcon } from '@chakra-ui/icons';
 import { Link as RouterLink } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 
 const MotionBox = motion(Box);
-
-const footerLinks = {
-  'Services': [
-    { name: 'Royal Strategy', path: '/consulting#strategy' },
-    { name: 'AI Excellence', path: '/consulting#ml' },
-    { name: 'Vision Systems', path: '/consulting#cv' },
-    { name: 'Natural Intelligence', path: '/consulting#nlp' },
-  ],
-  'Gallery': [
-    { name: 'Medical Innovations', path: '/projects#medical' },
-    { name: 'Business Intelligence', path: '/projects#bi' },
-    { name: 'Automation Luxury', path: '/projects#automation' },
-    { name: 'Research Excellence', path: '/projects#research' },
-  ],
-  'Resources': [
-    { name: 'Royal Assessment', path: '/assessment' },
-    { name: 'Case Studies', path: '/case-studies' },
-    { name: 'Royal Blog', path: '/blog' },
-    { name: 'Whitepapers', path: '/resources' },
-  ],
-};
 
 const socialLinks = [
   { name: 'LinkedIn', url: 'https://linkedin.com/in/placeholder', color: '#0A66C2' },
@@ -46,6 +26,29 @@ const socialLinks = [
 ];
 
 export const Footer: React.FC = () => {
+  const { t } = useTranslation();
+
+  const footerLinksTranslated = {
+    [t('footer.sections.services')]: [
+      { name: t('footer.links.royalStrategy'), path: '/consulting#strategy' },
+      { name: t('footer.links.aiExcellence'), path: '/consulting#ml' },
+      { name: t('footer.links.visionSystems'), path: '/consulting#cv' },
+      { name: t('footer.links.naturalIntelligence'), path: '/consulting#nlp' },
+    ],
+    [t('footer.sections.gallery')]: [
+      { name: t('footer.links.medicalInnovations'), path: '/projects#medical' },
+      { name: t('footer.links.businessIntelligence'), path: '/projects#bi' },
+      { name: t('footer.links.automationLuxury'), path: '/projects#automation' },
+      { name: t('footer.links.researchExcellence'), path: '/projects#research' },
+    ],
+    [t('footer.sections.resources')]: [
+      { name: t('footer.links.royalAssessment'), path: '/assessment' },
+      { name: t('footer.links.caseStudies'), path: '/case-studies' },
+      { name: t('footer.links.royalBlog'), path: '/blog' },
+      { name: t('footer.links.whitepapers'), path: '/resources' },
+    ],
+  };
+
   return (
     <MotionBox
       as="footer"
@@ -68,14 +71,13 @@ export const Footer: React.FC = () => {
                 mb={2}
                 fontFamily="heading"
               >
-                Royal Portfolio
+                {t('footer.brand.name')}
               </Text>
               <Text fontSize="sm" color="brand.accent" fontWeight="600" mb={4}>
-                Luxury AI Solutions
+                {t('footer.brand.tagline')}
               </Text>
               <Text fontSize="sm" color="brand.cream" lineHeight="1.6">
-                Where contemporary elegance meets timeless sophistication in 
-                artificial intelligence and strategic consulting.
+                {t('footer.brand.description')}
               </Text>
             </Box>
             
@@ -102,7 +104,7 @@ export const Footer: React.FC = () => {
           </VStack>
 
           {/* Footer Links */}
-          {Object.entries(footerLinks).map(([category, links]) => (
+          {Object.entries(footerLinksTranslated).map(([category, links]) => (
             <VStack key={category} align="start" spacing={3}>
               <Text fontSize="sm" fontWeight="600" color="brand.primary" mb={2}>
                 {category}
@@ -136,7 +138,7 @@ export const Footer: React.FC = () => {
           gap={4}
         >
           <Text fontSize="sm" color="brand.cream" opacity={0.8}>
-            © 2024 Royal Portfolio. Crafted with regal excellence.
+            {t('footer.copyright')}
           </Text>
           
           <HStack spacing={6} fontSize="sm">
@@ -146,7 +148,7 @@ export const Footer: React.FC = () => {
               color="brand.cream"
               _hover={{ color: 'brand.accent' }}
             >
-              Privacy Policy
+              {t('footer.links.privacyPolicy')}
             </Link>
             <Link
               as={RouterLink}
@@ -154,7 +156,7 @@ export const Footer: React.FC = () => {
               color="brand.cream"
               _hover={{ color: 'brand.accent' }}
             >
-              Terms of Service
+              {t('footer.links.termsOfService')}
             </Link>
             <Link
               href="#"

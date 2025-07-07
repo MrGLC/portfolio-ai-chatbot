@@ -14,7 +14,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
     <Box minH="100vh" bg="brand.primary">
       <Navigation />
       
-      <Box as="main" pt="80px">
+      <Box as="main" pt={{ base: "92px", md: "92px" }}>
         {children}
       </Box>
       

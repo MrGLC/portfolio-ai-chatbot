@@ -2,11 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { IconButton } from '@chakra-ui/react';
 import { ChevronUpIcon } from '@chakra-ui/icons';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
+import { durations, easings, variants } from '../../theme/animations';
 
 const MotionIconButton = motion(IconButton);
 
 export const ScrollToTop: React.FC = () => {
   const [isVisible, setIsVisible] = useState(false);
+  const { t } = useTranslation();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -33,7 +36,7 @@ export const ScrollToTop: React.FC = () => {
           right="20px"
           size="lg"
           variant="primary"
-          aria-label="Scroll to top"
+          aria-label={t('common.scrollToTop')}
           icon={<ChevronUpIcon boxSize={6} />}
           onClick={scrollToTop}
           zIndex={999}
@@ -42,7 +45,7 @@ export const ScrollToTop: React.FC = () => {
           exit={{ opacity: 0, scale: 0 }}
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.9 }}
-          transition={{ duration: 0.2 }}
+          transition={{ duration: durations.fast, ease: easings.smooth }}
         />
       )}
     </AnimatePresence>

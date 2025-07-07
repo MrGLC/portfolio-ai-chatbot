@@ -22,11 +22,13 @@ import {
 } from '@chakra-ui/react';
 import { Link as RouterLink } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import { 
   CheckCircleIcon, 
   StarIcon,
   ArrowForwardIcon
 } from '@chakra-ui/icons';
+import { variants, durations, easings, delays, springs, createStaggerAnimation } from '../theme/animations';
 
 const MotionBox = motion(Box);
 const MotionCard = motion(Card);
@@ -34,35 +36,24 @@ const MotionHeading = motion(Heading);
 const MotionText = motion(Text);
 const MotionButton = motion(Button);
 
-// Animation variants
-const fadeInUp = {
-  initial: { opacity: 0, y: 30 },
-  animate: { opacity: 1, y: 0 },
-  transition: { duration: 0.8, ease: [0.4, 0, 0.2, 1] }
-};
-
-const stagger = {
-  animate: {
-    transition: {
-      staggerChildren: 0.2
-    }
-  }
-};
+// Use standardized animations from theme
+const staggerAnimation = createStaggerAnimation(delays.staggerSlow, variants.heroFadeIn);
 
 export const HomePage: React.FC = () => {
   const isMobile = useBreakpointValue({ base: true, lg: false });
+  const { t } = useTranslation();
 
   return (
     <Box>
       {/* Hero Section - Full Screen */}
       <MotionBox
-        minH="100vh"
+        minH="85vh"
         bg="brand.secondary"
         position="relative"
         overflow="hidden"
         initial="initial"
         animate="animate"
-        variants={stagger}
+        variants={staggerAnimation.parent}
       >
         {/* Background gradient overlay */}
         <Box
@@ -87,7 +78,7 @@ export const HomePage: React.FC = () => {
           borderRadius="50%"
           bg="radial-gradient(circle, rgba(255, 215, 0, 0.1), transparent)"
           filter="blur(40px)"
-          animation="float 20s ease-in-out infinite"
+          animation="float 25s cubic-bezier(0.4, 0, 0.2, 1) infinite"
         />
         <Box
           position="absolute"
@@ -98,15 +89,15 @@ export const HomePage: React.FC = () => {
           borderRadius="50%"
           bg="radial-gradient(circle, rgba(220, 20, 60, 0.1), transparent)"
           filter="blur(40px)"
-          animation="float 15s ease-in-out infinite reverse"
+          animation="float 20s cubic-bezier(0.4, 0, 0.2, 1) infinite reverse"
         />
         
-        <Container maxW="1400px" position="relative" zIndex={1} h="100vh">
+        <Container maxW="1400px" position="relative" zIndex={1} h="85vh">
           <Flex
             h="100%"
-            align="center"
+            align="flex-start"
             justify={{ base: "center", lg: "flex-start" }}
-            pt={{ base: 0, lg: "10vh" }}
+            pt={{ base: 10, lg: 12 }}
           >
             <VStack spacing={8} maxW="800px" align={{ base: "center", lg: "flex-start" }} textAlign={{ base: "center", lg: "left" }}>
               {/* Luxury subtitle */}
@@ -117,11 +108,9 @@ export const HomePage: React.FC = () => {
                 textTransform="uppercase"
                 color="brand.accent"
                 opacity={0.9}
-                variants={fadeInUp}
-                animation="fadeInUp 0.8s ease-out"
-                style={{ animationDelay: '0.2s' }}
+                variants={staggerAnimation.child}
               >
-                Luxury Redefined
+                {t('home.hero.luxurySubtitle')}
               </MotionText>
 
               {/* Main title */}
@@ -133,11 +122,9 @@ export const HomePage: React.FC = () => {
                 color="brand.primary"
                 fontFamily="heading"
                 letterSpacing="-2px"
-                variants={fadeInUp}
-                animation="fadeInUp 0.8s ease-out"
-                style={{ animationDelay: '0.4s' }}
+                variants={staggerAnimation.child}
               >
-                Modern Royalty
+                {t('home.hero.modernTitle')}
               </MotionHeading>
 
               {/* Description */}
@@ -147,20 +134,15 @@ export const HomePage: React.FC = () => {
                 lineHeight="1.8"
                 fontWeight="300"
                 maxW="600px"
-                variants={fadeInUp}
-                animation="fadeInUp 0.8s ease-out"
-                style={{ animationDelay: '0.6s' }}
+                variants={staggerAnimation.child}
                 textAlign={{ base: "center", lg: "left" }}
               >
-                Where contemporary elegance meets timeless sophistication. 
-                Crafting exceptional experiences with a regal touch.
+                {t('home.hero.description')}
               </MotionText>
 
               {/* CTA Buttons */}
               <MotionBox
-                variants={fadeInUp}
-                animation="fadeInUp 0.8s ease-out"
-                style={{ animationDelay: '0.8s' }}
+                variants={staggerAnimation.child}
               >
                 <HStack spacing={4} justify={{ base: "center", lg: "flex-start" }} wrap="wrap">
                   <Button
@@ -169,7 +151,7 @@ export const HomePage: React.FC = () => {
                     variant="primary"
                     size="lg"
                   >
-                    Explore Portfolio
+                    {t('home.hero.viewPortfolio')}
                   </Button>
                   <Button
                     as={RouterLink}
@@ -178,12 +160,14 @@ export const HomePage: React.FC = () => {
                     size="lg"
                     borderColor="brand.cream"
                     color="brand.cream"
+                    transition={`all ${durations.normal}s cubic-bezier(${easings.smooth.join(',')})`}
                     _hover={{
                       bg: 'brand.cream',
                       color: 'brand.secondary',
+                      transform: 'translateY(-2px)',
                     }}
                   >
-                    Get in Touch
+                    {t('home.hero.getInTouch')}
                   </Button>
                 </HStack>
               </MotionBox>
@@ -220,7 +204,7 @@ export const HomePage: React.FC = () => {
                 textTransform="uppercase"
                 color="brand.secondary"
               >
-                What We Offer
+                {t('home.services.subtitle')}
               </Text>
               <Heading 
                 size="3xl" 
@@ -228,7 +212,7 @@ export const HomePage: React.FC = () => {
                 fontFamily="heading"
                 fontSize={{ base: "3xl", md: "4xl", lg: "5xl" }}
               >
-                Royal Services
+                {t('home.services.title')}
               </Heading>
             </VStack>
 
@@ -236,33 +220,33 @@ export const HomePage: React.FC = () => {
             <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={8} w="full">
               {[
                 {
-                  title: "Brand Strategy",
-                  description: "Crafting compelling brand narratives that resonate with your audience and establish market dominance.",
+                  title: t('home.services.strategy.title'),
+                  description: t('home.services.strategy.description'),
                   icon: StarIcon,
                 },
                 {
-                  title: "Web Design", 
-                  description: "Creating stunning digital experiences that captivate visitors and convert them into loyal customers.",
+                  title: t('home.services.webDesign.title'), 
+                  description: t('home.services.webDesign.description'),
                   icon: CheckCircleIcon,
                 },
                 {
-                  title: "UI/UX Design",
-                  description: "Designing intuitive interfaces that delight users and drive engagement through thoughtful interaction.",
+                  title: t('home.services.uiux.title'),
+                  description: t('home.services.uiux.description'),
                   icon: ArrowForwardIcon,
                 },
                 {
-                  title: "Digital Marketing",
-                  description: "Amplifying your brand's voice across digital channels to reach and engage your target audience.",
+                  title: t('home.services.marketing.title'),
+                  description: t('home.services.marketing.description'),
                   icon: StarIcon,
                 },
                 {
-                  title: "Consulting",
-                  description: "Providing strategic insights and expert guidance to transform your business vision into reality.",
+                  title: t('home.services.consulting.title'),
+                  description: t('home.services.consulting.description'),
                   icon: CheckCircleIcon,
                 },
                 {
-                  title: "Development",
-                  description: "Building robust, scalable solutions that power your digital presence with cutting-edge technology.",
+                  title: t('home.services.development.title'),
+                  description: t('home.services.development.description'),
                   icon: ArrowForwardIcon,
                 }
               ].map((feature, index) => (
@@ -275,6 +259,7 @@ export const HomePage: React.FC = () => {
                   position="relative"
                   overflow="hidden"
                   boxShadow="0 4px 20px rgba(0, 0, 0, 0.05)"
+                  style={{ transition: `all ${durations.normal}s cubic-bezier(${easings.smooth.join(',')})` }}
                   _before={{
                     content: '""',
                     position: 'absolute',
@@ -284,10 +269,10 @@ export const HomePage: React.FC = () => {
                     height: '4px',
                     bg: 'linear-gradient(90deg, var(--chakra-colors-brand-secondary), var(--chakra-colors-brand-accent))',
                     transform: 'translateX(-100%)',
-                    transition: 'transform 0.5s ease',
+                    transition: `transform ${durations.slow}s cubic-bezier(${easings.smooth.join(',')})`,
                   }}
                   _hover={{
-                    transform: 'translateY(-10px)',
+                    transform: 'translateY(-8px)',
                     boxShadow: '0 15px 40px rgba(0, 0, 0, 0.1)',
                     _before: {
                       transform: 'translateX(0)',
@@ -295,8 +280,8 @@ export const HomePage: React.FC = () => {
                   }}
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.1, duration: 0.5 }}
-                  viewport={{ once: true }}
+                  transition={{ delay: index * 0.08, duration: durations.normal, ease: easings.smooth }}
+                  viewport={{ once: true, margin: "-50px" }}
                 >
                   <Flex
                     w={16}
@@ -307,10 +292,10 @@ export const HomePage: React.FC = () => {
                     borderRadius="50%"
                     align="center"
                     justify="center"
-                    transition="all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55)"
+                    transition={`all ${durations.normal}s cubic-bezier(${easings.smooth.join(',')})`}
                     _groupHover={{
                       bg: 'brand.accent',
-                      transform: 'rotateY(360deg)',
+                      transform: 'scale(1.1)',
                     }}
                   >
                     <Icon as={feature.icon} boxSize={7} color="brand.primary" />
@@ -329,7 +314,7 @@ export const HomePage: React.FC = () => {
                     rightIcon={<ArrowForwardIcon />}
                     _hover={{ color: 'brand.accent' }}
                   >
-                    Learn More
+                    {t('home.services.learnMore')}
                   </Button>
                 </MotionCard>
               ))}
@@ -351,7 +336,7 @@ export const HomePage: React.FC = () => {
                 textTransform="uppercase"
                 color="brand.accent"
               >
-                Our Work
+                {t('home.portfolio.subtitle')}
               </Text>
               <Heading 
                 size="3xl" 
@@ -359,7 +344,7 @@ export const HomePage: React.FC = () => {
                 fontFamily="heading"
                 fontSize={{ base: "3xl", md: "4xl", lg: "5xl" }}
               >
-                Royal Gallery
+                {t('home.portfolio.title')}
               </Heading>
             </VStack>
 
@@ -374,11 +359,11 @@ export const HomePage: React.FC = () => {
                   cursor="pointer"
                   position="relative"
                   h={{ base: "250px", md: item % 2 === 0 ? "300px" : "250px" }}
-                  initial={{ opacity: 0, scale: 0.9 }}
+                  initial={{ opacity: 0, scale: 0.95 }}
                   whileInView={{ opacity: 1, scale: 1 }}
-                  whileHover={{ scale: 1.03 }}
-                  transition={{ duration: 0.3 }}
-                  viewport={{ once: true }}
+                  whileHover={{ scale: 1.02 }}
+                  transition={{ duration: durations.normal, ease: easings.smooth }}
+                  viewport={{ once: true, margin: "-50px" }}
                 >
                   <Box
                     position="absolute"
@@ -398,10 +383,10 @@ export const HomePage: React.FC = () => {
                     bg="linear-gradient(to top, rgba(26, 26, 26, 0.9), transparent)"
                   >
                     <Text fontSize="xs" color="brand.accent" textTransform="uppercase" letterSpacing="1px" mb={1}>
-                      {item % 3 === 0 ? 'Branding' : item % 3 === 1 ? 'Web Design' : 'Marketing'}
+                      {item % 3 === 0 ? t('home.portfolio.branding') : item % 3 === 1 ? t('home.portfolio.webDesign') : t('home.portfolio.marketing')}
                     </Text>
                     <Heading size="md" color="brand.primary" fontFamily="heading">
-                      Royal Project {item}
+                      {t('home.portfolio.project')} {item}
                     </Heading>
                   </Box>
                 </MotionBox>
@@ -416,7 +401,7 @@ export const HomePage: React.FC = () => {
               variant="primary"
               rightIcon={<ArrowForwardIcon />}
             >
-              View Full Portfolio
+              {t('home.portfolio.viewAll')}
             </Button>
           </VStack>
         </Container>
@@ -449,11 +434,10 @@ export const HomePage: React.FC = () => {
                 fontFamily="heading"
                 fontSize={{ base: "3xl", md: "4xl", lg: "5xl" }}
               >
-                Ready to Experience Excellence?
+                {t('home.cta.title')}
               </Heading>
               <Text fontSize={{ base: "lg", md: "xl" }} color="brand.textSecondary" maxW="2xl">
-                Let's craft your exceptional journey together with the sophistication 
-                and precision your business deserves.
+                {t('home.cta.description')}
               </Text>
             </VStack>
             
@@ -463,7 +447,7 @@ export const HomePage: React.FC = () => {
               variant="secondary"
               size="lg"
             >
-              Send Royal Message
+              {t('home.cta.button')}
             </Button>
           </VStack>
         </Container>

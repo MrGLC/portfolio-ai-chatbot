@@ -24,74 +24,78 @@ import {
 import { EmailIcon, PhoneIcon, TimeIcon, CalendarIcon, ExternalLinkIcon, CheckIcon } from '@chakra-ui/icons';
 // Icons already imported from Chakra UI
 import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 
 const MotionBox = motion(Box);
 const MotionCard = motion(Card);
 
-const contactMethods = [
-  {
-    icon: EmailIcon,
-    title: 'Email',
-    description: 'Direct communication',
-    value: 'ingbmluisgomez@gmail.com',
-    link: 'mailto:ingbmluisgomez@gmail.com',
-    responseTime: '< 24 hours',
-  },
-  {
-    icon: PhoneIcon,
-    title: 'Phone',
-    description: 'Quick consultation',
-    value: '+52 614 344 7013',
-    link: 'tel:+526143447013',
-    responseTime: 'Business hours',
-  },
-  {
-    icon: ExternalLinkIcon,
-    title: 'LinkedIn',
-    description: 'Professional network',
-    value: 'linkedin.com/in/gomezgg',
-    link: 'https://linkedin.com/in/gomezgg',
-    responseTime: 'Active daily',
-  },
-  {
-    icon: ExternalLinkIcon,
-    title: 'GitHub',
-    description: 'Code portfolio',
-    value: 'github.com/MrGLC',
-    link: 'https://github.com/MrGLC',
-    responseTime: 'Open source',
-  },
-];
-
-const services = [
-  'AI Consulting & Strategy',
-  'Computer Vision Development',
-  'Machine Learning Solutions',
-  'Medical AI Applications',
-  'Natural Language Processing',
-  'AI Workflow Automation',
-  'Custom AI Model Training',
-  'Rapid MVP Development',
-  'Other (please specify)',
-];
-
-const budgetRanges = [
-  { value: '<3k', label: 'Under $3,000 (MVP scope)' },
-  { value: '3k-10k', label: '$3,000 - $10,000' },
-  { value: '10k-25k', label: '$10,000 - $25,000' },
-  { value: '25k-50k', label: '$25,000 - $50,000' },
-  { value: '50k+', label: '$50,000+' },
-];
-
-const timelines = [
-  { value: 'immediate', label: 'Immediate start (this week)' },
-  { value: '2weeks', label: '2-week MVP sprint' },
-  { value: '1month', label: 'Within 1 month' },
-  { value: '1-3months', label: '1-3 months' },
-  { value: '3months+', label: '3+ months' },
-];
 
 export const ContactPage: React.FC = () => {
+  const { t } = useTranslation();
+  
+  const contactMethods = [
+    {
+      icon: EmailIcon,
+      title: t('contact.methods.email.title'),
+      description: t('contact.methods.email.description'),
+      value: 'ingbmluisgomez@gmail.com',
+      link: 'mailto:ingbmluisgomez@gmail.com',
+      responseTime: t('contact.methods.email.responseTime'),
+    },
+    {
+      icon: PhoneIcon,
+      title: t('contact.methods.phone.title'),
+      description: t('contact.methods.phone.description'),
+      value: '+52 614 344 7013',
+      link: 'tel:+526143447013',
+      responseTime: t('contact.methods.phone.responseTime'),
+    },
+    {
+      icon: ExternalLinkIcon,
+      title: t('contact.methods.linkedin.title'),
+      description: t('contact.methods.linkedin.description'),
+      value: 'linkedin.com/in/gomezgg',
+      link: 'https://linkedin.com/in/gomezgg',
+      responseTime: t('contact.methods.linkedin.responseTime'),
+    },
+    {
+      icon: ExternalLinkIcon,
+      title: t('contact.methods.github.title'),
+      description: t('contact.methods.github.description'),
+      value: 'github.com/MrGLC',
+      link: 'https://github.com/MrGLC',
+      responseTime: t('contact.methods.github.responseTime'),
+    },
+  ];
+
+  const services = [
+    t('contact.services.aiConsulting'),
+    t('contact.services.computerVision'),
+    t('contact.services.machineLearning'),
+    t('contact.services.medicalAI'),
+    t('contact.services.nlp'),
+    t('contact.services.aiWorkflow'),
+    t('contact.services.customTraining'),
+    t('contact.services.mvpDevelopment'),
+    t('contact.services.other'),
+  ];
+
+  const budgetRanges = [
+    { value: '<3k', label: t('contact.budgetRanges.under3k') },
+    { value: '3k-10k', label: t('contact.budgetRanges.3kTo10k') },
+    { value: '10k-25k', label: t('contact.budgetRanges.10kTo25k') },
+    { value: '25k-50k', label: t('contact.budgetRanges.25kTo50k') },
+    { value: '50k+', label: t('contact.budgetRanges.over50k') },
+  ];
+
+  const timelines = [
+    { value: 'immediate', label: t('contact.timelines.immediate') },
+    { value: '2weeks', label: t('contact.timelines.2weeks') },
+    { value: '1month', label: t('contact.timelines.1month') },
+    { value: '1-3months', label: t('contact.timelines.1to3months') },
+    { value: '3months+', label: t('contact.timelines.over3months') },
+  ];
+  
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -133,14 +137,13 @@ export const ContactPage: React.FC = () => {
                 opacity={0.9}
                 mb={4}
               >
-                Get Started Today
+                {t('contact.hero.subtitle')}
               </Text>
               <Heading size="4xl" color="white" mb={4} fontFamily="heading">
-                Let's Build Your AI Solution
+                {t('contact.hero.title')}
               </Heading>
               <Text fontSize="xl" color="whiteAlpha.900" maxW="800px" mx="auto" mb={6}>
-                Schedule a paid consultation to discuss your needs. 
-                2-week MVP delivery for $2-3k. Consultation fee applied to project cost.
+                {t('contact.hero.description')}
               </Text>
               <HStack spacing={4} justify="center">
                 <Badge 
@@ -152,7 +155,7 @@ export const ContactPage: React.FC = () => {
                   fontSize="md"
                   fontWeight="600"
                 >
-                  Available for Immediate Start
+                  {t('contact.hero.badge1')}
                 </Badge>
                 <Badge 
                   bg="whiteAlpha.200" 
@@ -162,7 +165,7 @@ export const ContactPage: React.FC = () => {
                   borderRadius="full"
                   fontSize="md"
                 >
-                  Response within 24 hours
+                  {t('contact.hero.badge2')}
                 </Badge>
               </HStack>
             </MotionBox>
@@ -189,11 +192,10 @@ export const ContactPage: React.FC = () => {
                     <VStack spacing={6} align="stretch">
                       <Box>
                         <Heading size="lg" color="brand.text" mb={2} fontFamily="heading">
-                          Request Consultation
+                          {t('contact.form.title')}
                         </Heading>
                         <Text color="brand.textSecondary">
-                          Fill out this form to schedule your paid consultation. 
-                          We'll discuss your project and create a custom proposal.
+                          {t('contact.form.description')}
                         </Text>
                       </Box>
 
@@ -201,26 +203,26 @@ export const ContactPage: React.FC = () => {
                         <VStack spacing={4}>
                           <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4} width="full">
                             <FormControl isRequired>
-                              <FormLabel color="brand.text" fontSize="sm" fontWeight="600">Name</FormLabel>
+                              <FormLabel color="brand.text" fontSize="sm" fontWeight="600">{t('contact.form.labels.name')}</FormLabel>
                               <Input
                                 name="name"
                                 value={formData.name}
                                 onChange={handleInputChange}
                                 variant="filled"
-                                placeholder="Your full name"
+                                placeholder={t('contact.form.placeholders.fullName')}
                                 size="lg"
                               />
                             </FormControl>
 
                             <FormControl isRequired>
-                              <FormLabel color="brand.text" fontSize="sm" fontWeight="600">Email</FormLabel>
+                              <FormLabel color="brand.text" fontSize="sm" fontWeight="600">{t('contact.form.labels.email')}</FormLabel>
                               <Input
                                 name="email"
                                 type="email"
                                 value={formData.email}
                                 onChange={handleInputChange}
                                 variant="filled"
-                                placeholder="your@email.com"
+                                placeholder={t('contact.form.placeholders.email')}
                                 size="lg"
                               />
                             </FormControl>
@@ -228,26 +230,26 @@ export const ContactPage: React.FC = () => {
 
                           <FormControl>
                             <FormLabel color="brand.text" fontSize="sm" fontWeight="600">
-                              Company <Text as="span" fontSize="xs" color="brand.textSecondary">(optional)</Text>
+                              {t('contact.form.labels.company')} <Text as="span" fontSize="xs" color="brand.textSecondary">{t('contact.form.labels.companyOptional')}</Text>
                             </FormLabel>
                             <Input
                               name="company"
                               value={formData.company}
                               onChange={handleInputChange}
                               variant="filled"
-                              placeholder="Your company name"
+                              placeholder={t('contact.form.placeholders.companyName')}
                               size="lg"
                             />
                           </FormControl>
 
                           <FormControl isRequired>
-                            <FormLabel color="brand.text" fontSize="sm" fontWeight="600">Service Interested In</FormLabel>
+                            <FormLabel color="brand.text" fontSize="sm" fontWeight="600">{t('contact.form.labels.service')}</FormLabel>
                             <Select
                               name="service"
                               value={formData.service}
                               onChange={handleInputChange}
                               variant="filled"
-                              placeholder="Select a service"
+                              placeholder={t('contact.form.placeholders.selectService')}
                               size="lg"
                             >
                               {services.map((service) => (
@@ -260,13 +262,13 @@ export const ContactPage: React.FC = () => {
 
                           <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4} width="full">
                             <FormControl isRequired>
-                              <FormLabel color="brand.text" fontSize="sm" fontWeight="600">Budget Range</FormLabel>
+                              <FormLabel color="brand.text" fontSize="sm" fontWeight="600">{t('contact.form.labels.budget')}</FormLabel>
                               <Select
                                 name="budget"
                                 value={formData.budget}
                                 onChange={handleInputChange}
                                 variant="filled"
-                                placeholder="Select budget"
+                                placeholder={t('contact.form.placeholders.selectBudget')}
                                 size="lg"
                               >
                                 {budgetRanges.map((range) => (
@@ -278,13 +280,13 @@ export const ContactPage: React.FC = () => {
                             </FormControl>
 
                             <FormControl isRequired>
-                              <FormLabel color="brand.text" fontSize="sm" fontWeight="600">Timeline</FormLabel>
+                              <FormLabel color="brand.text" fontSize="sm" fontWeight="600">{t('contact.form.labels.timeline')}</FormLabel>
                               <Select
                                 name="timeline"
                                 value={formData.timeline}
                                 onChange={handleInputChange}
                                 variant="filled"
-                                placeholder="Select timeline"
+                                placeholder={t('contact.form.placeholders.selectTimeline')}
                                 size="lg"
                               >
                                 {timelines.map((timeline) => (
@@ -297,13 +299,13 @@ export const ContactPage: React.FC = () => {
                           </SimpleGrid>
 
                           <FormControl isRequired>
-                            <FormLabel color="brand.text" fontSize="sm" fontWeight="600">Message</FormLabel>
+                            <FormLabel color="brand.text" fontSize="sm" fontWeight="600">{t('contact.form.labels.message')}</FormLabel>
                             <Textarea
                               name="message"
                               value={formData.message}
                               onChange={handleInputChange}
                               variant="filled"
-                              placeholder="Tell me about your project goals, current challenges, and what success looks like for you..."
+                              placeholder={t('contact.form.placeholders.message')}
                               rows={5}
                               size="lg"
                             />
@@ -317,10 +319,10 @@ export const ContactPage: React.FC = () => {
                               width="full"
                               rightIcon={<EmailIcon />}
                             >
-                              Schedule Paid Consultation
+                              {t('contact.form.submit')}
                             </Button>
                             <Text fontSize="sm" color="brand.textSecondary" textAlign="center">
-                              Consultation fee will be credited towards your project cost
+                              {t('contact.form.consultationNote')}
                             </Text>
                           </VStack>
                         </VStack>
@@ -333,7 +335,7 @@ export const ContactPage: React.FC = () => {
                 <VStack spacing={6} align="stretch">
                   {/* Quick Contact Info */}
                   <Box>
-                    <Heading size="md" mb={4} fontFamily="heading">Get in Touch</Heading>
+                    <Heading size="md" mb={4} fontFamily="heading">{t('contact.info.title')}</Heading>
                     <VStack spacing={4} align="stretch">
                       {contactMethods.map((method, index) => (
                         <MotionCard
@@ -411,26 +413,26 @@ export const ContactPage: React.FC = () => {
                           <HStack>
                             <Icon as={CalendarIcon} color="brand.secondary" />
                             <Text fontWeight="600" color="brand.text" fontSize="lg">
-                              Location & Availability
+                              {t('contact.info.locationAvailability.title')}
                             </Text>
                           </HStack>
                           <Divider borderColor="brand.border" />
                           <SimpleGrid columns={{ base: 1, sm: 2 }} spacing={4} width="full">
                             <VStack align="start" spacing={2}>
-                              <Text fontWeight="600" color="brand.text" fontSize="sm">Location</Text>
-                              <Text color="brand.textSecondary" fontSize="sm">Mexico (Remote Available)</Text>
+                              <Text fontWeight="600" color="brand.text" fontSize="sm">{t('contact.info.locationAvailability.location')}</Text>
+                              <Text color="brand.textSecondary" fontSize="sm">{t('contact.info.locationAvailability.locationValue')}</Text>
                             </VStack>
                             <VStack align="start" spacing={2}>
-                              <Text fontWeight="600" color="brand.text" fontSize="sm">Time Zone</Text>
-                              <Text color="brand.textSecondary" fontSize="sm">CST (UTC-6)</Text>
+                              <Text fontWeight="600" color="brand.text" fontSize="sm">{t('contact.info.locationAvailability.timezone')}</Text>
+                              <Text color="brand.textSecondary" fontSize="sm">{t('contact.info.locationAvailability.timezoneValue')}</Text>
                             </VStack>
                             <VStack align="start" spacing={2}>
-                              <Text fontWeight="600" color="brand.text" fontSize="sm">Working Hours</Text>
-                              <Text color="brand.textSecondary" fontSize="sm">9 AM - 6 PM CST</Text>
+                              <Text fontWeight="600" color="brand.text" fontSize="sm">{t('contact.info.locationAvailability.workingHours')}</Text>
+                              <Text color="brand.textSecondary" fontSize="sm">{t('contact.info.locationAvailability.workingHoursValue')}</Text>
                             </VStack>
                             <VStack align="start" spacing={2}>
-                              <Text fontWeight="600" color="brand.text" fontSize="sm">Response Time</Text>
-                              <Text color="brand.textSecondary" fontSize="sm">Within 24 hours</Text>
+                              <Text fontWeight="600" color="brand.text" fontSize="sm">{t('contact.info.locationAvailability.responseTime')}</Text>
+                              <Text color="brand.textSecondary" fontSize="sm">{t('contact.info.locationAvailability.responseTimeValue')}</Text>
                             </VStack>
                           </SimpleGrid>
                         </VStack>
@@ -444,7 +446,7 @@ export const ContactPage: React.FC = () => {
                           <HStack>
                             <Icon as={ExternalLinkIcon} color="brand.secondary" />
                             <Text fontWeight="600" color="brand.text" fontSize="lg">
-                              Portfolio & Projects
+                              {t('contact.info.portfolio.title')}
                             </Text>
                           </HStack>
                           <Divider borderColor="brand.border" />
@@ -462,7 +464,7 @@ export const ContactPage: React.FC = () => {
                             <ExternalLinkIcon />
                           </Link>
                           <Text fontSize="sm" color="brand.textSecondary">
-                            View my portfolio website to see completed projects and case studies
+                            {t('contact.info.portfolio.description')}
                           </Text>
                         </VStack>
                       </CardBody>
@@ -475,30 +477,30 @@ export const ContactPage: React.FC = () => {
                           <HStack>
                             <Icon as={CheckIcon} color="brand.text" />
                             <Text fontWeight="600" color="brand.text" fontSize="lg">
-                              What Happens Next?
+                              {t('contact.nextSteps.title')}
                             </Text>
                           </HStack>
                           <VStack align="start" spacing={3} fontSize="sm" color="brand.text">
                             <HStack align="start">
                               <Text fontWeight="600">1.</Text>
-                              <Text>I'll review your requirements and respond within 24 hours</Text>
+                              <Text>{t('contact.nextSteps.steps.0')}</Text>
                             </HStack>
                             <HStack align="start">
                               <Text fontWeight="600">2.</Text>
-                              <Text>We'll schedule a paid consultation to discuss your needs in detail</Text>
+                              <Text>{t('contact.nextSteps.steps.1')}</Text>
                             </HStack>
                             <HStack align="start">
                               <Text fontWeight="600">3.</Text>
-                              <Text>You'll receive a custom proposal with timeline and investment</Text>
+                              <Text>{t('contact.nextSteps.steps.2')}</Text>
                             </HStack>
                             <HStack align="start">
                               <Text fontWeight="600">4.</Text>
-                              <Text>Upon approval, we begin your 2-week MVP sprint immediately</Text>
+                              <Text>{t('contact.nextSteps.steps.3')}</Text>
                             </HStack>
                           </VStack>
                           <Box bg="brand.text" opacity={0.1} height="1px" width="full" />
                           <Text fontSize="xs" color="brand.text" fontWeight="500">
-                            Consultation fee: $150 (Applied to project cost when you proceed)
+                            {t('contact.nextSteps.consultationFee')}
                           </Text>
                         </VStack>
                       </CardBody>
@@ -515,11 +517,10 @@ export const ContactPage: React.FC = () => {
         <Container maxW="7xl">
           <VStack spacing={8} textAlign="center">
             <Heading size="2xl" fontFamily="heading" color="brand.text">
-              Ready to Transform Your Business with AI?
+              {t('contact.cta.title')}
             </Heading>
             <Text fontSize="lg" color="brand.textSecondary" maxW="600px">
-              Don't wait to leverage the power of AI. With our 2-week MVP delivery, 
-              you can start seeing results faster than you think.
+              {t('contact.cta.description')}
             </Text>
             <HStack spacing={4}>
               <Button
@@ -529,7 +530,7 @@ export const ContactPage: React.FC = () => {
                 size="lg"
                 leftIcon={<EmailIcon />}
               >
-                Email Me Now
+                {t('contact.cta.emailButton')}
               </Button>
               <Button
                 as="a"
@@ -538,11 +539,11 @@ export const ContactPage: React.FC = () => {
                 size="lg"
                 leftIcon={<PhoneIcon />}
               >
-                Call Directly
+                {t('contact.cta.callButton')}
               </Button>
             </HStack>
             <Text fontSize="sm" color="brand.textSecondary" fontStyle="italic">
-              "The best time to implement AI was yesterday. The second best time is now."
+              {t('contact.cta.quote')}
             </Text>
           </VStack>
         </Container>

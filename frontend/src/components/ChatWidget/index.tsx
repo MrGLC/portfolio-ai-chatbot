@@ -12,6 +12,8 @@ import {
 } from '@chakra-ui/react';
 import { ChatIcon, CloseIcon } from '@chakra-ui/icons';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
+import { variants, durations, easings } from '../../theme/animations';
 
 const MotionBox = motion(Box);
 const MotionFlex = motion(Flex);
@@ -24,11 +26,12 @@ interface Message {
 }
 
 const ChatWidget: React.FC = () => {
+  const { t } = useTranslation();
   const { isOpen, onToggle } = useDisclosure();
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
-      text: "Hi! I'm Luis's AI assistant. I can help you learn about his AI consulting services. What would you like to know?",
+      text: t('chat.messages.initial'),
       isUser: false,
       timestamp: new Date(),
     },
@@ -54,7 +57,7 @@ const ChatWidget: React.FC = () => {
     setTimeout(() => {
       const botMessage: Message = {
         id: (Date.now() + 1).toString(),
-        text: "Thanks for your question! This is a demo response. Luis specializes in AI strategy consulting, machine learning implementation, and custom AI solutions. Would you like to schedule a consultation?",
+        text: t('chat.messages.demoResponse'),
         isUser: false,
         timestamp: new Date(),
       };
@@ -74,7 +77,7 @@ const ChatWidget: React.FC = () => {
     <Box
       position="fixed"
       bottom="20px"
-      right="20px"
+      left="20px"
       zIndex={1000}
     >
       <AnimatePresence>
@@ -82,7 +85,7 @@ const ChatWidget: React.FC = () => {
           <MotionBox
             position="absolute"
             bottom="80px"
-            right="0"
+            left="0"
             w="350px"
             h="500px"
             bg="brand.surface"
@@ -90,10 +93,10 @@ const ChatWidget: React.FC = () => {
             borderColor="brand.border"
             borderRadius="16px"
             boxShadow="0 20px 40px rgba(0, 0, 0, 0.1)"
-            initial={{ opacity: 0, scale: 0.8, y: 20 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.8, y: 20 }}
-            transition={{ duration: 0.2 }}
+            initial={variants.widgetOpen.initial}
+            animate={variants.widgetOpen.animate}
+            exit={variants.widgetOpen.exit}
+            transition={variants.widgetOpen.transition}
           >
             {/* Header */}
             <Flex
@@ -116,22 +119,22 @@ const ChatWidget: React.FC = () => {
                   justifyContent="center"
                 >
                   <Text fontSize="sm" fontWeight="bold" color="white">
-                    AI
+                    {t('chat.assistant.avatar')}
                   </Text>
                 </Box>
                 <VStack align="start" spacing={0}>
                   <Text fontSize="sm" fontWeight="600" color="brand.text">
-                    Luis's AI Assistant
+                    {t('chat.assistant.name')}
                   </Text>
                   <Text fontSize="xs" color="brand.secondary">
-                    Online
+                    {t('chat.assistant.status')}
                   </Text>
                 </VStack>
               </Flex>
               <IconButton
                 variant="ghost"
                 size="sm"
-                aria-label="Close chat"
+                aria-label={t('chat.ariaLabels.close')}
                 icon={<CloseIcon />}
                 onClick={onToggle}
                 color="brand.textSecondary"
@@ -165,7 +168,7 @@ const ChatWidget: React.FC = () => {
                   justify={message.isUser ? 'flex-end' : 'flex-start'}
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.2 }}
+                  transition={{ duration: durations.fast, ease: easings.smooth }}
                 >
                   <Box
                     maxW="80%"
@@ -187,6 +190,7 @@ const ChatWidget: React.FC = () => {
                   justify="flex-start"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
+                  transition={{ duration: durations.fast, ease: easings.smooth }}
                 >
                   <Box
                     bg="brand.cream"
@@ -196,7 +200,7 @@ const ChatWidget: React.FC = () => {
                     fontSize="sm"
                   >
                     <Text color="brand.textSecondary">
-                      Typing...
+                      {t('chat.typingIndicator')}
                     </Text>
                   </Box>
                 </MotionFlex>
@@ -215,7 +219,7 @@ const ChatWidget: React.FC = () => {
                   value={inputValue}
                   onChange={(e) => setInputValue(e.target.value)}
                   onKeyPress={handleKeyPress}
-                  placeholder="Ask about AI consulting..."
+                  placeholder={t('chat.placeholder')}
                   size="sm"
                   variant="filled"
                   _placeholder={{ color: 'brand.textSecondary' }}
@@ -226,7 +230,7 @@ const ChatWidget: React.FC = () => {
                   onClick={handleSendMessage}
                   isDisabled={inputValue.trim() === ''}
                 >
-                  Send
+                  {t('chat.sendButton')}
                 </Button>
               </Flex>
             </Box>
@@ -238,18 +242,20 @@ const ChatWidget: React.FC = () => {
       <MotionBox
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
+        transition={{ duration: durations.fast, ease: easings.smooth }}
       >
         <IconButton
           bg="brand.accent"
           color="brand.text"
           size="lg"
-          aria-label="Open chat"
+          aria-label={t('chat.ariaLabels.open')}
           icon={isOpen ? <CloseIcon /> : <ChatIcon />}
           onClick={onToggle}
           borderRadius="full"
           w="60px"
           h="60px"
           boxShadow="0 8px 25px rgba(255, 215, 0, 0.3)"
+          transition={`all ${durations.normal}s cubic-bezier(${easings.smooth.join(',')})`}
           _hover={{
             bg: 'brand.accentLight',
             transform: 'scale(1.1)',
