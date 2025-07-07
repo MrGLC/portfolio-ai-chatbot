@@ -19,7 +19,6 @@ import {
 } from '@chakra-ui/react';
 import { CheckCircleIcon, StarIcon, TimeIcon } from '@chakra-ui/icons';
 import { motion } from 'framer-motion';
-import { DebugWrapper } from '../components/DebugSystem';
 
 const MotionCard = motion(Card);
 
@@ -103,12 +102,12 @@ const process = [
 
 export const ConsultingPage: React.FC = () => {
   return (
-    <DebugWrapper name="ConsultingPage Root" type="section" layer={0}>
+    <>
       <Container maxW="7xl" py={20}>
-        <DebugWrapper name="Consulting Content Container" type="container" layer={1}>
+        <>
           <VStack spacing={16} align="stretch">
             {/* Header */}
-            <DebugWrapper name="Consulting Header" type="component" layer={2}>
+            <>
               <Box textAlign="center">
                 <Heading size="4xl" color="brand.text" mb={4}>
                   AI Consulting Services
@@ -118,20 +117,20 @@ export const ConsultingPage: React.FC = () => {
                   measurable business impact and competitive advantage.
                 </Text>
               </Box>
-            </DebugWrapper>
+            </>
 
             {/* Service Tiers */}
-            <DebugWrapper name="Service Tiers Section" type="container" layer={2}>
+            <>
               <Box>
-                <DebugWrapper name="Service Tiers Title" type="element" layer={3}>
+                <>
                   <Heading size="2xl" color="brand.text" mb={8} textAlign="center">
                     Service Packages
                   </Heading>
-                </DebugWrapper>
-                <DebugWrapper name="Service Cards Grid" type="container" layer={3}>
+                </>
+                <>
                   <SimpleGrid columns={{ base: 1, lg: 3 }} spacing={8}>
                     {services.map((service, index) => (
-                      <DebugWrapper key={service.title} name={`Service Card: ${service.title}`} type="component" layer={4}>
+                      <>
                         <MotionCard
                           bg="brand.secondary"
                           border="2px solid"
@@ -209,25 +208,25 @@ export const ConsultingPage: React.FC = () => {
                   </VStack>
                 </CardBody>
                         </MotionCard>
-                      </DebugWrapper>
+                      </>
                     ))}
                   </SimpleGrid>
-                </DebugWrapper>
+                </>
               </Box>
-            </DebugWrapper>
+            </>
 
             {/* Process */}
-            <DebugWrapper name="Process Section" type="container" layer={2}>
+            <>
               <Box>
-                <DebugWrapper name="Process Title" type="element" layer={3}>
+                <>
                   <Heading size="2xl" color="brand.text" mb={8} textAlign="center">
                     Our Process
                   </Heading>
-                </DebugWrapper>
-                <DebugWrapper name="Process Steps Grid" type="container" layer={3}>
+                </>
+                <>
                   <SimpleGrid columns={{ base: 1, md: 2, lg: 4 }} spacing={8}>
                     {process.map((step, index) => (
-                      <DebugWrapper key={step.step} name={`Process Step ${step.step}: ${step.title}`} type="component" layer={4}>
+                      <>
                         <MotionCard
                           bg="brand.secondary"
                           border="1px solid"
@@ -282,27 +281,27 @@ export const ConsultingPage: React.FC = () => {
                   </VStack>
                 </CardBody>
                         </MotionCard>
-                      </DebugWrapper>
+                      </>
                     ))}
                   </SimpleGrid>
-                </DebugWrapper>
+                </>
               </Box>
-            </DebugWrapper>
+            </>
 
             {/* ROI Section */}
-            <DebugWrapper name="ROI Section" type="component" layer={2}>
+            <>
               <Card bg="brand.secondary" border="1px solid" borderColor="brand.border">
                 <CardBody p={8}>
                   <VStack spacing={8}>
-                    <DebugWrapper name="ROI Title" type="element" layer={3}>
+                    <>
                       <Heading size="2xl" color="brand.text" textAlign="center">
                         Proven ROI & Business Impact
                       </Heading>
-                    </DebugWrapper>
+                    </>
                     
-                    <DebugWrapper name="ROI Metrics Grid" type="container" layer={3}>
+                    <>
                       <SimpleGrid columns={{ base: 1, md: 3 }} spacing={8} width="full">
-                        <DebugWrapper name="ROI Metric 1" type="component" layer={4}>
+                        <>
                           <VStack>
                             <Text fontSize="4xl" fontWeight="bold" color="brand.accent">
                               $2M+
@@ -311,8 +310,8 @@ export const ConsultingPage: React.FC = () => {
                               Total cost savings generated for clients
                             </Text>
                           </VStack>
-                        </DebugWrapper>
-                        <DebugWrapper name="ROI Metric 2" type="component" layer={4}>
+                        </>
+                        <>
                           <VStack>
                             <Text fontSize="4xl" fontWeight="bold" color="brand.accentCyan">
                               40%
@@ -321,8 +320,8 @@ export const ConsultingPage: React.FC = () => {
                               Average efficiency improvement
                             </Text>
                           </VStack>
-                        </DebugWrapper>
-                        <DebugWrapper name="ROI Metric 3" type="component" layer={4}>
+                        </>
+                        <>
                           <VStack>
                             <Text fontSize="4xl" fontWeight="bold" color="brand.accent">
                               6 months
@@ -331,22 +330,22 @@ export const ConsultingPage: React.FC = () => {
                               Average time to ROI realization
                             </Text>
                           </VStack>
-                        </DebugWrapper>
+                        </>
                       </SimpleGrid>
-                    </DebugWrapper>
+                    </>
 
-                    <DebugWrapper name="ROI CTA Button" type="element" layer={3}>
+                    <>
                       <Button variant="primary" size="lg">
                         Schedule Free AI Assessment
                       </Button>
-                    </DebugWrapper>
+                    </>
                   </VStack>
                 </CardBody>
               </Card>
-            </DebugWrapper>
+            </>
           </VStack>
-        </DebugWrapper>
+        </>
       </Container>
-    </DebugWrapper>
+    </>
   );
 };

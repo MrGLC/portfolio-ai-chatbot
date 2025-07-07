@@ -1,0 +1,1081 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>La Realeza AI Assistant - Royal Conversations</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.28.0/feather.min.css">
+    <style>
+        /* CSS Variables based on Royal Design System */
+        :root {
+            /* Colors - 60-30-10 Rule */
+            --cream-50: #FFFEF7;
+            --cream-100: #FFFAED;
+            --cream-500: #F5E6D3;
+            --cream-600: #E8D5B7;
+            --cream-700: #D4C4A8;
+            
+            --royal-red-500: #DC143C;
+            --royal-red-600: #C41E3A;
+            --royal-red-700: #A91B30;
+            --royal-red-800: #8F1626;
+            
+            --golden-yellow-500: #FFD700;
+            --golden-yellow-600: #E6C200;
+            --golden-yellow-700: #CCAD00;
+            
+            --black: #1A1A1A;
+            --white: #FFFFFF;
+            --gray-500: #737373;
+            --gray-700: #404040;
+            --gray-800: #262626;
+            
+            /* Typography */
+            --font-display: 'Playfair Display', Georgia, serif;
+            --font-body: 'Inter', system-ui, -apple-system, sans-serif;
+            
+            /* Spacing */
+            --spacing-1: 0.25rem;
+            --spacing-2: 0.5rem;
+            --spacing-3: 0.75rem;
+            --spacing-4: 1rem;
+            --spacing-5: 1.25rem;
+            --spacing-6: 1.5rem;
+            --spacing-8: 2rem;
+            --spacing-12: 3rem;
+            --spacing-16: 4rem;
+            --spacing-24: 6rem;
+            --spacing-32: 8rem;
+            
+            /* Animations */
+            --duration-fast: 150ms;
+            --duration-normal: 300ms;
+            --duration-slow: 500ms;
+            --easing: cubic-bezier(0.4, 0, 0.2, 1);
+            
+            /* Shadows */
+            --shadow-royal: 0 8px 32px rgba(220, 20, 60, 0.15);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            --shadow-message: 0 4px 12px rgba(0, 0, 0, 0.08);
+            
+            /* Gradients */
+            --gradient-royal: linear-gradient(135deg, #F5E6D3 0%, #DC143C 50%, #FFD700 100%);
+            --gradient-subtle: linear-gradient(135deg, #F5E6D3 0%, #FFFAED 100%);
+            --gradient-accent: linear-gradient(90deg, #DC143C 0%, #FFD700 100%);
+            --gradient-chat-bg: linear-gradient(135deg, #FFFEF7 0%, #F5E6D3 100%);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: var(--font-body);
+            line-height: 1.6;
+            color: var(--black);
+            background: var(--gradient-chat-bg);
+            overflow-x: hidden;
+            height: 100vh;
+        }
+        
+        /* Cinematic Loading Animation */
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--black);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            opacity: 1;
+            transition: opacity 1s ease-out;
+        }
+        
+        .loading-screen.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+        
+        .crown-loader {
+            width: 80px;
+            height: 80px;
+            position: relative;
+            animation: pulse 2s infinite;
+            margin-bottom: var(--spacing-6);
+        }
+        
+        .crown-loader::before {
+            content: "👑";
+            font-size: 3rem;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+        
+        .loading-text {
+            color: var(--white);
+            font-size: 1.2rem;
+            font-weight: 600;
+            opacity: 0.9;
+            animation: fadeInUp 1s ease-out 0.5s forwards;
+            opacity: 0;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        
+        @keyframes glow {
+            from { filter: drop-shadow(0 0 10px var(--golden-yellow-500)); }
+            to { filter: drop-shadow(0 0 20px var(--golden-yellow-500)); }
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* Main Chat Interface */
+        .chat-container {
+            display: flex;
+            height: 100vh;
+            max-width: 1400px;
+            margin: 0 auto;
+            background: var(--white);
+            box-shadow: var(--shadow-xl);
+            border-radius: 0;
+        }
+        
+        /* Sidebar */
+        .chat-sidebar {
+            width: 320px;
+            background: var(--gradient-subtle);
+            border-right: 2px solid var(--cream-600);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .chat-sidebar::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 30% 70%, rgba(220, 20, 60, 0.05) 0%, transparent 50%);
+            pointer-events: none;
+        }
+        
+        .sidebar-header {
+            padding: var(--spacing-6);
+            text-align: center;
+            position: relative;
+            z-index: 2;
+            border-bottom: 1px solid var(--cream-600);
+        }
+        
+        .royal-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--spacing-2);
+            background: var(--gradient-accent);
+            color: var(--white);
+            padding: var(--spacing-2) var(--spacing-4);
+            border-radius: 50px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: var(--spacing-4);
+            box-shadow: var(--shadow-royal);
+        }
+        
+        .chat-title {
+            font-family: var(--font-display);
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--royal-red-500);
+            margin-bottom: var(--spacing-2);
+        }
+        
+        .chat-subtitle {
+            color: var(--gray-700);
+            font-size: 1rem;
+            opacity: 0.8;
+        }
+        
+        .suggested-prompts {
+            flex: 1;
+            padding: var(--spacing-6);
+            position: relative;
+            z-index: 2;
+        }
+        
+        .prompts-title {
+            font-weight: 600;
+            color: var(--royal-red-500);
+            margin-bottom: var(--spacing-4);
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-2);
+        }
+        
+        .prompt-item {
+            background: rgba(255, 255, 255, 0.7);
+            border: 2px solid var(--cream-600);
+            border-radius: 12px;
+            padding: var(--spacing-4);
+            margin-bottom: var(--spacing-3);
+            cursor: pointer;
+            transition: all var(--duration-normal) var(--easing);
+            backdrop-filter: blur(10px);
+        }
+        
+        .prompt-item:hover {
+            border-color: var(--royal-red-500);
+            background: rgba(255, 255, 255, 0.9);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .prompt-item:active {
+            transform: translateY(0);
+        }
+        
+        .prompt-text {
+            font-size: 0.95rem;
+            color: var(--gray-700);
+            font-weight: 500;
+        }
+        
+        .prompt-category {
+            font-size: 0.8rem;
+            color: var(--royal-red-500);
+            font-weight: 600;
+            margin-bottom: var(--spacing-1);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        /* Main Chat Area */
+        .chat-main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: var(--white);
+        }
+        
+        .chat-header {
+            padding: var(--spacing-6);
+            border-bottom: 2px solid var(--cream-600);
+            background: var(--gradient-subtle);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .chat-status {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-3);
+        }
+        
+        .ai-avatar {
+            width: 48px;
+            height: 48px;
+            background: var(--gradient-accent);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            box-shadow: var(--shadow-royal);
+        }
+        
+        .status-info h3 {
+            font-family: var(--font-display);
+            font-size: 1.3rem;
+            color: var(--royal-red-500);
+            font-weight: 700;
+        }
+        
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-2);
+            font-size: 0.9rem;
+            color: var(--gray-700);
+        }
+        
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: #22c55e;
+            border-radius: 50%;
+            animation: pulse-dot 2s infinite;
+        }
+        
+        @keyframes pulse-dot {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        .chat-actions {
+            display: flex;
+            gap: var(--spacing-2);
+        }
+        
+        .action-btn {
+            width: 40px;
+            height: 40px;
+            border: none;
+            background: rgba(220, 20, 60, 0.1);
+            color: var(--royal-red-500);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all var(--duration-normal) var(--easing);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .action-btn:hover {
+            background: var(--royal-red-500);
+            color: var(--white);
+            transform: translateY(-2px);
+        }
+        
+        /* Messages Area */
+        .messages-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: var(--spacing-6);
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-6);
+        }
+        
+        .message {
+            display: flex;
+            gap: var(--spacing-3);
+            opacity: 0;
+            animation: messageSlideIn 0.5s ease-out forwards;
+        }
+        
+        .message.user {
+            flex-direction: row-reverse;
+        }
+        
+        .message-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+        
+        .message.ai .message-avatar {
+            background: var(--gradient-accent);
+            color: var(--white);
+            box-shadow: var(--shadow-royal);
+        }
+        
+        .message.user .message-avatar {
+            background: var(--cream-600);
+            color: var(--royal-red-500);
+            border: 2px solid var(--royal-red-500);
+        }
+        
+        .message-content {
+            max-width: 70%;
+            position: relative;
+        }
+        
+        .message-bubble {
+            padding: var(--spacing-4) var(--spacing-5);
+            border-radius: 18px;
+            position: relative;
+            box-shadow: var(--shadow-message);
+            margin-bottom: var(--spacing-2);
+        }
+        
+        .message.ai .message-bubble {
+            background: var(--gradient-subtle);
+            border: 1px solid var(--cream-600);
+            border-bottom-left-radius: 6px;
+        }
+        
+        .message.user .message-bubble {
+            background: var(--royal-red-500);
+            color: var(--white);
+            border-bottom-right-radius: 6px;
+        }
+        
+        .message-text {
+            font-size: 1rem;
+            line-height: 1.6;
+            margin: 0;
+        }
+        
+        .message-time {
+            font-size: 0.8rem;
+            opacity: 0.6;
+            margin-top: var(--spacing-1);
+        }
+        
+        .message.ai .message-time {
+            color: var(--gray-700);
+        }
+        
+        .message.user .message-time {
+            color: rgba(255, 255, 255, 0.7);
+            text-align: right;
+        }
+        
+        @keyframes messageSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+        
+        /* Typing Indicator */
+        .typing-indicator {
+            display: flex;
+            gap: var(--spacing-3);
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all var(--duration-normal) var(--easing);
+        }
+        
+        .typing-indicator.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .typing-bubble {
+            background: var(--gradient-subtle);
+            border: 1px solid var(--cream-600);
+            border-radius: 18px;
+            border-bottom-left-radius: 6px;
+            padding: var(--spacing-4) var(--spacing-5);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-2);
+        }
+        
+        .typing-dots {
+            display: flex;
+            gap: 4px;
+        }
+        
+        .typing-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--royal-red-500);
+            border-radius: 50%;
+            animation: typingDot 1.4s infinite;
+        }
+        
+        .typing-dot:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+        
+        .typing-dot:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+        
+        @keyframes typingDot {
+            0%, 60%, 100% {
+                transform: scale(1);
+                opacity: 0.7;
+            }
+            30% {
+                transform: scale(1.3);
+                opacity: 1;
+            }
+        }
+        
+        /* Message Input */
+        .message-input-container {
+            padding: var(--spacing-6);
+            border-top: 2px solid var(--cream-600);
+            background: var(--gradient-subtle);
+        }
+        
+        .input-wrapper {
+            display: flex;
+            gap: var(--spacing-3);
+            align-items: flex-end;
+            max-width: 100%;
+        }
+        
+        .message-input {
+            flex: 1;
+            background: var(--white);
+            border: 2px solid var(--cream-600);
+            border-radius: 24px;
+            padding: var(--spacing-4) var(--spacing-5);
+            font-size: 1rem;
+            font-family: var(--font-body);
+            color: var(--black);
+            resize: none;
+            min-height: 48px;
+            max-height: 120px;
+            transition: all var(--duration-normal) var(--easing);
+            outline: none;
+        }
+        
+        .message-input:focus {
+            border-color: var(--royal-red-500);
+            box-shadow: 0 0 0 3px rgba(220, 20, 60, 0.1);
+        }
+        
+        .message-input::placeholder {
+            color: var(--gray-500);
+        }
+        
+        .send-button {
+            width: 48px;
+            height: 48px;
+            background: var(--gradient-accent);
+            border: none;
+            border-radius: 50%;
+            color: var(--white);
+            cursor: pointer;
+            transition: all var(--duration-normal) var(--easing);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--shadow-royal);
+            flex-shrink: 0;
+        }
+        
+        .send-button:hover {
+            transform: translateY(-2px) scale(1.05);
+            box-shadow: var(--shadow-xl);
+        }
+        
+        .send-button:active {
+            transform: translateY(0) scale(1);
+        }
+        
+        .send-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        /* Welcome Message */
+        .welcome-message {
+            text-align: center;
+            padding: var(--spacing-8);
+            opacity: 0;
+            animation: fadeInUp 1s ease-out 0.5s forwards;
+        }
+        
+        .welcome-crown {
+            font-size: 4rem;
+            margin-bottom: var(--spacing-4);
+            animation: glow 3s ease-in-out infinite alternate;
+        }
+        
+        .welcome-title {
+            font-family: var(--font-display);
+            font-size: 2.5rem;
+            color: var(--royal-red-500);
+            margin-bottom: var(--spacing-3);
+            font-weight: 700;
+        }
+        
+        .welcome-text {
+            font-size: 1.2rem;
+            color: var(--gray-700);
+            max-width: 500px;
+            margin: 0 auto var(--spacing-6);
+            line-height: 1.6;
+        }
+        
+        .welcome-features {
+            display: flex;
+            justify-content: center;
+            gap: var(--spacing-6);
+            flex-wrap: wrap;
+            margin-top: var(--spacing-6);
+        }
+        
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-2);
+            color: var(--gray-700);
+            font-size: 0.95rem;
+        }
+        
+        .feature-icon {
+            color: var(--royal-red-500);
+            font-size: 1.2rem;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .chat-container {
+                flex-direction: column;
+                height: 100vh;
+            }
+            
+            .chat-sidebar {
+                width: 100%;
+                height: auto;
+                max-height: 40vh;
+                border-right: none;
+                border-bottom: 2px solid var(--cream-600);
+            }
+            
+            .suggested-prompts {
+                padding: var(--spacing-4);
+            }
+            
+            .prompt-item {
+                padding: var(--spacing-3);
+            }
+            
+            .messages-container {
+                padding: var(--spacing-4);
+            }
+            
+            .message-content {
+                max-width: 85%;
+            }
+            
+            .welcome-title {
+                font-size: 2rem;
+            }
+            
+            .welcome-features {
+                flex-direction: column;
+                align-items: center;
+                gap: var(--spacing-3);
+            }
+        }
+        
+        /* Custom Scrollbar */
+        .messages-container::-webkit-scrollbar,
+        .suggested-prompts::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        .messages-container::-webkit-scrollbar-track,
+        .suggested-prompts::-webkit-scrollbar-track {
+            background: var(--cream-500);
+            border-radius: 4px;
+        }
+        
+        .messages-container::-webkit-scrollbar-thumb,
+        .suggested-prompts::-webkit-scrollbar-thumb {
+            background: var(--royal-red-500);
+            border-radius: 4px;
+        }
+        
+        .messages-container::-webkit-scrollbar-thumb:hover,
+        .suggested-prompts::-webkit-scrollbar-thumb:hover {
+            background: var(--royal-red-700);
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div class="loading-screen" id="loadingScreen">
+        <div class="crown-loader"></div>
+        <div class="loading-text">Iniciando conversación real...</div>
+    </div>
+
+    <!-- Main Chat Interface -->
+    <div class="chat-container">
+        <!-- Sidebar -->
+        <div class="chat-sidebar">
+            <div class="sidebar-header">
+                <div class="royal-badge">
+                    <span>👑</span>
+                    <span>AI Assistant</span>
+                </div>
+                <h1 class="chat-title">La Realeza</h1>
+                <p class="chat-subtitle">Tu asistente personal de IA</p>
+            </div>
+            
+            <div class="suggested-prompts">
+                <h3 class="prompts-title">
+                    <i data-feather="message-square"></i>
+                    Preguntas Sugeridas
+                </h3>
+                
+                <div class="prompt-item" data-prompt="¿Quién es Luis Gómez y cuál es su experiencia profesional?">
+                    <div class="prompt-category">Sobre el Programador</div>
+                    <div class="prompt-text">¿Quién es Luis Gómez y cuál es su experiencia profesional?</div>
+                </div>
+                
+                <div class="prompt-item" data-prompt="¿Qué servicios ofrece La Realeza y en qué se especializa?">
+                    <div class="prompt-category">Servicios</div>
+                    <div class="prompt-text">¿Qué servicios ofrece La Realeza y en qué se especializa?</div>
+                </div>
+                
+                <div class="prompt-item" data-prompt="¿Cuáles son los proyectos más destacados que ha desarrollado?">
+                    <div class="prompt-category">Portafolio</div>
+                    <div class="prompt-text">¿Cuáles son los proyectos más destacados que ha desarrollado?</div>
+                </div>
+                
+                <div class="prompt-item" data-prompt="¿Cómo puedo contactar para solicitar un proyecto?">
+                    <div class="prompt-category">Contacto</div>
+                    <div class="prompt-text">¿Cómo puedo contactar para solicitar un proyecto?</div>
+                </div>
+                
+                <div class="prompt-item" data-prompt="¿Qué tecnologías domina y cuál es su stack preferido?">
+                    <div class="prompt-category">Tecnologías</div>
+                    <div class="prompt-text">¿Qué tecnologías domina y cuál es su stack preferido?</div>
+                </div>
+                
+                <div class="prompt-item" data-prompt="¿Cuál es la filosofía de trabajo de La Realeza?">
+                    <div class="prompt-category">Filosofía</div>
+                    <div class="prompt-text">¿Cuál es la filosofía de trabajo de La Realeza?</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Main Chat Area -->
+        <div class="chat-main">
+            <!-- Chat Header -->
+            <div class="chat-header">
+                <div class="chat-status">
+                    <div class="ai-avatar">👑</div>
+                    <div class="status-info">
+                        <h3>Asistente Real</h3>
+                        <div class="status-indicator">
+                            <div class="status-dot"></div>
+                            <span>En línea y listo para ayudar</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="chat-actions">
+                    <button class="action-btn" title="Limpiar conversación" id="clearChat">
+                        <i data-feather="trash-2"></i>
+                    </button>
+                    <button class="action-btn" title="Configuración">
+                        <i data-feather="settings"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Messages Container -->
+            <div class="messages-container" id="messagesContainer">
+                <!-- Welcome Message -->
+                <div class="welcome-message">
+                    <div class="welcome-crown">👑</div>
+                    <h2 class="welcome-title">¡Bienvenido a La Realeza!</h2>
+                    <p class="welcome-text">
+                        Soy tu asistente personal de IA, experto en todo lo relacionado con Luis Gómez y La Realeza. 
+                        Puedo contarte sobre proyectos, servicios, tecnologías y mucho más.
+                    </p>
+                    <div class="welcome-features">
+                        <div class="feature-item">
+                            <i data-feather="zap" class="feature-icon"></i>
+                            <span>Respuestas instantáneas</span>
+                        </div>
+                        <div class="feature-item">
+                            <i data-feather="brain" class="feature-icon"></i>
+                            <span>Conocimiento experto</span>
+                        </div>
+                        <div class="feature-item">
+                            <i data-feather="heart" class="feature-icon"></i>
+                            <span>Conversación natural</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Typing Indicator -->
+            <div class="typing-indicator" id="typingIndicator">
+                <div class="message-avatar">
+                    <div class="ai-avatar">👑</div>
+                </div>
+                <div class="typing-bubble">
+                    <div class="typing-dots">
+                        <div class="typing-dot"></div>
+                        <div class="typing-dot"></div>
+                        <div class="typing-dot"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Message Input -->
+            <div class="message-input-container">
+                <div class="input-wrapper">
+                    <textarea 
+                        class="message-input" 
+                        id="messageInput" 
+                        placeholder="Pregúntame lo que quieras sobre La Realeza..."
+                        rows="1"
+                    ></textarea>
+                    <button class="send-button" id="sendButton">
+                        <i data-feather="send"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://unpkg.com/feather-icons"></script>
+    <script>
+        // Initialize Feather Icons
+        feather.replace();
+        
+        // DOM Elements
+        const loadingScreen = document.getElementById('loadingScreen');
+        const messagesContainer = document.getElementById('messagesContainer');
+        const messageInput = document.getElementById('messageInput');
+        const sendButton = document.getElementById('sendButton');
+        const typingIndicator = document.getElementById('typingIndicator');
+        const clearChatBtn = document.getElementById('clearChat');
+        const promptItems = document.querySelectorAll('.prompt-item');
+        
+        // Chat state
+        let messageCount = 0;
+        let isTyping = false;
+        
+        // Loading Screen
+        window.addEventListener('load', function() {
+            setTimeout(() => {
+                loadingScreen.classList.add('hidden');
+            }, 2500);
+        });
+        
+        // Auto-resize textarea
+        messageInput.addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = Math.min(this.scrollHeight, 120) + 'px';
+        });
+        
+        // Sample responses based on La Realeza context
+        const responses = {
+            greetings: [
+                "¡Saludos reales! 👑 Soy el asistente de IA de La Realeza. ¿En qué puedo ayudarte hoy?",
+                "¡Bienvenido a La Realeza! Estoy aquí para contarte todo sobre Luis Gómez y nuestros servicios.",
+                "¡Hola! Es un honor tenerte aquí. ¿Qué te gustaría saber sobre La Realeza?"
+            ],
+            about_luis: [
+                "Luis Gómez es un desarrollador full-stack apasionado con más de 5 años de experiencia. Se especializa en crear soluciones digitales innovadoras que combinan tecnología de vanguardia con diseño elegante. Su enfoque real se basa en la excelencia técnica y la satisfacción del cliente. 👑",
+                "Luis es el fundador de La Realeza, donde cada proyecto se trata como una obra maestra digna de la realeza. Con experiencia en React, Node.js, Python y más, ha desarrollado desde aplicaciones web complejas hasta sistemas de inteligencia artificial."
+            ],
+            services: [
+                "La Realeza ofrece servicios de desarrollo full-stack, incluyendo:\n\n🚀 Desarrollo web moderno (React, Vue, Angular)\n💻 Aplicaciones backend robustas\n🎨 Diseño UI/UX elegante\n🤖 Soluciones de IA personalizadas\n📱 Aplicaciones móviles\n⚡ Optimización y consultoría técnica\n\nCada proyecto recibe el tratamiento real que merece.",
+                "Nos especializamos en transformar ideas en realidades digitales extraordinarias. Desde aplicaciones web complejas hasta sistemas de inteligencia artificial, cada solución está diseñada con la precisión y elegancia digna de la realeza."
+            ],
+            projects: [
+                "Entre los proyectos más destacados de La Realeza se encuentran:\n\n🏥 Sistemas de gestión médica con IA\n💼 Plataformas empresariales escalables\n🛒 E-commerce de alta conversión\n🎓 Plataformas educativas interactivas\n📊 Dashboards de análisis en tiempo real\n\nCada proyecto refleja la excelencia y innovación que caracteriza a La Realeza.",
+                "He tenido el honor de desarrollar más de 50 proyectos, cada uno único y personalizado. Desde sistemas complejos de gestión hasta aplicaciones móviles elegantes, todos comparten el sello de calidad real."
+            ],
+            contact: [
+                "Para unirte a La Realeza y comenzar tu proyecto real, puedes contactarnos:\n\n📧 Email: contacto@larealeza.dev\n📱 WhatsApp: +1 (555) 123-4567\n💼 LinkedIn: /in/luis-gomez-realeza\n🌐 Sitio web: www.larealeza.dev\n\n¡Estamos listos para hacer realidad tu visión digital! 👑",
+                "¡Excelente pregunta! Puedes contactar directamente para discutir tu proyecto. Ofrecemos consultas gratuitas donde evaluamos tus necesidades y te proponemos la mejor solución real para tu negocio."
+            ],
+            technologies: [
+                "Luis domina un arsenal completo de tecnologías reales:\n\n🎯 Frontend: React, Vue.js, Angular, TypeScript\n⚙️ Backend: Node.js, Python, PHP, Express\n🗄️ Bases de datos: MongoDB, PostgreSQL, MySQL\n☁️ Cloud: AWS, Google Cloud, Azure\n🤖 IA/ML: TensorFlow, PyTorch, OpenAI\n🎨 Design: Figma, Adobe Creative Suite\n\nSu stack preferido: React + Node.js + MongoDB para desarrollo ágil y escalable.",
+                "La experiencia técnica de Luis abarca desde tecnologías clásicas hasta las más modernas. Su enfoque siempre es elegir la tecnología adecuada para cada proyecto, garantizando soluciones robustas y futuras."
+            ],
+            philosophy: [
+                "La filosofía de La Realeza se basa en tres pilares fundamentales:\n\n👑 **Excelencia**: Cada línea de código debe ser digna de la realeza\n🎨 **Elegancia**: La belleza y funcionalidad van de la mano\n🤝 **Satisfacción**: El cliente no es solo un cliente, es parte de la realeza\n\nCreemos que la tecnología debe servir a las personas, no al revés.",
+                "En La Realeza, cada proyecto es una oportunidad de crear algo extraordinario. No nos conformamos con 'suficientemente bueno' - buscamos la perfección en cada detalle, desde la arquitectura del código hasta la experiencia del usuario final."
+            ],
+            default: [
+                "Esa es una excelente pregunta sobre La Realeza. ¿Podrías ser más específico para poder ayudarte mejor? Puedo contarte sobre Luis Gómez, nuestros servicios, proyectos, tecnologías o filosofía de trabajo. 👑",
+                "Me encantaría ayudarte con esa consulta. Como asistente de La Realeza, tengo conocimiento profundo sobre todos nuestros servicios y experiencia. ¿Hay algo específico que te interese más?",
+                "¡Por supuesto! Estoy aquí para responder cualquier pregunta sobre La Realeza. ¿Te gustaría saber sobre nuestros proyectos, servicios, o tal vez cómo podemos ayudarte con tu próximo proyecto?"
+            ]
+        };
+        
+        // Function to get appropriate response
+        function getResponse(message) {
+            const msg = message.toLowerCase();
+            
+            if (msg.includes('hola') || msg.includes('hi') || msg.includes('hello') || msg.includes('saludos')) {
+                return getRandomResponse('greetings');
+            } else if (msg.includes('luis') || msg.includes('quien') || msg.includes('programador') || msg.includes('desarrollador') || msg.includes('experiencia')) {
+                return getRandomResponse('about_luis');
+            } else if (msg.includes('servicio') || msg.includes('que ofrece') || msg.includes('especializa') || msg.includes('hace')) {
+                return getRandomResponse('services');
+            } else if (msg.includes('proyecto') || msg.includes('portafolio') || msg.includes('trabajo') || msg.includes('destacado')) {
+                return getRandomResponse('projects');
+            } else if (msg.includes('contacto') || msg.includes('contactar') || msg.includes('email') || msg.includes('telefono') || msg.includes('whatsapp')) {
+                return getRandomResponse('contact');
+            } else if (msg.includes('tecnologia') || msg.includes('stack') || msg.includes('programacion') || msg.includes('lenguaje') || msg.includes('framework')) {
+                return getRandomResponse('technologies');
+            } else if (msg.includes('filosofia') || msg.includes('enfoque') || msg.includes('valores') || msg.includes('porque') || msg.includes('realeza')) {
+                return getRandomResponse('philosophy');
+            } else {
+                return getRandomResponse('default');
+            }
+        }
+        
+        function getRandomResponse(category) {
+            const categoryResponses = responses[category];
+            return categoryResponses[Math.floor(Math.random() * categoryResponses.length)];
+        }
+        
+        // Function to create message element
+        function createMessage(content, isUser = false, isWelcome = false) {
+            if (isWelcome) {
+                // Remove welcome message
+                const welcomeMsg = document.querySelector('.welcome-message');
+                if (welcomeMsg) {
+                    welcomeMsg.style.opacity = '0';
+                    welcomeMsg.style.transform = 'translateY(-20px)';
+                    setTimeout(() => welcomeMsg.remove(), 300);
+                }
+            }
+            
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${isUser ? 'user' : 'ai'}`;
+            messageDiv.style.animationDelay = `${messageCount * 0.1}s`;
+            
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('es-ES', { 
+                hour: '2-digit', 
+                minute: '2-digit' 
+            });
+            
+            messageDiv.innerHTML = `
+                <div class="message-avatar">
+                    ${isUser ? '👤' : '👑'}
+                </div>
+                <div class="message-content">
+                    <div class="message-bubble">
+                        <p class="message-text">${content}</p>
+                    </div>
+                    <div class="message-time">${timeString}</div>
+                </div>
+            `;
+            
+            messagesContainer.appendChild(messageDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            messageCount++;
+            
+            return messageDiv;
+        }
+        
+        // Function to show typing indicator
+        function showTyping() {
+            if (isTyping) return;
+            isTyping = true;
+            typingIndicator.classList.add('show');
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+        
+        // Function to hide typing indicator
+        function hideTyping() {
+            isTyping = false;
+            typingIndicator.classList.remove('show');
+        }
+        
+        // Function to send message
+        function sendMessage() {
+            const message = messageInput.value.trim();
+            if (!message || isTyping) return;
+            
+            // Create user message
+            createMessage(message, true, messageCount === 0);
+            
+            // Clear input
+            messageInput.value = '';
+            messageInput.style.height = 'auto';
+            
+            // Show typing indicator
+            showTyping();
+            
+            // Simulate AI response delay
+            setTimeout(() => {
+                hideTyping();
+                const response = getResponse(message);
+                createMessage(response, false);
+            }, 1500 + Math.random() * 1000);
+        }
+        
+        // Event listeners
+        sendButton.addEventListener('click', sendMessage);
+        
+        messageInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+        
+        // Suggested prompts
+        promptItems.forEach(item => {
+            item.addEventListener('click', function() {
+                const prompt = this.dataset.prompt;
+                messageInput.value = prompt;
+                messageInput.focus();
+                sendMessage();
+            });
+        });
+        
+        // Clear chat
+        clearChatBtn.addEventListener('click', function() {
+            if (confirm('¿Estás seguro de que quieres limpiar la conversación?')) {
+                messagesContainer.innerHTML = `
+                    <div class="welcome-message">
+                        <div class="welcome-crown">👑</div>
+                        <h2 class="welcome-title">¡Conversación reiniciada!</h2>
+                        <p class="welcome-text">
+                            ¡Listo para una nueva conversación real! ¿En qué puedo ayudarte?
+                        </p>
+                    </div>
+                `;
+                messageCount = 0;
+            }
+        });
+        
+        // Auto-focus input
+        messageInput.focus();
+        
+        // Feather icons refresh for dynamic content
+        const observer = new MutationObserver(function(mutations) {
+            mutations.forEach(function(mutation) {
+                if (mutation.addedNodes.length) {
+                    feather.replace();
+                }
+            });
+        });
+        
+        observer.observe(document.body, {
+            childList: true,
+            subtree: true
+        });
+    </script>
+</body>
+</html>

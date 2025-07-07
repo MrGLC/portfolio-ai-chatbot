@@ -1,0 +1,1271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>La Realeza - Portfolio con AI Assistant</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.28.0/feather.min.css">
+    <style>
+        /* CSS Variables based on Royal Design System */
+        :root {
+            /* Colors - 60-30-10 Rule */
+            --cream-50: #FFFEF7;
+            --cream-100: #FFFAED;
+            --cream-500: #F5E6D3;
+            --cream-600: #E8D5B7;
+            --cream-700: #D4C4A8;
+            
+            --royal-red-500: #DC143C;
+            --royal-red-600: #C41E3A;
+            --royal-red-700: #A91B30;
+            --royal-red-800: #8F1626;
+            
+            --golden-yellow-500: #FFD700;
+            --golden-yellow-600: #E6C200;
+            --golden-yellow-700: #CCAD00;
+            
+            --black: #1A1A1A;
+            --white: #FFFFFF;
+            --gray-500: #737373;
+            --gray-700: #404040;
+            --gray-800: #262626;
+            
+            /* Typography */
+            --font-display: 'Playfair Display', Georgia, serif;
+            --font-body: 'Inter', system-ui, -apple-system, sans-serif;
+            
+            /* Spacing */
+            --spacing-1: 0.25rem;
+            --spacing-2: 0.5rem;
+            --spacing-3: 0.75rem;
+            --spacing-4: 1rem;
+            --spacing-5: 1.25rem;
+            --spacing-6: 1.5rem;
+            --spacing-8: 2rem;
+            --spacing-12: 3rem;
+            --spacing-16: 4rem;
+            --spacing-24: 6rem;
+            --spacing-32: 8rem;
+            
+            /* Animations */
+            --duration-fast: 150ms;
+            --duration-normal: 300ms;
+            --duration-slow: 500ms;
+            --easing: cubic-bezier(0.4, 0, 0.2, 1);
+            
+            /* Shadows */
+            --shadow-royal: 0 8px 32px rgba(220, 20, 60, 0.15);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            
+            /* Gradients */
+            --gradient-royal: linear-gradient(135deg, #F5E6D3 0%, #DC143C 50%, #FFD700 100%);
+            --gradient-subtle: linear-gradient(135deg, #F5E6D3 0%, #FFFAED 100%);
+            --gradient-accent: linear-gradient(90deg, #DC143C 0%, #FFD700 100%);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: var(--font-body);
+            line-height: 1.6;
+            color: var(--black);
+            background: var(--cream-500);
+            overflow-x: hidden;
+        }
+        
+        /* Cinematic Loading Animation */
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--black);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            opacity: 1;
+            transition: opacity 1s ease-out;
+        }
+        
+        .loading-screen.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+        
+        .crown-loader {
+            width: 80px;
+            height: 80px;
+            position: relative;
+            animation: pulse 2s infinite;
+        }
+        
+        .crown-loader::before {
+            content: "👑";
+            font-size: 3rem;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        
+        @keyframes glow {
+            from { filter: drop-shadow(0 0 10px var(--golden-yellow-500)); }
+            to { filter: drop-shadow(0 0 20px var(--golden-yellow-500)); }
+        }
+        
+        /* Hero Section */
+        .hero {
+            height: 100vh;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, var(--cream-500) 0%, var(--cream-100) 100%);
+            overflow: hidden;
+        }
+        
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 30% 70%, rgba(220, 20, 60, 0.1) 0%, transparent 50%),
+                        radial-gradient(circle at 70% 30%, rgba(255, 215, 0, 0.1) 0%, transparent 50%);
+            animation: floatingOrbs 20s ease-in-out infinite;
+        }
+        
+        @keyframes floatingOrbs {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
+        }
+        
+        .hero-content {
+            text-align: center;
+            z-index: 2;
+            position: relative;
+            max-width: 1200px;
+            padding: 0 var(--spacing-6);
+        }
+        
+        .hero-subtitle {
+            font-size: 1.2rem;
+            color: var(--royal-red-500);
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            margin-bottom: var(--spacing-4);
+            opacity: 0;
+            animation: fadeInUp 1s ease-out 0.5s forwards;
+        }
+        
+        .hero-title {
+            font-family: var(--font-display);
+            font-size: clamp(4rem, 12vw, 8rem);
+            font-weight: 800;
+            line-height: 1.1;
+            color: var(--royal-red-500);
+            margin-bottom: var(--spacing-8);
+            position: relative;
+            opacity: 0;
+            animation: fadeInUp 1s ease-out 1s forwards;
+        }
+        
+        .hero-title::before {
+            content: '';
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 4px;
+            background: var(--gradient-accent);
+            border-radius: 2px;
+            opacity: 0;
+            animation: fadeInUp 1s ease-out 1.5s forwards;
+        }
+        
+        .hero-title::after {
+            content: '';
+            position: absolute;
+            bottom: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: var(--gradient-accent);
+            border-radius: 2px;
+            opacity: 0;
+            animation: fadeInUp 1s ease-out 1.5s forwards;
+        }
+        
+        .hero-description {
+            font-size: 1.5rem;
+            color: var(--gray-700);
+            max-width: 600px;
+            margin: 0 auto var(--spacing-12);
+            opacity: 0;
+            animation: fadeInUp 1s ease-out 1.5s forwards;
+        }
+        
+        .hero-cta {
+            display: flex;
+            gap: var(--spacing-6);
+            justify-content: center;
+            flex-wrap: wrap;
+            opacity: 0;
+            animation: fadeInUp 1s ease-out 2s forwards;
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--spacing-2);
+            padding: var(--spacing-4) var(--spacing-8);
+            border-radius: 0.375rem;
+            font-weight: 600;
+            font-size: 1.1rem;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            transition: all var(--duration-normal) var(--easing);
+            position: relative;
+            overflow: hidden;
+            min-width: 180px;
+            justify-content: center;
+        }
+        
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left var(--duration-slow) var(--easing);
+        }
+        
+        .btn:hover::before {
+            left: 100%;
+        }
+        
+        .btn-primary {
+            background: var(--royal-red-500);
+            color: var(--white);
+            box-shadow: var(--shadow-royal);
+        }
+        
+        .btn-primary:hover {
+            background: var(--royal-red-700);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-xl);
+        }
+        
+        .btn-secondary {
+            background: var(--golden-yellow-500);
+            color: var(--black);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .btn-secondary:hover {
+            background: var(--golden-yellow-600);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-xl);
+        }
+        
+        /* Floating Navigation */
+        .floating-nav {
+            position: fixed;
+            top: var(--spacing-8);
+            right: var(--spacing-8);
+            z-index: 1000;
+            display: flex;
+            gap: var(--spacing-4);
+            opacity: 0;
+            animation: fadeIn 1s ease-out 3s forwards;
+        }
+        
+        .nav-item {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border: 2px solid var(--royal-red-500);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--royal-red-500);
+            text-decoration: none;
+            transition: all var(--duration-normal) var(--easing);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .nav-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--royal-red-500);
+            transform: scale(0);
+            transition: transform var(--duration-normal) var(--easing);
+            border-radius: 50%;
+        }
+        
+        .nav-item:hover::before {
+            transform: scale(1);
+        }
+        
+        .nav-item:hover {
+            color: var(--white);
+            transform: scale(1.1);
+        }
+        
+        .nav-item i {
+            z-index: 1;
+            position: relative;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        /* Floating Chatbot Widget */
+        .chatbot-widget {
+            position: fixed;
+            bottom: var(--spacing-6);
+            right: var(--spacing-6);
+            z-index: 1000;
+            transition: all var(--duration-normal) var(--easing);
+        }
+
+        .chatbot-toggle {
+            width: 64px;
+            height: 64px;
+            background: var(--gradient-accent);
+            border: none;
+            border-radius: 50%;
+            color: var(--white);
+            cursor: pointer;
+            box-shadow: var(--shadow-royal);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            transition: all var(--duration-normal) var(--easing);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .chatbot-toggle::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transform: translateX(-100%);
+            transition: transform var(--duration-slow) var(--easing);
+        }
+
+        .chatbot-toggle:hover::before {
+            transform: translateX(100%);
+        }
+
+        .chatbot-toggle:hover {
+            transform: scale(1.1);
+            box-shadow: var(--shadow-xl);
+        }
+
+        .chatbot-container {
+            position: absolute;
+            bottom: 80px;
+            right: 0;
+            width: 380px;
+            height: 500px;
+            background: var(--white);
+            border-radius: 16px;
+            box-shadow: var(--shadow-xl);
+            border: 2px solid var(--cream-600);
+            transform: scale(0) translateY(20px);
+            transform-origin: bottom right;
+            opacity: 0;
+            transition: all var(--duration-normal) var(--easing);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chatbot-container.active {
+            transform: scale(1) translateY(0);
+            opacity: 1;
+        }
+
+        .chatbot-header {
+            background: var(--gradient-subtle);
+            padding: var(--spacing-4);
+            border-bottom: 2px solid var(--cream-600);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .chatbot-info {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-3);
+        }
+
+        .chatbot-avatar {
+            width: 40px;
+            height: 40px;
+            background: var(--gradient-accent);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: var(--white);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .chatbot-title {
+            font-family: var(--font-display);
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--royal-red-500);
+            margin: 0;
+        }
+
+        .chatbot-status {
+            font-size: 0.8rem;
+            color: var(--gray-700);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .status-dot {
+            width: 6px;
+            height: 6px;
+            background: #22c55e;
+            border-radius: 50%;
+            animation: pulse-dot 2s infinite;
+        }
+
+        .chatbot-close {
+            background: none;
+            border: none;
+            color: var(--gray-700);
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 4px;
+            transition: all var(--duration-normal) var(--easing);
+        }
+
+        .chatbot-close:hover {
+            background: var(--cream-600);
+            color: var(--royal-red-500);
+        }
+
+        .chatbot-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: var(--spacing-4);
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-4);
+        }
+
+        .chat-message {
+            display: flex;
+            gap: var(--spacing-2);
+            opacity: 0;
+            animation: messageSlideIn 0.5s ease-out forwards;
+        }
+
+        .chat-message.user {
+            flex-direction: row-reverse;
+        }
+
+        .message-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+
+        .chat-message.ai .message-avatar {
+            background: var(--gradient-accent);
+            color: var(--white);
+        }
+
+        .chat-message.user .message-avatar {
+            background: var(--cream-600);
+            color: var(--royal-red-500);
+            border: 2px solid var(--royal-red-500);
+        }
+
+        .message-content {
+            max-width: 75%;
+        }
+
+        .message-bubble {
+            padding: var(--spacing-3) var(--spacing-4);
+            border-radius: 12px;
+            font-size: 0.9rem;
+            line-height: 1.4;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .chat-message.ai .message-bubble {
+            background: var(--gradient-subtle);
+            border: 1px solid var(--cream-600);
+            border-bottom-left-radius: 4px;
+        }
+
+        .chat-message.user .message-bubble {
+            background: var(--royal-red-500);
+            color: var(--white);
+            border-bottom-right-radius: 4px;
+        }
+
+        .message-time {
+            font-size: 0.7rem;
+            opacity: 0.6;
+            margin-top: 4px;
+            text-align: right;
+        }
+
+        .chat-message.ai .message-time {
+            color: var(--gray-700);
+            text-align: left;
+        }
+
+        .chatbot-typing {
+            display: flex;
+            gap: var(--spacing-2);
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all var(--duration-normal) var(--easing);
+        }
+
+        .chatbot-typing.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .typing-bubble {
+            background: var(--gradient-subtle);
+            border: 1px solid var(--cream-600);
+            border-radius: 12px;
+            border-bottom-left-radius: 4px;
+            padding: var(--spacing-3);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .typing-dots {
+            display: flex;
+            gap: 3px;
+        }
+
+        .typing-dot {
+            width: 6px;
+            height: 6px;
+            background: var(--royal-red-500);
+            border-radius: 50%;
+            animation: typingDot 1.4s infinite;
+        }
+
+        .typing-dot:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .typing-dot:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes typingDot {
+            0%, 60%, 100% {
+                transform: scale(1);
+                opacity: 0.7;
+            }
+            30% {
+                transform: scale(1.3);
+                opacity: 1;
+            }
+        }
+
+        @keyframes pulse-dot {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        @keyframes messageSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(15px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .chatbot-input-container {
+            padding: var(--spacing-4);
+            border-top: 2px solid var(--cream-600);
+            background: var(--gradient-subtle);
+        }
+
+        .chatbot-input-wrapper {
+            display: flex;
+            gap: var(--spacing-2);
+            align-items: flex-end;
+        }
+
+        .chatbot-input {
+            flex: 1;
+            background: var(--white);
+            border: 2px solid var(--cream-600);
+            border-radius: 20px;
+            padding: var(--spacing-3) var(--spacing-4);
+            font-size: 0.9rem;
+            font-family: var(--font-body);
+            color: var(--black);
+            resize: none;
+            min-height: 36px;
+            max-height: 80px;
+            transition: all var(--duration-normal) var(--easing);
+            outline: none;
+        }
+
+        .chatbot-input:focus {
+            border-color: var(--royal-red-500);
+            box-shadow: 0 0 0 3px rgba(220, 20, 60, 0.1);
+        }
+
+        .chatbot-input::placeholder {
+            color: var(--gray-500);
+        }
+
+        .chatbot-send {
+            width: 36px;
+            height: 36px;
+            background: var(--gradient-accent);
+            border: none;
+            border-radius: 50%;
+            color: var(--white);
+            cursor: pointer;
+            transition: all var(--duration-normal) var(--easing);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--shadow-lg);
+            flex-shrink: 0;
+        }
+
+        .chatbot-send:hover {
+            transform: scale(1.1);
+            box-shadow: var(--shadow-xl);
+        }
+
+        .chatbot-send:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .chatbot-welcome {
+            text-align: center;
+            padding: var(--spacing-6) var(--spacing-4);
+        }
+
+        .welcome-icon {
+            font-size: 2.5rem;
+            margin-bottom: var(--spacing-3);
+            animation: glow 3s ease-in-out infinite alternate;
+        }
+
+        .welcome-title {
+            font-family: var(--font-display);
+            font-size: 1.3rem;
+            color: var(--royal-red-500);
+            margin-bottom: var(--spacing-2);
+            font-weight: 700;
+        }
+
+        .welcome-text {
+            font-size: 0.9rem;
+            color: var(--gray-700);
+            line-height: 1.5;
+            margin-bottom: var(--spacing-4);
+        }
+
+        .quick-prompts {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-2);
+        }
+
+        .quick-prompt {
+            background: rgba(220, 20, 60, 0.05);
+            border: 1px solid var(--cream-600);
+            border-radius: 8px;
+            padding: var(--spacing-2) var(--spacing-3);
+            cursor: pointer;
+            transition: all var(--duration-normal) var(--easing);
+            font-size: 0.8rem;
+            color: var(--gray-700);
+            text-align: left;
+        }
+
+        .quick-prompt:hover {
+            background: rgba(220, 20, 60, 0.1);
+            border-color: var(--royal-red-500);
+            transform: translateY(-1px);
+        }
+
+        /* Mobile responsiveness for chatbot */
+        @media (max-width: 768px) {
+            .chatbot-container {
+                width: calc(100vw - 2rem);
+                height: calc(100vh - 6rem);
+                bottom: 5rem;
+                right: 1rem;
+                left: 1rem;
+                transform-origin: bottom center;
+            }
+
+            .chatbot-widget {
+                bottom: var(--spacing-4);
+                right: var(--spacing-4);
+            }
+        }
+
+        /* Hide chatbot scrollbar */
+        .chatbot-messages::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .chatbot-messages::-webkit-scrollbar-track {
+            background: var(--cream-500);
+            border-radius: 2px;
+        }
+
+        .chatbot-messages::-webkit-scrollbar-thumb {
+            background: var(--royal-red-500);
+            border-radius: 2px;
+        }
+        
+        /* Additional sections styling */
+        .section {
+            padding: var(--spacing-24) var(--spacing-6);
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .section-title {
+            font-family: var(--font-display);
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--royal-red-500);
+            text-align: center;
+            margin-bottom: var(--spacing-8);
+            position: relative;
+        }
+        
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: var(--gradient-accent);
+            border-radius: 2px;
+        }
+        
+        .section-description {
+            font-size: 1.2rem;
+            color: var(--gray-700);
+            text-align: center;
+            max-width: 600px;
+            margin: 0 auto var(--spacing-12);
+            line-height: 1.8;
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: clamp(2.5rem, 8vw, 4rem);
+            }
+            
+            .hero-description {
+                font-size: 1.2rem;
+            }
+            
+            .hero-cta {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .floating-nav {
+                top: var(--spacing-4);
+                right: var(--spacing-4);
+            }
+            
+            .section-title {
+                font-size: 2rem;
+            }
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--cream-500);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--royal-red-500);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--royal-red-700);
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div class="loading-screen" id="loadingScreen">
+        <div class="crown-loader"></div>
+    </div>
+
+    <!-- Floating Navigation -->
+    <nav class="floating-nav">
+        <a href="#home" class="nav-item" title="Home">
+            <i data-feather="home"></i>
+        </a>
+        <a href="#about" class="nav-item" title="About">
+            <i data-feather="user"></i>
+        </a>
+        <a href="#services" class="nav-item" title="Services">
+            <i data-feather="zap"></i>
+        </a>
+        <a href="#contact" class="nav-item" title="Contact">
+            <i data-feather="mail"></i>
+        </a>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="hero-content">
+            <div class="hero-subtitle">Portfolio Real</div>
+            <h1 class="hero-title">La Realeza</h1>
+            <p class="hero-description">
+                Donde la excelencia se encuentra con la innovación, y cada proyecto es una obra maestra digna de la realeza.
+            </p>
+            <div class="hero-cta">
+                <a href="#about" class="btn btn-primary">
+                    <i data-feather="play"></i>
+                    Descubre Mi Historia
+                </a>
+                <a href="#services" class="btn btn-secondary">
+                    <i data-feather="star"></i>
+                    Ver Mis Servicios
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="section" id="about">
+        <h2 class="section-title">Acerca de La Realeza</h2>
+        <p class="section-description">
+            Luis Gómez es un desarrollador full-stack apasionado con más de 5 años de experiencia, 
+            especializado en crear soluciones digitales innovadoras que combinan tecnología de vanguardia con diseño elegante.
+        </p>
+    </section>
+
+    <!-- Services Section -->
+    <section class="section" id="services">
+        <h2 class="section-title">Servicios Reales</h2>
+        <p class="section-description">
+            Ofrecemos desarrollo full-stack, diseño UI/UX, soluciones de IA, aplicaciones móviles y consultoría técnica.
+            Cada proyecto recibe el tratamiento real que merece.
+        </p>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="section" id="contact">
+        <h2 class="section-title">Únete a La Realeza</h2>
+        <p class="section-description">
+            ¿Estás listo para transformar tu visión en una realidad digital extraordinaria? 
+            Comencemos esta aventura juntos.
+        </p>
+    </section>
+
+    <!-- Floating Chatbot Widget -->
+    <div class="chatbot-widget" id="chatbotWidget">
+        <button class="chatbot-toggle" id="chatbotToggle" title="Chat with La Realeza AI">
+            💬
+        </button>
+        
+        <div class="chatbot-container" id="chatbotContainer">
+            <!-- Chatbot Header -->
+            <div class="chatbot-header">
+                <div class="chatbot-info">
+                    <div class="chatbot-avatar">👑</div>
+                    <div>
+                        <div class="chatbot-title">La Realeza AI</div>
+                        <div class="chatbot-status">
+                            <div class="status-dot"></div>
+                            <span>En línea</span>
+                        </div>
+                    </div>
+                </div>
+                <button class="chatbot-close" id="chatbotClose" title="Cerrar chat">
+                    <i data-feather="x"></i>
+                </button>
+            </div>
+            
+            <!-- Messages Area -->
+            <div class="chatbot-messages" id="chatbotMessages">
+                <!-- Welcome Message -->
+                <div class="chatbot-welcome">
+                    <div class="welcome-icon">👑</div>
+                    <div class="welcome-title">¡Hola! Soy La Realeza AI</div>
+                    <div class="welcome-text">
+                        Tu asistente experto en todo sobre Luis Gómez y La Realeza. ¿En qué puedo ayudarte?
+                    </div>
+                    <div class="quick-prompts">
+                        <div class="quick-prompt" data-message="¿Quién es Luis Gómez?">👨‍💻 ¿Quién es Luis Gómez?</div>
+                        <div class="quick-prompt" data-message="¿Qué servicios ofrece La Realeza?">🚀 ¿Qué servicios ofrece La Realeza?</div>
+                        <div class="quick-prompt" data-message="¿Cuáles son sus proyectos destacados?">💼 ¿Cuáles son sus proyectos destacados?</div>
+                        <div class="quick-prompt" data-message="¿Cómo puedo contactarlo?">📞 ¿Cómo puedo contactarlo?</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Typing Indicator -->
+            <div class="chatbot-typing" id="chatbotTyping">
+                <div class="message-avatar">
+                    <div class="chatbot-avatar">👑</div>
+                </div>
+                <div class="typing-bubble">
+                    <div class="typing-dots">
+                        <div class="typing-dot"></div>
+                        <div class="typing-dot"></div>
+                        <div class="typing-dot"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Input Area -->
+            <div class="chatbot-input-container">
+                <div class="chatbot-input-wrapper">
+                    <textarea 
+                        class="chatbot-input" 
+                        id="chatbotInput" 
+                        placeholder="Pregúntame sobre La Realeza..."
+                        rows="1"
+                    ></textarea>
+                    <button class="chatbot-send" id="chatbotSend">
+                        <i data-feather="send"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://unpkg.com/feather-icons"></script>
+    <script>
+        // Initialize Feather Icons
+        feather.replace();
+        
+        // Loading Screen
+        window.addEventListener('load', function() {
+            setTimeout(() => {
+                document.getElementById('loadingScreen').classList.add('hidden');
+            }, 2000);
+        });
+        
+        // Smooth Scrolling
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Chatbot Functionality
+        const chatbotWidget = document.getElementById('chatbotWidget');
+        const chatbotToggle = document.getElementById('chatbotToggle');
+        const chatbotContainer = document.getElementById('chatbotContainer');
+        const chatbotClose = document.getElementById('chatbotClose');
+        const chatbotMessages = document.getElementById('chatbotMessages');
+        const chatbotInput = document.getElementById('chatbotInput');
+        const chatbotSend = document.getElementById('chatbotSend');
+        const chatbotTyping = document.getElementById('chatbotTyping');
+
+        let isChatbotOpen = false;
+        let chatMessageCount = 0;
+        let isChatbotTyping = false;
+
+        // Chatbot responses database
+        const chatbotResponses = {
+            greetings: [
+                "¡Saludos reales! 👑 Soy el asistente de IA de La Realeza. ¿En qué puedo ayudarte hoy?",
+                "¡Bienvenido a La Realeza! Estoy aquí para contarte todo sobre Luis Gómez y nuestros servicios.",
+                "¡Hola! Es un honor tenerte aquí. ¿Qué te gustaría saber sobre La Realeza?"
+            ],
+            about_luis: [
+                "Luis Gómez es un desarrollador full-stack apasionado con más de 5 años de experiencia. Se especializa en crear soluciones digitales innovadoras que combinan tecnología de vanguardia con diseño elegante. Su enfoque real se basa en la excelencia técnica y la satisfacción del cliente. 👑",
+                "Luis es el fundador de La Realeza, donde cada proyecto se trata como una obra maestra digna de la realeza. Con experiencia en React, Node.js, Python y más, ha desarrollado desde aplicaciones web complejas hasta sistemas de inteligencia artificial."
+            ],
+            services: [
+                "La Realeza ofrece servicios de desarrollo full-stack, incluyendo:\n\n🚀 Desarrollo web moderno (React, Vue, Angular)\n💻 Aplicaciones backend robustas\n🎨 Diseño UI/UX elegante\n🤖 Soluciones de IA personalizadas\n📱 Aplicaciones móviles\n⚡ Optimización y consultoría técnica\n\nCada proyecto recibe el tratamiento real que merece.",
+                "Nos especializamos en transformar ideas en realidades digitales extraordinarias. Desde aplicaciones web complejas hasta sistemas de inteligencia artificial, cada solución está diseñada con la precisión y elegancia digna de la realeza."
+            ],
+            projects: [
+                "Entre los proyectos más destacados de La Realeza se encuentran:\n\n🏥 Sistemas de gestión médica con IA\n💼 Plataformas empresariales escalables\n🛒 E-commerce de alta conversión\n🎓 Plataformas educativas interactivas\n📊 Dashboards de análisis en tiempo real\n\nCada proyecto refleja la excelencia y innovación que caracteriza a La Realeza.",
+                "He tenido el honor de desarrollar más de 50 proyectos, cada uno único y personalizado. Desde sistemas complejos de gestión hasta aplicaciones móviles elegantes, todos comparten el sello de calidad real."
+            ],
+            contact: [
+                "Para unirte a La Realeza y comenzar tu proyecto real, puedes contactarnos:\n\n📧 Email: contacto@larealeza.dev\n📱 WhatsApp: +1 (555) 123-4567\n💼 LinkedIn: /in/luis-gomez-realeza\n🌐 Sitio web: www.larealeza.dev\n\n¡Estamos listos para hacer realidad tu visión digital! 👑",
+                "¡Excelente pregunta! Puedes contactar directamente para discutir tu proyecto. Ofrecemos consultas gratuitas donde evaluamos tus necesidades y te proponemos la mejor solución real para tu negocio."
+            ],
+            technologies: [
+                "Luis domina un arsenal completo de tecnologías reales:\n\n🎯 Frontend: React, Vue.js, Angular, TypeScript\n⚙️ Backend: Node.js, Python, PHP, Express\n🗄️ Bases de datos: MongoDB, PostgreSQL, MySQL\n☁️ Cloud: AWS, Google Cloud, Azure\n🤖 IA/ML: TensorFlow, PyTorch, OpenAI\n🎨 Design: Figma, Adobe Creative Suite\n\nSu stack preferido: React + Node.js + MongoDB para desarrollo ágil y escalable.",
+                "La experiencia técnica de Luis abarca desde tecnologías clásicas hasta las más modernas. Su enfoque siempre es elegir la tecnología adecuada para cada proyecto, garantizando soluciones robustas y futuras."
+            ],
+            philosophy: [
+                "La filosofía de La Realeza se basa en tres pilares fundamentales:\n\n👑 **Excelencia**: Cada línea de código debe ser digna de la realeza\n🎨 **Elegancia**: La belleza y funcionalidad van de la mano\n🤝 **Satisfacción**: El cliente no es solo un cliente, es parte de la realeza\n\nCreemos que la tecnología debe servir a las personas, no al revés.",
+                "En La Realeza, cada proyecto es una oportunidad de crear algo extraordinario. No nos conformamos con 'suficientemente bueno' - buscamos la perfección en cada detalle, desde la arquitectura del código hasta la experiencia del usuario final."
+            ],
+            default: [
+                "Esa es una excelente pregunta sobre La Realeza. ¿Podrías ser más específico para poder ayudarte mejor? Puedo contarte sobre Luis Gómez, nuestros servicios, proyectos, tecnologías o filosofía de trabajo. 👑",
+                "Me encantaría ayudarte con esa consulta. Como asistente de La Realeza, tengo conocimiento profundo sobre todos nuestros servicios y experiencia. ¿Hay algo específico que te interese más?",
+                "¡Por supuesto! Estoy aquí para responder cualquier pregunta sobre La Realeza. ¿Te gustaría saber sobre nuestros proyectos, servicios, o tal vez cómo podemos ayudarte con tu próximo proyecto?"
+            ]
+        };
+
+        // Function to get appropriate response
+        function getChatbotResponse(message) {
+            const msg = message.toLowerCase();
+            
+            if (msg.includes('hola') || msg.includes('hi') || msg.includes('hello') || msg.includes('saludos')) {
+                return getRandomChatResponse('greetings');
+            } else if (msg.includes('luis') || msg.includes('quien') || msg.includes('programador') || msg.includes('desarrollador') || msg.includes('experiencia')) {
+                return getRandomChatResponse('about_luis');
+            } else if (msg.includes('servicio') || msg.includes('que ofrece') || msg.includes('especializa') || msg.includes('hace')) {
+                return getRandomChatResponse('services');
+            } else if (msg.includes('proyecto') || msg.includes('portafolio') || msg.includes('trabajo') || msg.includes('destacado')) {
+                return getRandomChatResponse('projects');
+            } else if (msg.includes('contacto') || msg.includes('contactar') || msg.includes('email') || msg.includes('telefono') || msg.includes('whatsapp')) {
+                return getRandomChatResponse('contact');
+            } else if (msg.includes('tecnologia') || msg.includes('stack') || msg.includes('programacion') || msg.includes('lenguaje') || msg.includes('framework')) {
+                return getRandomChatResponse('technologies');
+            } else if (msg.includes('filosofia') || msg.includes('enfoque') || msg.includes('valores') || msg.includes('porque') || msg.includes('realeza')) {
+                return getRandomChatResponse('philosophy');
+            } else {
+                return getRandomChatResponse('default');
+            }
+        }
+
+        function getRandomChatResponse(category) {
+            const categoryResponses = chatbotResponses[category];
+            return categoryResponses[Math.floor(Math.random() * categoryResponses.length)];
+        }
+
+        // Toggle chatbot
+        function toggleChatbot() {
+            isChatbotOpen = !isChatbotOpen;
+            chatbotContainer.classList.toggle('active', isChatbotOpen);
+            
+            if (isChatbotOpen) {
+                chatbotInput.focus();
+            }
+        }
+
+        // Create chat message
+        function createChatMessage(content, isUser = false) {
+            // Remove welcome message if this is the first real message
+            if (chatMessageCount === 0) {
+                const welcomeMsg = document.querySelector('.chatbot-welcome');
+                if (welcomeMsg) {
+                    welcomeMsg.style.opacity = '0';
+                    welcomeMsg.style.transform = 'translateY(-10px)';
+                    setTimeout(() => welcomeMsg.remove(), 300);
+                }
+            }
+
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `chat-message ${isUser ? 'user' : 'ai'}`;
+            messageDiv.style.animationDelay = `${chatMessageCount * 0.1}s`;
+            
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('es-ES', { 
+                hour: '2-digit', 
+                minute: '2-digit' 
+            });
+            
+            messageDiv.innerHTML = `
+                <div class="message-avatar">
+                    ${isUser ? '👤' : '👑'}
+                </div>
+                <div class="message-content">
+                    <div class="message-bubble">
+                        ${content.replace(/\n/g, '<br>')}
+                    </div>
+                    <div class="message-time">${timeString}</div>
+                </div>
+            `;
+            
+            chatbotMessages.appendChild(messageDiv);
+            chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+            chatMessageCount++;
+            
+            return messageDiv;
+        }
+
+        // Show typing indicator
+        function showChatbotTyping() {
+            if (isChatbotTyping) return;
+            isChatbotTyping = true;
+            chatbotTyping.classList.add('show');
+            chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+        }
+
+        // Hide typing indicator
+        function hideChatbotTyping() {
+            isChatbotTyping = false;
+            chatbotTyping.classList.remove('show');
+        }
+
+        // Send message
+        function sendChatMessage() {
+            const message = chatbotInput.value.trim();
+            if (!message || isChatbotTyping) return;
+            
+            // Create user message
+            createChatMessage(message, true);
+            
+            // Clear input
+            chatbotInput.value = '';
+            chatbotInput.style.height = 'auto';
+            
+            // Show typing indicator
+            showChatbotTyping();
+            
+            // Simulate AI response delay
+            setTimeout(() => {
+                hideChatbotTyping();
+                const response = getChatbotResponse(message);
+                createChatMessage(response, false);
+            }, 1000 + Math.random() * 1500);
+        }
+
+        // Auto-resize textarea
+        chatbotInput.addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = Math.min(this.scrollHeight, 80) + 'px';
+        });
+
+        // Event listeners
+        chatbotToggle.addEventListener('click', toggleChatbot);
+        chatbotClose.addEventListener('click', toggleChatbot);
+        chatbotSend.addEventListener('click', sendChatMessage);
+
+        chatbotInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendChatMessage();
+            }
+        });
+
+        // Quick prompts
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('quick-prompt')) {
+                const message = e.target.dataset.message;
+                chatbotInput.value = message;
+                sendChatMessage();
+            }
+        });
+
+        // Close chatbot when clicking outside
+        document.addEventListener('click', function(e) {
+            if (isChatbotOpen && !chatbotWidget.contains(e.target)) {
+                toggleChatbot();
+            }
+        });
+
+        // Add floating navigation item for chatbot
+        const floatingNav = document.querySelector('.floating-nav');
+        if (floatingNav) {
+            const chatNavItem = document.createElement('a');
+            chatNavItem.href = '#';
+            chatNavItem.className = 'nav-item';
+            chatNavItem.title = 'Chat AI';
+            chatNavItem.innerHTML = '<i data-feather="message-square"></i>';
+            chatNavItem.addEventListener('click', function(e) {
+                e.preventDefault();
+                toggleChatbot();
+            });
+            floatingNav.appendChild(chatNavItem);
+            feather.replace();
+        }
+    </script>
+</body>
+</html>

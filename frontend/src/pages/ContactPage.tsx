@@ -21,7 +21,6 @@ import {
 } from '@chakra-ui/react';
 import { EmailIcon, PhoneIcon, TimeIcon, CalendarIcon } from '@chakra-ui/icons';
 import { motion } from 'framer-motion';
-import { DebugWrapper } from '../components/DebugSystem';
 
 const MotionCard = motion(Card);
 
@@ -84,12 +83,12 @@ export const ContactPage: React.FC = () => {
   };
 
   return (
-    <DebugWrapper name="ContactPage Root" type="section" layer={0}>
+    <>
       <Container maxW="7xl" py={20}>
-        <DebugWrapper name="Contact Content Container" type="container" layer={1}>
+        <>
           <VStack spacing={16} align="stretch">
             {/* Header */}
-            <DebugWrapper name="Contact Header" type="component" layer={2}>
+            <>
               <Box textAlign="center">
                 <Heading size="4xl" color="brand.text" mb={4}>
                   Let's Transform Your Business
@@ -99,12 +98,12 @@ export const ContactPage: React.FC = () => {
                   to explore how we can drive growth and efficiency in your organization.
                 </Text>
               </Box>
-            </DebugWrapper>
+            </>
 
-            <DebugWrapper name="Contact Main Grid" type="container" layer={2}>
+            <>
               <SimpleGrid columns={{ base: 1, lg: 2 }} spacing={12}>
                 {/* Contact Form */}
-                <DebugWrapper name="Contact Form Section" type="component" layer={3}>
+                <>
                   <MotionCard
                     bg="brand.secondary"
                     border="1px solid"
@@ -268,16 +267,16 @@ export const ContactPage: React.FC = () => {
               </VStack>
             </CardBody>
                   </MotionCard>
-                </DebugWrapper>
+                </>
 
                 {/* Contact Information */}
-                <DebugWrapper name="Contact Info Section" type="component" layer={3}>
+                <>
                   <VStack spacing={8} align="stretch">
                     {/* Contact Methods */}
-                    <DebugWrapper name="Contact Methods Grid" type="container" layer={4}>
+                    <>
                       <VStack spacing={6}>
                         {contactMethods.map((method, index) => (
-                          <DebugWrapper key={method.title} name={`Contact Method: ${method.title}`} type="component" layer={5}>
+                          <>
                             <MotionCard
                               bg="brand.secondary"
                               border="1px solid"
@@ -331,13 +330,13 @@ export const ContactPage: React.FC = () => {
                     </HStack>
                   </CardBody>
                             </MotionCard>
-                          </DebugWrapper>
+                          </>
                         ))}
                       </VStack>
-                    </DebugWrapper>
+                    </>
 
                     {/* Availability */}
-                    <DebugWrapper name="Availability Card" type="component" layer={4}>
+                    <>
                       <Card bg="brand.secondary" border="1px solid" borderColor="brand.border">
                         <CardBody p={6}>
                           <VStack spacing={4} align="start">
@@ -361,10 +360,10 @@ export const ContactPage: React.FC = () => {
                           </VStack>
                         </CardBody>
                       </Card>
-                    </DebugWrapper>
+                    </>
 
                     {/* Next Steps */}
-                    <DebugWrapper name="Next Steps Card" type="component" layer={4}>
+                    <>
                       <Card bg="linear-gradient(135deg, #00ABE4, #7ACFD6)" borderRadius="12px">
                         <CardBody p={6}>
                           <VStack spacing={4} align="start">
@@ -380,14 +379,14 @@ export const ContactPage: React.FC = () => {
                           </VStack>
                         </CardBody>
                       </Card>
-                    </DebugWrapper>
+                    </>
                   </VStack>
-                </DebugWrapper>
+                </>
               </SimpleGrid>
-            </DebugWrapper>
+            </>
           </VStack>
-        </DebugWrapper>
+        </>
       </Container>
-    </DebugWrapper>
+    </>
   );
 };

@@ -12,7 +12,6 @@ import {
   Progress,
 } from '@chakra-ui/react';
 import { motion } from 'framer-motion';
-import { DebugWrapper } from '../components/DebugSystem';
 
 const MotionBox = motion(Box);
 const MotionCard = motion(Card);
@@ -28,9 +27,9 @@ const skills = [
 
 export const AboutPage: React.FC = () => {
   return (
-    <DebugWrapper name="AboutPage Root" type="section" layer={0}>
+    <>
       <Container maxW="6xl" py={20}>
-        <DebugWrapper name="About Content Container" type="container" layer={1}>
+        <>
           <MotionBox
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -38,7 +37,7 @@ export const AboutPage: React.FC = () => {
           >
             <VStack spacing={12} align="stretch">
               {/* Header */}
-              <DebugWrapper name="About Header" type="component" layer={2}>
+              <>
                 <Box textAlign="center">
                   <Heading size="4xl" color="brand.text" mb={4}>
                     About Luis Alberto Gomez
@@ -48,19 +47,19 @@ export const AboutPage: React.FC = () => {
                     transforming businesses through cutting-edge AI solutions.
                   </Text>
                 </Box>
-              </DebugWrapper>
+              </>
 
               {/* Bio Section */}
-              <DebugWrapper name="Bio Section" type="component" layer={2}>
+              <>
                 <Card bg="brand.secondary" border="1px solid" borderColor="brand.border">
                   <CardBody p={8}>
                     <VStack spacing={6} align="stretch">
-                      <DebugWrapper name="Bio Title" type="element" layer={3}>
+                      <>
                         <Heading size="lg" color="brand.text">
                           Professional Background
                         </Heading>
-                      </DebugWrapper>
-                      <DebugWrapper name="Bio Content" type="element" layer={3}>
+                      </>
+                      <>
                         <Text color="brand.textSecondary" lineHeight="1.8" fontSize="lg">
                           [Bio content placeholder - specialized in Computer Vision and Medical AI, 
                           with proven track record of delivering ML solutions that generate measurable ROI. 
@@ -70,24 +69,24 @@ export const AboutPage: React.FC = () => {
                           [Experience details - led AI initiatives at Fortune 500 companies, 
                           published research in top-tier journals, speaking engagements at AI conferences.]
                         </Text>
-                      </DebugWrapper>
+                      </>
                     </VStack>
                   </CardBody>
                 </Card>
-              </DebugWrapper>
+              </>
 
               {/* Skills Grid */}
-              <DebugWrapper name="Skills Section" type="container" layer={2}>
+              <>
                 <Box>
-                  <DebugWrapper name="Skills Title" type="element" layer={3}>
+                  <>
                     <Heading size="lg" color="brand.text" mb={8} textAlign="center">
                       Technical Expertise
                     </Heading>
-                  </DebugWrapper>
-                  <DebugWrapper name="Skills Grid Container" type="container" layer={3}>
+                  </>
+                  <>
                     <SimpleGrid columns={{ base: 1, md: 2 }} spacing={6}>
                       {skills.map((skill, index) => (
-                        <DebugWrapper key={skill.name} name={`Skill Card: ${skill.name}`} type="component" layer={4}>
+                        <>
                           <MotionCard
                             bg="brand.secondary"
                             border="1px solid"
@@ -121,25 +120,25 @@ export const AboutPage: React.FC = () => {
                               </VStack>
                             </CardBody>
                           </MotionCard>
-                        </DebugWrapper>
+                        </>
                       ))}
                     </SimpleGrid>
-                  </DebugWrapper>
+                  </>
                 </Box>
-              </DebugWrapper>
+              </>
 
               {/* Achievements */}
-              <DebugWrapper name="Achievements Section" type="component" layer={2}>
+              <>
                 <Card bg="brand.secondary" border="1px solid" borderColor="brand.border">
                   <CardBody p={8}>
-                    <DebugWrapper name="Achievements Title" type="element" layer={3}>
+                    <>
                       <Heading size="lg" color="brand.text" mb={6}>
                         Key Achievements
                       </Heading>
-                    </DebugWrapper>
-                    <DebugWrapper name="Achievements Grid" type="container" layer={3}>
+                    </>
+                    <>
                       <SimpleGrid columns={{ base: 1, md: 3 }} spacing={6}>
-                        <DebugWrapper name="Achievement 1: Cost Savings" type="component" layer={4}>
+                        <>
                           <VStack>
                             <Text fontSize="3xl" fontWeight="bold" color="brand.accent">
                               $2M+
@@ -148,8 +147,8 @@ export const AboutPage: React.FC = () => {
                               Cost savings generated for clients
                             </Text>
                           </VStack>
-                        </DebugWrapper>
-                        <DebugWrapper name="Achievement 2: Research Papers" type="component" layer={4}>
+                        </>
+                        <>
                           <VStack>
                             <Text fontSize="3xl" fontWeight="bold" color="brand.accentCyan">
                               15+
@@ -158,8 +157,8 @@ export const AboutPage: React.FC = () => {
                               Published research papers
                             </Text>
                           </VStack>
-                        </DebugWrapper>
-                        <DebugWrapper name="Achievement 3: Accuracy" type="component" layer={4}>
+                        </>
+                        <>
                           <VStack>
                             <Text fontSize="3xl" fontWeight="bold" color="brand.accent">
                               40%
@@ -168,16 +167,16 @@ export const AboutPage: React.FC = () => {
                               Average model accuracy improvement
                             </Text>
                           </VStack>
-                        </DebugWrapper>
+                        </>
                       </SimpleGrid>
-                    </DebugWrapper>
+                    </>
                   </CardBody>
                 </Card>
-              </DebugWrapper>
+              </>
             </VStack>
           </MotionBox>
-        </DebugWrapper>
+        </>
       </Container>
-    </DebugWrapper>
+    </>
   );
 };

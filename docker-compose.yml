@@ -52,6 +52,16 @@ services:
     networks:
       - portfolio_network
 
+  dev-server:
+    image: nginx:alpine
+    container_name: portfolio_dev_server
+    ports:
+      - "8080:80"
+    volumes:
+      - ./dev-html:/usr/share/nginx/html
+    networks:
+      - portfolio_network
+
 volumes:
   redis_data:
 

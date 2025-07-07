@@ -11,7 +11,7 @@ import { AboutPage } from './pages/AboutPage';
 import { ProjectsPage } from './pages/ProjectsPage';
 import { ConsultingPage } from './pages/ConsultingPage';
 import { ContactPage } from './pages/ContactPage';
-import { DebugProvider, DebugControls } from './components/DebugSystem';
+// Debug system removed for production
 
 // Create a client for React Query
 const queryClient = new QueryClient({
@@ -27,22 +27,19 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <ChakraProvider theme={theme}>
-        <DebugProvider>
-          <Router>
-            <Layout>
-              <AnimatePresence mode="wait">
-                <Routes>
-                  <Route path="/" element={<HomePage />} />
-                  <Route path="/about" element={<AboutPage />} />
-                  <Route path="/projects" element={<ProjectsPage />} />
-                  <Route path="/consulting" element={<ConsultingPage />} />
-                  <Route path="/contact" element={<ContactPage />} />
-                </Routes>
-              </AnimatePresence>
-            </Layout>
-            <DebugControls />
-          </Router>
-        </DebugProvider>
+        <Router>
+          <Layout>
+            <AnimatePresence mode="wait">
+              <Routes>
+                <Route path="/" element={<HomePage />} />
+                <Route path="/about" element={<AboutPage />} />
+                <Route path="/projects" element={<ProjectsPage />} />
+                <Route path="/consulting" element={<ConsultingPage />} />
+                <Route path="/contact" element={<ContactPage />} />
+              </Routes>
+            </AnimatePresence>
+          </Layout>
+        </Router>
       </ChakraProvider>
     </QueryClientProvider>
   );

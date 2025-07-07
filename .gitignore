@@ -1,0 +1,15 @@
+frontend/node_modules/
+
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.pdb
+*.pkl
+*.pyo
+
+frontend_iterations/
+*.log
+*.csv
+*.txt   
+inspiration/

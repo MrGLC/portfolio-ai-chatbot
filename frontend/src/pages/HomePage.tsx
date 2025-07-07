@@ -23,7 +23,7 @@ import {
   CheckCircleIcon, 
   StarIcon
 } from '@chakra-ui/icons';
-import { DebugWrapper } from '../components/DebugSystem';
+// Debug system removed - clean production code
 
 const MotionBox = motion(Box);
 const MotionCard = motion(Card);
@@ -47,10 +47,10 @@ const stagger = {
 
 export const HomePage: React.FC = () => {
   return (
-    <DebugWrapper name="HomePage Root" type="section" layer={0}>
+    <>
       <Box>
         {/* Hero Section */}
-        <DebugWrapper name="Hero Section" type="section" layer={1}>
+        <>
           <MotionBox
             minH="100vh"
             display="flex"
@@ -63,7 +63,7 @@ export const HomePage: React.FC = () => {
             variants={stagger}
           >
             {/* Background geometric pattern */}
-            <DebugWrapper name="Background Pattern" type="element" layer={2} position="absolute">
+            <>
               <Box
                 position="absolute"
                 top={0}
@@ -73,11 +73,11 @@ export const HomePage: React.FC = () => {
                 opacity={0.1}
                 backgroundImage="linear-gradient(45deg, transparent 30%, rgba(0, 171, 228, 0.1) 50%, transparent 70%)"
               />
-            </DebugWrapper>
+            </>
             
-            <DebugWrapper name="Hero Container" type="container" layer={2}>
+            <>
               <Container maxW="7xl" position="relative" zIndex={1}>
-                <DebugWrapper name="Hero Flex Layout" type="container" layer={3}>
+                <>
                   <Flex
                     direction={{ base: 'column', lg: 'row' }}
                     align="center"
@@ -85,9 +85,9 @@ export const HomePage: React.FC = () => {
                     minH="80vh"
                   >
                     {/* Left Column - Main Content */}
-                    <DebugWrapper name="Left Column - Content" type="container" layer={4}>
+                    <>
                       <VStack align="start" spacing={8} flex={1} maxW="600px">
-                        <DebugWrapper name="Excellence Badge" type="component" layer={5}>
+                        <>
                           <MotionBox variants={fadeInUp}>
                             <Badge
                               colorScheme="blue"
@@ -104,9 +104,9 @@ export const HomePage: React.FC = () => {
                               AI Consulting Excellence
                             </Badge>
                           </MotionBox>
-                        </DebugWrapper>
+                        </>
 
-                        <DebugWrapper name="Main Heading" type="component" layer={5}>
+                        <>
                           <MotionHeading
                             size="4xl"
                             color="brand.text"
@@ -119,9 +119,9 @@ export const HomePage: React.FC = () => {
                             </Text>{' '}
                             Solutions
                           </MotionHeading>
-                        </DebugWrapper>
+                        </>
 
-                        <DebugWrapper name="Description Text" type="component" layer={5}>
+                        <>
                           <MotionText
                             fontSize="xl"
                             color="brand.textSecondary"
@@ -134,9 +134,9 @@ export const HomePage: React.FC = () => {
                               {' '}$2M+ in cost savings generated for clients.
                             </Text>
                           </MotionText>
-                        </DebugWrapper>
+                        </>
 
-                        <DebugWrapper name="CTA Buttons" type="component" layer={5}>
+                        <>
                           <MotionBox variants={fadeInUp}>
                             <HStack spacing={4} wrap="wrap">
                               <Button
@@ -159,10 +159,10 @@ export const HomePage: React.FC = () => {
                               </Button>
                             </HStack>
                           </MotionBox>
-                        </DebugWrapper>
+                        </>
 
                         {/* Trust Indicators */}
-                        <DebugWrapper name="Trust Indicators" type="component" layer={5}>
+                        <>
                           <MotionBox variants={fadeInUp}>
                             <HStack spacing={8} pt={4}>
                               <VStack spacing={1} align="start">
@@ -191,18 +191,18 @@ export const HomePage: React.FC = () => {
                               </VStack>
                             </HStack>
                           </MotionBox>
-                        </DebugWrapper>
+                        </>
                       </VStack>
-                    </DebugWrapper>
+                    </>
 
                     {/* Right Column - Interactive Demo */}
-                    <DebugWrapper name="Right Column - Dashboard" type="container" layer={4}>
+                    <>
                       <MotionBox 
                         flex={1} 
                         maxW="500px"
                         variants={fadeInUp}
                       >
-                        <DebugWrapper name="Dashboard Card" type="component" layer={5}>
+                        <>
                           <Card
                 bg="brand.secondary"
                 border="1px solid"
@@ -302,18 +302,18 @@ export const HomePage: React.FC = () => {
                   </VStack>
                 </CardBody>
                           </Card>
-                        </DebugWrapper>
+                        </>
                       </MotionBox>
-                    </DebugWrapper>
+                    </>
                   </Flex>
-                </DebugWrapper>
+                </>
               </Container>
-            </DebugWrapper>
+            </>
           </MotionBox>
-        </DebugWrapper>
+        </>
 
         {/* Expertise Areas Section */}
-        <DebugWrapper name="Expertise Section" type="section" layer={1}>
+        <>
           <Container maxW="7xl" py={20}>
         <MotionBox
           textAlign="center"
@@ -342,7 +342,7 @@ export const HomePage: React.FC = () => {
           </MotionText>
         </MotionBox>
 
-            <DebugWrapper name="Expertise Cards Grid" type="container" layer={2}>
+            <>
               <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={8}>
                 {[
             {
@@ -432,12 +432,12 @@ export const HomePage: React.FC = () => {
             </MotionCard>
           ))}
                 </SimpleGrid>
-            </DebugWrapper>
+            </>
           </Container>
-        </DebugWrapper>
+        </>
 
         {/* CTA Section */}
-        <DebugWrapper name="CTA Section" type="section" layer={1}>
+        <>
           <MotionBox
             bg="linear-gradient(135deg, #00ABE4, #7ACFD6)"
             py={20}
@@ -489,8 +489,8 @@ export const HomePage: React.FC = () => {
           </VStack>
             </Container>
           </MotionBox>
-        </DebugWrapper>
+        </>
       </Box>
-    </DebugWrapper>
+    </>
   );
 };

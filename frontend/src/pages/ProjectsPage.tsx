@@ -15,7 +15,6 @@ import {
 } from '@chakra-ui/react';
 import { ExternalLinkIcon, ViewIcon } from '@chakra-ui/icons';
 import { motion } from 'framer-motion';
-import { DebugWrapper } from '../components/DebugSystem';
 
 const MotionCard = motion(Card);
 
@@ -93,12 +92,12 @@ const getStatusColor = (status: string) => {
 
 export const ProjectsPage: React.FC = () => {
   return (
-    <DebugWrapper name="ProjectsPage Root" type="section" layer={0}>
+    <>
       <Container maxW="7xl" py={20}>
-        <DebugWrapper name="Projects Content Container" type="container" layer={1}>
+        <>
           <VStack spacing={12} align="stretch">
             {/* Header */}
-            <DebugWrapper name="Projects Header" type="component" layer={2}>
+            <>
               <Box textAlign="center">
                 <Heading size="4xl" color="brand.text" mb={4}>
                   AI Project Portfolio
@@ -108,10 +107,10 @@ export const ProjectsPage: React.FC = () => {
                   finance, and research with quantifiable business results.
                 </Text>
               </Box>
-            </DebugWrapper>
+            </>
 
             {/* Filter/Category Section - Placeholder */}
-            <DebugWrapper name="Filter Buttons" type="component" layer={2}>
+            <>
               <HStack spacing={4} justify="center" wrap="wrap">
                 {['All Projects', 'Computer Vision', 'Machine Learning', 'NLP', 'Research'].map((filter) => (
                   <Button
@@ -123,13 +122,13 @@ export const ProjectsPage: React.FC = () => {
                   </Button>
                 ))}
               </HStack>
-            </DebugWrapper>
+            </>
 
             {/* Projects Grid */}
-            <DebugWrapper name="Projects Grid Container" type="container" layer={2}>
+            <>
               <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={8}>
                 {projects.map((project, index) => (
-                  <DebugWrapper key={project.id} name={`Project Card: ${project.title}`} type="component" layer={3}>
+                  <>
                     <MotionCard
                       bg="brand.secondary"
                       border="1px solid"
@@ -232,39 +231,39 @@ export const ProjectsPage: React.FC = () => {
                 </VStack>
               </CardBody>
                     </MotionCard>
-                  </DebugWrapper>
+                  </>
                 ))}
               </SimpleGrid>
-            </DebugWrapper>
+            </>
 
             {/* CTA Section */}
-            <DebugWrapper name="Projects CTA Section" type="component" layer={2}>
+            <>
               <Card bg="brand.secondary" border="1px solid" borderColor="brand.border">
                 <CardBody p={8} textAlign="center">
                   <VStack spacing={4}>
-                    <DebugWrapper name="CTA Title" type="element" layer={3}>
+                    <>
                       <Heading size="lg" color="brand.text">
                         Interested in Similar Results?
                       </Heading>
-                    </DebugWrapper>
-                    <DebugWrapper name="CTA Description" type="element" layer={3}>
+                    </>
+                    <>
                       <Text color="brand.textSecondary" maxW="600px">
                         Let's discuss how these proven AI methodologies can be adapted 
                         to solve your specific business challenges.
                       </Text>
-                    </DebugWrapper>
-                    <DebugWrapper name="CTA Button" type="element" layer={3}>
+                    </>
+                    <>
                       <Button variant="primary" size="lg">
                         Schedule Strategy Session
                       </Button>
-                    </DebugWrapper>
+                    </>
                   </VStack>
                 </CardBody>
               </Card>
-            </DebugWrapper>
+            </>
           </VStack>
-        </DebugWrapper>
+        </>
       </Container>
-    </DebugWrapper>
+    </>
   );
 };
