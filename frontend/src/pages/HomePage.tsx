@@ -29,12 +29,13 @@ import {
   ArrowForwardIcon
 } from '@chakra-ui/icons';
 import { variants, durations, easings, delays, springs, createStaggerAnimation } from '../theme/animations';
+import { AnimatedBackground, FlowingRibbons, GeometricPattern } from '../components/ThreeBackground';
 
 const MotionBox = motion(Box);
-const MotionCard = motion(Card);
-const MotionHeading = motion(Heading);
-const MotionText = motion(Text);
-const MotionButton = motion(Button);
+const MotionCard = motion.div;
+const MotionHeading = motion.h1;
+const MotionText = motion.p;
+const MotionButton = motion.button;
 
 // Use standardized animations from theme
 const staggerAnimation = createStaggerAnimation(delays.staggerSlow, variants.heroFadeIn);
@@ -55,6 +56,9 @@ export const HomePage: React.FC = () => {
         animate="animate"
         variants={staggerAnimation.parent}
       >
+        {/* 3D Animated Background */}
+        <AnimatedBackground intensity={0.7} />
+        
         {/* Background gradient overlay */}
         <Box
           position="absolute"
@@ -62,8 +66,8 @@ export const HomePage: React.FC = () => {
           left={0}
           right={0}
           bottom={0}
-          bgGradient="radial-gradient(circle at 30% 50%, rgba(232, 93, 117, 0.3), transparent 40%), 
-                      radial-gradient(circle at 70% 80%, rgba(185, 28, 60, 0.3), transparent 50%)"
+          bgGradient="radial-gradient(circle at 30% 50%, rgba(232, 93, 117, 0.2), transparent 40%), 
+                      radial-gradient(circle at 70% 80%, rgba(185, 28, 60, 0.2), transparent 50%)"
           opacity={0.3}
           pointerEvents="none"
         />
@@ -101,7 +105,8 @@ export const HomePage: React.FC = () => {
           >
             <VStack spacing={8} maxW="800px" align={{ base: "center", lg: "flex-start" }} textAlign={{ base: "center", lg: "left" }}>
               {/* Luxury subtitle */}
-              <MotionText
+              <Text
+                as={MotionText}
                 fontSize={{ base: "xs", md: "sm" }}
                 fontWeight="300"
                 letterSpacing="3px"
@@ -111,11 +116,12 @@ export const HomePage: React.FC = () => {
                 variants={staggerAnimation.child}
               >
                 {t('home.hero.luxurySubtitle')}
-              </MotionText>
+              </Text>
 
               {/* Main title */}
-              <MotionHeading
-                as="h1"
+              <Heading
+                as={MotionHeading}
+                size="4xl"
                 fontSize={{ base: "5xl", md: "7xl", lg: "8xl" }}
                 fontWeight="900"
                 lineHeight="1.1"
@@ -125,10 +131,11 @@ export const HomePage: React.FC = () => {
                 variants={staggerAnimation.child}
               >
                 {t('home.hero.modernTitle')}
-              </MotionHeading>
+              </Heading>
 
               {/* Description */}
-              <MotionText
+              <Text
+                as={MotionText}
                 fontSize={{ base: "lg", md: "xl" }}
                 color="brand.cream"
                 lineHeight="1.8"
@@ -138,7 +145,7 @@ export const HomePage: React.FC = () => {
                 textAlign={{ base: "center", lg: "left" }}
               >
                 {t('home.hero.description')}
-              </MotionText>
+              </Text>
 
               {/* CTA Buttons */}
               <MotionBox
@@ -252,37 +259,39 @@ export const HomePage: React.FC = () => {
               ].map((feature, index) => (
                 <MotionCard
                   key={index}
-                  bg="brand.surface"
-                  borderRadius="12px"
-                  p={8}
-                  textAlign="center"
-                  position="relative"
-                  overflow="hidden"
-                  boxShadow="0 4px 20px rgba(0, 0, 0, 0.05)"
-                  style={{ transition: `all ${durations.normal}s cubic-bezier(${easings.smooth.join(',')})` }}
-                  _before={{
-                    content: '""',
-                    position: 'absolute',
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    height: '4px',
-                    bg: 'linear-gradient(90deg, var(--chakra-colors-brand-secondary), var(--chakra-colors-brand-accent))',
-                    transform: 'translateX(-100%)',
-                    transition: `transform ${durations.slow}s cubic-bezier(${easings.smooth.join(',')})`,
-                  }}
-                  _hover={{
-                    transform: 'translateY(-8px)',
-                    boxShadow: '0 15px 40px rgba(0, 0, 0, 0.1)',
-                    _before: {
-                      transform: 'translateX(0)',
-                    },
-                  }}
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.08, duration: durations.normal, ease: easings.smooth }}
                   viewport={{ once: true, margin: "-50px" }}
                 >
+                  <Card
+                    bg="brand.surface"
+                    borderRadius="12px"
+                    p={8}
+                    textAlign="center"
+                    position="relative"
+                    overflow="hidden"
+                    boxShadow="0 4px 20px rgba(0, 0, 0, 0.05)"
+                    transition={`all ${durations.normal}s cubic-bezier(${easings.smooth.join(',')})`}
+                    _before={{
+                      content: '""',
+                      position: 'absolute',
+                      top: 0,
+                      left: 0,
+                      right: 0,
+                      height: '4px',
+                      bg: 'linear-gradient(90deg, var(--chakra-colors-brand-secondary), var(--chakra-colors-brand-accent))',
+                      transform: 'translateX(-100%)',
+                      transition: `transform ${durations.slow}s cubic-bezier(${easings.smooth.join(',')})`,
+                    }}
+                    _hover={{
+                      transform: 'translateY(-8px)',
+                      boxShadow: '0 15px 40px rgba(0, 0, 0, 0.1)',
+                      _before: {
+                        transform: 'translateX(0)',
+                      },
+                    }}
+                  >
                   <Flex
                     w={16}
                     h={16}
@@ -316,6 +325,7 @@ export const HomePage: React.FC = () => {
                   >
                     {t('home.services.learnMore')}
                   </Button>
+                  </Card>
                 </MotionCard>
               ))}
             </SimpleGrid>

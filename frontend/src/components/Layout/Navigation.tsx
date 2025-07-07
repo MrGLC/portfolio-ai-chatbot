@@ -23,7 +23,6 @@ import { LanguageSwitcher } from '../LanguageSwitcher';
 import { durations, easings, transitions } from '../../theme/animations';
 
 const MotionBox = motion(Box);
-const MotionButton = motion(Button);
 
 interface NavItem {
   key: string;
