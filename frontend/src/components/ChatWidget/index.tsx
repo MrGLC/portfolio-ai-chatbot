@@ -74,7 +74,7 @@ const ChatWidget: React.FC = () => {
     <Box
       position="fixed"
       bottom="20px"
-      left="20px"
+      right="20px"
       zIndex={1000}
     >
       <AnimatePresence>
@@ -82,14 +82,14 @@ const ChatWidget: React.FC = () => {
           <MotionBox
             position="absolute"
             bottom="80px"
-            left="0"
+            right="0"
             w="350px"
             h="500px"
-            bg="brand.secondary"
+            bg="brand.surface"
             border="1px solid"
             borderColor="brand.border"
             borderRadius="16px"
-            boxShadow="0 20px 40px rgba(0, 0, 0, 0.3)"
+            boxShadow="0 20px 40px rgba(0, 0, 0, 0.1)"
             initial={{ opacity: 0, scale: 0.8, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.8, y: 20 }}
@@ -102,14 +102,14 @@ const ChatWidget: React.FC = () => {
               p={4}
               borderBottom="1px solid"
               borderColor="brand.border"
-              bg="brand.surface"
+              bg="brand.cream"
               borderTopRadius="16px"
             >
               <Flex align="center" gap={3}>
                 <Box
                   w="32px"
                   h="32px"
-                  bg="linear-gradient(135deg, #00ABE4, #7ACFD6)"
+                  bg="linear-gradient(135deg, #DC143C, #B91C3C)"
                   borderRadius="full"
                   display="flex"
                   alignItems="center"
@@ -123,7 +123,7 @@ const ChatWidget: React.FC = () => {
                   <Text fontSize="sm" fontWeight="600" color="brand.text">
                     Luis's AI Assistant
                   </Text>
-                  <Text fontSize="xs" color="brand.accent">
+                  <Text fontSize="xs" color="brand.secondary">
                     Online
                   </Text>
                 </VStack>
@@ -169,7 +169,7 @@ const ChatWidget: React.FC = () => {
                 >
                   <Box
                     maxW="80%"
-                    bg={message.isUser ? 'brand.accent' : 'brand.surface'}
+                    bg={message.isUser ? 'brand.secondary' : 'brand.cream'}
                     color={message.isUser ? 'white' : 'brand.text'}
                     px={3}
                     py={2}
@@ -189,7 +189,7 @@ const ChatWidget: React.FC = () => {
                   animate={{ opacity: 1 }}
                 >
                   <Box
-                    bg="brand.surface"
+                    bg="brand.cream"
                     px={3}
                     py={2}
                     borderRadius="12px"
@@ -217,15 +217,8 @@ const ChatWidget: React.FC = () => {
                   onKeyPress={handleKeyPress}
                   placeholder="Ask about AI consulting..."
                   size="sm"
-                  bg="brand.surface"
-                  border="1px solid"
-                  borderColor="brand.border"
-                  color="brand.text"
+                  variant="filled"
                   _placeholder={{ color: 'brand.textSecondary' }}
-                  _focus={{
-                    borderColor: 'brand.accent',
-                    boxShadow: 'none',
-                  }}
                 />
                 <Button
                   variant="primary"
@@ -247,7 +240,8 @@ const ChatWidget: React.FC = () => {
         whileTap={{ scale: 0.95 }}
       >
         <IconButton
-          variant="primary"
+          bg="brand.accent"
+          color="brand.text"
           size="lg"
           aria-label="Open chat"
           icon={isOpen ? <CloseIcon /> : <ChatIcon />}
@@ -255,7 +249,11 @@ const ChatWidget: React.FC = () => {
           borderRadius="full"
           w="60px"
           h="60px"
-          boxShadow="0 8px 25px rgba(0, 171, 228, 0.3)"
+          boxShadow="0 8px 25px rgba(255, 215, 0, 0.3)"
+          _hover={{
+            bg: 'brand.accentLight',
+            transform: 'scale(1.1)',
+          }}
         />
       </MotionBox>
     </Box>

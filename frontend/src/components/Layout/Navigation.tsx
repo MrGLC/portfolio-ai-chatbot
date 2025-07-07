@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Flex,
@@ -23,17 +23,26 @@ const MotionBox = motion(Box);
 const MotionButton = motion(Button);
 
 const navItems = [
-  { name: 'Home', path: '/', section: 'AI Solutions' },
+  { name: 'Home', path: '/', section: 'Luxury Solutions' },
+  { name: 'Services', path: '/consulting', section: 'Services' },
+  { name: 'Portfolio', path: '/projects', section: 'Royal Gallery' },
   { name: 'About', path: '/about', section: 'Expertise' },
-  { name: 'Projects', path: '/projects', section: 'Portfolio' },
-  { name: 'Consulting', path: '/consulting', section: 'Services' },
-  { name: 'Contact', path: '/contact', section: 'Let\'s Connect' },
+  { name: 'Contact', path: '/contact', section: 'Royal Connection' },
 ];
 
 export const Navigation: React.FC = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const location = useLocation();
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 100);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const NavLink: React.FC<{ item: typeof navItems[0], isMobile?: boolean }> = ({ 
     item, 
@@ -46,81 +55,52 @@ export const Navigation: React.FC = () => {
         position="relative"
         onMouseEnter={() => setHoveredItem(item.name)}
         onMouseLeave={() => setHoveredItem(null)}
-        whileHover={{ y: -2 }}
-        transition={{ duration: 0.2 }}
       >
         <Button
           as={RouterLink}
           to={item.path}
           variant="ghost"
-          size={isMobile ? 'lg' : 'md'}
-          color={isActive ? 'brand.accent' : 'brand.text'}
-          fontWeight={isActive ? '700' : '500'}
-          fontSize={isMobile ? 'lg' : 'md'}
+          size={isMobile ? 'lg' : 'sm'}
+          color={isActive ? 'brand.accent' : 'brand.cream'}
+          fontWeight={isActive ? '700' : '400'}
+          fontSize={{ base: 'xs', md: 'sm' }}
+          textTransform="uppercase"
+          letterSpacing="0.5px"
+          bg="transparent"
+          px={3}
           _hover={{
             color: 'brand.accent',
-            bg: 'brand.surface',
+            bg: 'transparent',
           }}
-          _active={{ transform: 'translateY(0)' }}
-          borderRadius="8px"
-          px={4}
-          py={2}
+          _after={{
+            content: '""',
+            position: 'absolute',
+            bottom: '-2px',
+            left: 0,
+            width: isActive ? '100%' : '0',
+            height: '2px',
+            bg: 'brand.accent',
+            transition: 'width 0.3s ease',
+          }}
+          _active={{ transform: 'none' }}
         >
           {item.name}
         </Button>
         
-        {/* Active indicator */}
-        {isActive && (
+        {/* Hover effect for non-active items */}
+        {!isActive && (
           <MotionBox
             position="absolute"
-            bottom="-4px"
-            left="50%"
-            width="20px"
+            bottom="-2px"
+            left="0"
+            width="100%"
             height="2px"
             bg="brand.accent"
-            borderRadius="1px"
-            initial={{ x: '-50%', scale: 0 }}
-            animate={{ x: '-50%', scale: 1 }}
+            initial={{ scaleX: 0 }}
+            whileHover={{ scaleX: 1 }}
+            style={{ originX: 0 }}
             transition={{ duration: 0.3 }}
           />
-        )}
-        
-        {/* Hover tooltip */}
-        {hoveredItem === item.name && !isMobile && (
-          <MotionBox
-            position="absolute"
-            top="100%"
-            left="50%"
-            transform="translateX(-50%)"
-            mt={2}
-            px={3}
-            py={1}
-            bg="brand.secondary"
-            color="brand.textSecondary"
-            fontSize="xs"
-            borderRadius="6px"
-            border="1px solid"
-            borderColor="brand.border"
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.2 }}
-            whiteSpace="nowrap"
-          >
-            {item.section}
-            <Box
-              position="absolute"
-              top="-4px"
-              left="50%"
-              width="8px"
-              height="8px"
-              bg="brand.secondary"
-              borderLeft="1px solid"
-              borderTop="1px solid"
-              borderColor="brand.border"
-              transform="translateX(-50%) rotate(45deg)"
-            />
-          </MotionBox>
         )}
       </MotionBox>
     );
@@ -133,65 +113,38 @@ export const Navigation: React.FC = () => {
       left={0}
       right={0}
       zIndex={1000}
-      bg="rgba(13, 14, 14, 0.95)"
+      bg={scrolled ? "rgba(220, 20, 60, 0.95)" : "linear-gradient(to bottom, #DC143C, rgba(220, 20, 60, 0.95))"}
       backdropFilter="blur(10px)"
-      borderBottom="1px solid"
-      borderColor="brand.border"
+      boxShadow={scrolled ? "0 4px 20px rgba(0, 0, 0, 0.1)" : "none"}
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       transition={{ duration: 0.5 }}
+      py={scrolled ? 3 : 4}
     >
-      <Container maxW="7xl">
-        <Flex h="80px" alignItems="center" justifyContent="space-between">
+      <Container maxW="1400px">
+        <Flex h={scrolled ? "50px" : "60px"} alignItems="center" justifyContent="space-between" transition="all 0.3s">
           {/* Logo/Brand */}
           <MotionBox
             whileHover={{ scale: 1.05 }}
             transition={{ duration: 0.2 }}
           >
             <RouterLink to="/">
-              <Flex alignItems="center" gap={3}>
-                <Box
-                  w="32px"
-                  h="32px"
-                  bg="linear-gradient(135deg, #00ABE4, #7ACFD6)"
-                  borderRadius="8px"
-                  display="flex"
-                  alignItems="center"
-                  justifyContent="center"
-                >
-                  <Text
-                    fontSize="lg"
-                    fontWeight="bold"
-                    color="white"
-                    fontFamily="mono"
-                  >
-                    LG
-                  </Text>
-                </Box>
-                <VStack align="start" spacing={0}>
-                  <Text
-                    fontSize="lg"
-                    fontWeight="700"
-                    color="brand.text"
-                    lineHeight="1"
-                  >
-                    Luis Alberto Gomez
-                  </Text>
-                  <Text
-                    fontSize="xs"
-                    color="brand.accent"
-                    fontWeight="500"
-                    lineHeight="1"
-                  >
-                    AI Consulting Excellence
-                  </Text>
-                </VStack>
-              </Flex>
+              <Text
+                fontSize={{ base: "xl", md: "2xl" }}
+                fontWeight="700"
+                color="brand.cream"
+                fontFamily="heading"
+                letterSpacing="0.5px"
+                _hover={{ color: 'brand.accent' }}
+                transition="color 0.3s"
+              >
+                Royal Portfolio
+              </Text>
             </RouterLink>
           </MotionBox>
 
           {/* Desktop Navigation */}
-          <HStack spacing={1} display={{ base: 'none', md: 'flex' }}>
+          <HStack spacing={6} display={{ base: 'none', md: 'flex' }}>
             {navItems.map((item) => (
               <NavLink key={item.name} item={item} />
             ))}
@@ -199,17 +152,15 @@ export const Navigation: React.FC = () => {
 
           {/* CTA Button */}
           <HStack spacing={4}>
-            <MotionButton
+            <Button
               as={RouterLink}
               to="/contact"
               variant="primary"
-              size="md"
+              size="sm"
               display={{ base: 'none', md: 'flex' }}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
             >
-              Schedule Consultation
-            </MotionButton>
+              Get Started
+            </Button>
 
             {/* Mobile Menu Button */}
             <IconButton
@@ -218,8 +169,8 @@ export const Navigation: React.FC = () => {
               variant="ghost"
               aria-label="Open menu"
               icon={<HamburgerIcon />}
-              color="brand.text"
-              _hover={{ bg: 'brand.surface' }}
+              color="brand.cream"
+              _hover={{ bg: 'rgba(255, 255, 255, 0.1)' }}
             />
           </HStack>
         </Flex>
@@ -228,7 +179,7 @@ export const Navigation: React.FC = () => {
       {/* Mobile Menu Drawer */}
       <Drawer isOpen={isOpen} placement="right" onClose={onClose} size="sm">
         <DrawerOverlay />
-        <DrawerContent bg="brand.secondary" borderLeft="1px solid" borderColor="brand.border">
+        <DrawerContent bg="brand.surface" borderLeft="1px solid" borderColor="brand.border">
           <DrawerCloseButton color="brand.text" />
           <DrawerBody pt={16}>
             <VStack spacing={6} align="stretch">
@@ -245,13 +196,13 @@ export const Navigation: React.FC = () => {
                   width="full"
                   onClick={onClose}
                 >
-                  Schedule Consultation
+                  Get Started
                 </Button>
               </Box>
               
               <Box pt={4}>
                 <Text fontSize="sm" color="brand.textSecondary" textAlign="center">
-                  Ready to transform your business with AI?
+                  Where contemporary elegance meets timeless sophistication
                 </Text>
               </Box>
             </VStack>

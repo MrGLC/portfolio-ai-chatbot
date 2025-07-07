@@ -19,40 +19,38 @@ const MotionBox = motion(Box);
 
 const footerLinks = {
   'Services': [
-    { name: 'AI Strategy Consulting', path: '/consulting#strategy' },
-    { name: 'Machine Learning Solutions', path: '/consulting#ml' },
-    { name: 'Computer Vision', path: '/consulting#cv' },
-    { name: 'Natural Language Processing', path: '/consulting#nlp' },
+    { name: 'Royal Strategy', path: '/consulting#strategy' },
+    { name: 'AI Excellence', path: '/consulting#ml' },
+    { name: 'Vision Systems', path: '/consulting#cv' },
+    { name: 'Natural Intelligence', path: '/consulting#nlp' },
   ],
-  'Portfolio': [
-    { name: 'Medical AI Projects', path: '/projects#medical' },
+  'Gallery': [
+    { name: 'Medical Innovations', path: '/projects#medical' },
     { name: 'Business Intelligence', path: '/projects#bi' },
-    { name: 'Automation Solutions', path: '/projects#automation' },
-    { name: 'Research Papers', path: '/projects#research' },
+    { name: 'Automation Luxury', path: '/projects#automation' },
+    { name: 'Research Excellence', path: '/projects#research' },
   ],
   'Resources': [
-    { name: 'AI Assessment Tool', path: '/assessment' },
+    { name: 'Royal Assessment', path: '/assessment' },
     { name: 'Case Studies', path: '/case-studies' },
-    { name: 'Blog', path: '/blog' },
+    { name: 'Royal Blog', path: '/blog' },
     { name: 'Whitepapers', path: '/resources' },
   ],
 };
 
 const socialLinks = [
   { name: 'LinkedIn', url: 'https://linkedin.com/in/placeholder', color: '#0A66C2' },
-  { name: 'GitHub', url: 'https://github.com/placeholder', color: '#F0F0F0' },
+  { name: 'GitHub', url: 'https://github.com/placeholder', color: '#1A1A1A' },
   { name: 'Research Gate', url: 'https://researchgate.net/profile/placeholder', color: '#00D0B6' },
-  { name: 'Email', url: 'mailto:luis@example.com', color: '#00ABE4' },
+  { name: 'Email', url: 'mailto:luis@example.com', color: '#DC143C' },
 ];
 
 export const Footer: React.FC = () => {
   return (
     <MotionBox
       as="footer"
-      bg="brand.secondary"
-      borderTop="1px solid"
-      borderColor="brand.border"
-      mt={20}
+      bg="brand.text"
+      mt={0}
       initial={{ opacity: 0 }}
       whileInView={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
@@ -63,15 +61,21 @@ export const Footer: React.FC = () => {
           {/* Brand Section */}
           <VStack align="start" spacing={4}>
             <Box>
-              <Text fontSize="xl" fontWeight="700" color="brand.text" mb={2}>
-                Luis Alberto Gomez
+              <Text 
+                fontSize="2xl" 
+                fontWeight="700" 
+                color="brand.primary" 
+                mb={2}
+                fontFamily="heading"
+              >
+                Royal Portfolio
               </Text>
               <Text fontSize="sm" color="brand.accent" fontWeight="600" mb={4}>
-                AI Consulting Excellence
+                Luxury AI Solutions
               </Text>
-              <Text fontSize="sm" color="brand.textSecondary" lineHeight="1.6">
-                Transforming businesses through cutting-edge AI solutions, 
-                machine learning implementations, and strategic consulting.
+              <Text fontSize="sm" color="brand.cream" lineHeight="1.6">
+                Where contemporary elegance meets timeless sophistication in 
+                artificial intelligence and strategic consulting.
               </Text>
             </Box>
             
@@ -85,9 +89,9 @@ export const Footer: React.FC = () => {
                   variant="ghost"
                   size="sm"
                   aria-label={social.name}
-                  color="brand.textSecondary"
+                  color="brand.cream"
                   _hover={{
-                    color: social.color,
+                    color: 'brand.accent',
                     transform: 'translateY(-2px)',
                   }}
                   transition="all 0.2s"
@@ -100,7 +104,7 @@ export const Footer: React.FC = () => {
           {/* Footer Links */}
           {Object.entries(footerLinks).map(([category, links]) => (
             <VStack key={category} align="start" spacing={3}>
-              <Text fontSize="sm" fontWeight="600" color="brand.text" mb={2}>
+              <Text fontSize="sm" fontWeight="600" color="brand.primary" mb={2}>
                 {category}
               </Text>
               {links.map((link) => (
@@ -109,7 +113,7 @@ export const Footer: React.FC = () => {
                   as={RouterLink}
                   to={link.path}
                   fontSize="sm"
-                  color="brand.textSecondary"
+                  color="brand.cream"
                   _hover={{
                     color: 'brand.accent',
                     textDecoration: 'none',
@@ -123,7 +127,7 @@ export const Footer: React.FC = () => {
           ))}
         </SimpleGrid>
 
-        <Divider borderColor="brand.border" mb={8} />
+        <Divider borderColor="brand.border" opacity={0.2} mb={8} />
 
         <Flex
           direction={{ base: 'column', md: 'row' }}
@@ -131,15 +135,15 @@ export const Footer: React.FC = () => {
           align="center"
           gap={4}
         >
-          <Text fontSize="sm" color="brand.textSecondary">
-            © 2024 Luis Alberto Gomez Celaya. All rights reserved.
+          <Text fontSize="sm" color="brand.cream" opacity={0.8}>
+            © 2024 Royal Portfolio. Crafted with regal excellence.
           </Text>
           
           <HStack spacing={6} fontSize="sm">
             <Link
               as={RouterLink}
               to="/privacy"
-              color="brand.textSecondary"
+              color="brand.cream"
               _hover={{ color: 'brand.accent' }}
             >
               Privacy Policy
@@ -147,14 +151,18 @@ export const Footer: React.FC = () => {
             <Link
               as={RouterLink}
               to="/terms"
-              color="brand.textSecondary"
+              color="brand.cream"
               _hover={{ color: 'brand.accent' }}
             >
               Terms of Service
             </Link>
-            <Text color="brand.textSecondary">
-              Built with ⚡ React & AI
-            </Text>
+            <Link
+              href="#"
+              color="brand.accent"
+              _hover={{ color: 'brand.accentLight' }}
+            >
+              regal excellence
+            </Link>
           </HStack>
         </Flex>
       </Container>

@@ -1,40 +1,47 @@
 import { extendTheme, type ThemeConfig } from '@chakra-ui/react';
 
-// Deep Neural Network Palette
+// Royal Portfolio Palette - Luxury Red/Cream/Gold Theme
 const colors = {
   brand: {
-    primary: '#0D0E0E',      // Tech Black
-    secondary: '#1A1A1A',    // Charcoal
-    accent: '#00ABE4',       // Bright Blue
-    accentCyan: '#7ACFD6',   // Cyan Blue
-    text: '#F0F0F0',         // Off-White
-    textSecondary: '#B3B3B3', // Muted White
-    surface: '#2A2A2A',      // Surface Dark
-    border: '#3A3A3A',       // Border Dark
+    primary: '#FBF7F0',       // Cream Light (main background - 60%)
+    secondary: '#DC143C',     // Royal Red (secondary surfaces - 30%)
+    accent: '#FFD700',        // Golden Yellow (accent elements - 10%)
+    accentLight: '#FFED4E',   // Golden Yellow Light
+    text: '#1A1A1A',          // Dark Charcoal (main text)
+    textSecondary: '#666666', // Gray (secondary text)
+    surface: '#FFFFFF',       // White (cards/modals)
+    border: '#E8D4B8',        // Cream Dark (borders)
+    
+    // Additional shades for depth
+    redDark: '#B91C3C',       // Royal Red Dark
+    redDarker: '#8B0020',     // Royal Red Darker
+    redLight: '#E85D75',      // Royal Red Light
+    cream: '#F5E6D3',         // Regular Cream
+    creamDark: '#E8D4B8',     // Cream Dark
   },
   gray: {
-    50: '#F0F0F0',
-    100: '#E0E0E0',
-    200: '#C2C2C2',
-    300: '#A3A3A3',
-    400: '#858585',
-    500: '#666666',
-    600: '#4A4A4A',
-    700: '#3A3A3A',
-    800: '#2A2A2A',
-    900: '#1A1A1A',
+    50: '#FAFAFA',
+    100: '#F5F5F5',
+    200: '#E5E5E5',
+    300: '#D4D4D4',
+    400: '#A3A3A3',
+    500: '#737373',
+    600: '#525252',
+    700: '#404040',
+    800: '#262626',
+    900: '#171717',
   }
 };
 
 const config: ThemeConfig = {
-  initialColorMode: 'dark',
+  initialColorMode: 'light',
   useSystemColorMode: false,
 };
 
 const fonts = {
-  heading: 'Inter Display, -apple-system, BlinkMacSystemFont, sans-serif',
-  body: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
-  mono: 'IBM Plex Mono, Menlo, Monaco, Consolas, monospace',
+  heading: "'Playfair Display', Georgia, serif",
+  body: "'Inter', -apple-system, BlinkMacSystemFont, sans-serif",
+  mono: "'IBM Plex Mono', Menlo, Monaco, Consolas, monospace",
 };
 
 const styles = {
@@ -50,68 +57,143 @@ const styles = {
     '*, *::before, *::after': {
       borderColor: 'brand.border',
     },
+    // Add custom scrollbar styling
+    '::-webkit-scrollbar': {
+      width: '8px',
+      height: '8px',
+    },
+    '::-webkit-scrollbar-track': {
+      bg: 'brand.cream',
+    },
+    '::-webkit-scrollbar-thumb': {
+      bg: 'brand.secondary',
+      borderRadius: '4px',
+      _hover: {
+        bg: 'brand.redDark',
+      },
+    },
+    '::selection': {
+      bg: 'brand.redLight',
+      color: 'white',
+    },
   }),
 };
 
 const components = {
   Button: {
     baseStyle: {
-      fontWeight: '600',
-      borderRadius: '8px',
+      fontWeight: '500',
+      borderRadius: '6px',
+      textTransform: 'none',
+      letterSpacing: '0.02em',
+      fontSize: 'md',
+      transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+      _focus: {
+        boxShadow: 'none',
+      },
     },
     variants: {
       primary: {
         bg: 'brand.accent',
-        color: 'white',
+        color: 'brand.text',
+        boxShadow: '0 2px 4px rgba(0, 0, 0, 0.05)',
         _hover: {
-          bg: '#0096CC',
-          transform: 'translateY(-2px)',
-          boxShadow: '0 10px 25px rgba(0, 171, 228, 0.3)',
+          bg: 'brand.accentLight',
+          transform: 'translateY(-1px)',
+          boxShadow: '0 4px 12px rgba(255, 215, 0, 0.25)',
         },
         _active: {
           transform: 'translateY(0)',
+          boxShadow: '0 2px 4px rgba(0, 0, 0, 0.05)',
         },
-        transition: 'all 0.2s',
       },
       secondary: {
-        bg: 'brand.accentCyan',
-        color: 'brand.primary',
+        bg: 'brand.secondary',
+        color: 'white',
+        boxShadow: '0 2px 4px rgba(0, 0, 0, 0.05)',
         _hover: {
-          bg: '#6BB8C4',
-          transform: 'translateY(-2px)',
-          boxShadow: '0 10px 25px rgba(122, 207, 214, 0.3)',
+          bg: 'brand.redDark',
+          transform: 'translateY(-1px)',
+          boxShadow: '0 4px 12px rgba(220, 20, 60, 0.25)',
+        },
+        _active: {
+          transform: 'translateY(0)',
+          boxShadow: '0 2px 4px rgba(0, 0, 0, 0.05)',
+        },
+      },
+      outline: {
+        bg: 'transparent',
+        color: 'brand.secondary',
+        border: '2px solid',
+        borderColor: 'brand.secondary',
+        _hover: {
+          bg: 'brand.secondary',
+          color: 'white',
+          transform: 'translateY(-1px)',
+          boxShadow: '0 4px 12px rgba(220, 20, 60, 0.25)',
         },
         _active: {
           transform: 'translateY(0)',
         },
-        transition: 'all 0.2s',
       },
       ghost: {
         bg: 'transparent',
         color: 'brand.text',
-        border: '1px solid',
-        borderColor: 'brand.border',
         _hover: {
-          bg: 'brand.surface',
-          borderColor: 'brand.accent',
+          bg: 'brand.cream',
+        },
+        _active: {
+          bg: 'brand.creamDark',
         },
       },
+      link: {
+        bg: 'transparent',
+        color: 'brand.secondary',
+        textDecoration: 'none',
+        fontWeight: '400',
+        _hover: {
+          color: 'brand.redDark',
+          textDecoration: 'none',
+        },
+      },
+    },
+    sizes: {
+      sm: {
+        fontSize: 'sm',
+        px: 4,
+        py: 2,
+        h: 'auto',
+      },
+      md: {
+        fontSize: 'md',
+        px: 6,
+        py: 3,
+        h: 'auto',
+      },
+      lg: {
+        fontSize: 'lg',
+        px: 8,
+        py: 4,
+        h: 'auto',
+      },
+    },
+    defaultProps: {
+      variant: 'primary',
+      size: 'md',
     },
   },
   Card: {
     baseStyle: {
       container: {
-        bg: 'brand.secondary',
-        border: '1px solid',
-        borderColor: 'brand.border',
+        bg: 'brand.surface',
         borderRadius: '12px',
-        backdropFilter: 'blur(10px)',
+        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.04)',
+        overflow: 'hidden',
+        transition: 'all 0.2s ease',
         _hover: {
-          borderColor: 'brand.accent',
           transform: 'translateY(-4px)',
-          boxShadow: '0 20px 40px rgba(0, 0, 0, 0.3)',
+          boxShadow: '0 8px 24px rgba(0, 0, 0, 0.08)',
         },
-        transition: 'all 0.3s ease',
       },
     },
   },
@@ -124,8 +206,16 @@ const components = {
         color: 'brand.textSecondary',
       },
       accent: {
-        color: 'brand.accent',
+        color: 'brand.secondary',
         fontWeight: '600',
+      },
+      luxury: {
+        fontFamily: 'heading',
+        fontSize: 'sm',
+        fontWeight: '300',
+        letterSpacing: '2px',
+        textTransform: 'uppercase',
+        color: 'brand.secondary',
       },
     },
   },
@@ -133,6 +223,8 @@ const components = {
     baseStyle: {
       color: 'brand.text',
       fontWeight: '700',
+      fontFamily: 'heading',
+      letterSpacing: '-0.02em',
     },
     sizes: {
       '4xl': {
@@ -146,6 +238,77 @@ const components = {
       '2xl': {
         fontSize: ['24px', '28px', '32px'],
         lineHeight: '1.3',
+      },
+    },
+  },
+  Link: {
+    baseStyle: {
+      color: 'brand.secondary',
+      _hover: {
+        color: 'brand.accent',
+        textDecoration: 'none',
+      },
+      transition: 'color 0.3s ease',
+    },
+  },
+  Input: {
+    variants: {
+      filled: {
+        field: {
+          bg: 'brand.cream',
+          borderRadius: '8px',
+          _hover: {
+            bg: 'brand.cream',
+          },
+          _focus: {
+            bg: 'white',
+            borderColor: 'brand.secondary',
+            boxShadow: '0 0 0 1px var(--chakra-colors-brand-secondary)',
+          },
+        },
+      },
+      outline: {
+        field: {
+          borderColor: 'brand.border',
+          _hover: {
+            borderColor: 'brand.secondary',
+          },
+          _focus: {
+            borderColor: 'brand.secondary',
+            boxShadow: '0 0 0 1px var(--chakra-colors-brand-secondary)',
+          },
+        },
+      },
+    },
+    defaultProps: {
+      variant: 'filled',
+    },
+  },
+  Textarea: {
+    variants: {
+      filled: {
+        bg: 'brand.cream',
+        borderRadius: '8px',
+        _hover: {
+          bg: 'brand.cream',
+        },
+        _focus: {
+          bg: 'white',
+          borderColor: 'brand.secondary',
+          boxShadow: '0 0 0 1px var(--chakra-colors-brand-secondary)',
+        },
+      },
+    },
+    defaultProps: {
+      variant: 'filled',
+    },
+  },
+  IconButton: {
+    baseStyle: {
+      borderRadius: '8px',
+      transition: 'all 0.2s ease',
+      _focus: {
+        boxShadow: 'none',
       },
     },
   },
