@@ -49,26 +49,22 @@ export const HomePage: React.FC = () => {
       {/* Hero Section - Full Screen */}
       <MotionBox
         minH="85vh"
-        bg="brand.secondary"
+        bg="transparent"
         position="relative"
         overflow="hidden"
         initial="initial"
         animate="animate"
         variants={staggerAnimation.parent}
       >
-        {/* 3D Animated Background */}
-        <AnimatedBackground intensity={0.7} />
-        
-        {/* Background gradient overlay for hero */}
+        {/* Background overlay for hero - semi-transparent red */}
         <Box
           position="absolute"
           top={0}
           left={0}
           right={0}
           bottom={0}
-          bgGradient="radial-gradient(circle at 30% 50%, rgba(232, 93, 117, 0.3), transparent 40%), 
-                      radial-gradient(circle at 70% 80%, rgba(185, 28, 60, 0.3), transparent 50%)"
-          opacity={0.3}
+          bg="rgba(220, 20, 60, 0.65)"
+          bgGradient="linear-gradient(to bottom, rgba(220, 20, 60, 0.75), rgba(220, 20, 60, 0.55))"
           pointerEvents="none"
         />
         
@@ -175,7 +171,7 @@ export const HomePage: React.FC = () => {
           left={0}
           right={0}
           height="100px"
-          bg="brand.secondary"
+          bg="brand.primary"
           transform="skewY(-2deg)"
         />
         
@@ -314,13 +310,21 @@ export const HomePage: React.FC = () => {
 
       {/* Portfolio Preview Section - Red background showing 3D animation */}
       <Box 
-        bg="brand.secondary" 
+        bg="transparent" 
         py={{ base: 20, md: 32 }}
         position="relative"
         overflow="hidden"
       >
-        {/* 3D Animated Background */}
-        <AnimatedBackground intensity={0.7} />
+        {/* Semi-transparent red overlay */}
+        <Box
+          position="absolute"
+          top={0}
+          left={0}
+          right={0}
+          bottom={0}
+          bg="rgba(220, 20, 60, 0.85)"
+          pointerEvents="none"
+        />
         <Container maxW="1400px" position="relative" zIndex={1}>
           <VStack spacing={16}>
             {/* Section Header */}

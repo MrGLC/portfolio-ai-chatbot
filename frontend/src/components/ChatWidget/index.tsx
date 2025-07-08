@@ -16,7 +16,8 @@ import { useTranslation } from 'react-i18next';
 import { variants, durations, easings } from '../../theme/animations';
 
 const MotionBox = motion(Box);
-const MotionFlex = motion(Flex);
+// Use motion.div instead of motion(Flex) to avoid complex type issues
+const MotionFlex = motion.div;
 
 interface Message {
   id: string;
@@ -165,7 +166,10 @@ const ChatWidget: React.FC = () => {
               {messages.map((message) => (
                 <MotionFlex
                   key={message.id}
-                  justify={message.isUser ? 'flex-end' : 'flex-start'}
+                  style={{
+                    display: 'flex',
+                    justifyContent: message.isUser ? 'flex-end' : 'flex-start'
+                  }}
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: durations.fast, ease: easings.smooth }}
@@ -187,7 +191,10 @@ const ChatWidget: React.FC = () => {
               
               {isTyping && (
                 <MotionFlex
-                  justify="flex-start"
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'flex-start'
+                  }}
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ duration: durations.fast, ease: easings.smooth }}
