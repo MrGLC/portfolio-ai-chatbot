@@ -30,7 +30,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { durations, easings, delays, variants, transitions, createHoverAnimation } from '../theme/animations';
 
-const MotionCard = motion(Card);
+const MotionCard = motion.div;
 const MotionBox = motion(Box);
 
 interface Project {
@@ -253,28 +253,30 @@ export const ProjectsPage: React.FC = () => {
                 {filteredProjects.map((project, index) => (
                   <MotionCard
                     key={project.id}
-                    bg="white"
-                    overflow="hidden"
-                    borderRadius="xl"
-                    boxShadow="lg"
-                    cursor="pointer"
-                    onClick={() => handleProjectClick(project)}
                     initial={{ opacity: 0, y: 30 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: index * delays.staggerNormal, duration: durations.normal, ease: easings.smooth }}
-                    _hover={{
-                      transform: 'translateY(-8px) scale(1.02)',
-                      boxShadow: '2xl',
-                    }}
-                    position="relative"
-                    style={{ transition: transitions.normal }}
+                    style={{ cursor: 'pointer' }}
                   >
-                    {/* Gradient Placeholder Image */}
-                    <Box
-                      h="200px"
-                      bgGradient={project.gradient}
+                    <Card
+                      bg="white"
+                      overflow="hidden"
+                      borderRadius="xl"
+                      boxShadow="lg"
+                      onClick={() => handleProjectClick(project)}
+                      _hover={{
+                        transform: 'translateY(-8px) scale(1.02)',
+                        boxShadow: '2xl',
+                      }}
                       position="relative"
+                      transition={transitions.normal}
                     >
+                      {/* Gradient Placeholder Image */}
+                      <Box
+                        h="200px"
+                        bgGradient={project.gradient}
+                        position="relative"
+                      >
                       <Box
                         position="absolute"
                         inset={0}
@@ -355,6 +357,7 @@ export const ProjectsPage: React.FC = () => {
                         </Button>
                       </VStack>
                     </CardBody>
+                    </Card>
                   </MotionCard>
                 ))}
               </SimpleGrid>

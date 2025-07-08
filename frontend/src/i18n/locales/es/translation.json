@@ -81,6 +81,25 @@
       "title": "¿Listo para Transformar tu Negocio?",
       "description": "Creemos algo extraordinario juntos. Disponible para comenzar de inmediato con entrega de MVP en 2 semanas.",
       "button": "Comienza tu Proyecto"
+    },
+    "chatbot": {
+      "title": "ASISTENTE IA",
+      "heading": "Pregúntame lo que quieras",
+      "description": "Obtén respuestas instantáneas sobre mi trabajo, experiencia y cómo puedo ayudarte con tu proyecto",
+      "chatTitle": "Chatea con Luis IA",
+      "poweredBy": "Impulsado por La Realeza AI",
+      "responseTime": "Tiempo de respuesta promedio: 2s",
+      "placeholder": "Pregúntame sobre el trabajo de Luis...",
+      "welcomeMessage": "¡Hola! 👋 Soy el asistente de IA de Luis. Puedo contarte sobre su experiencia, proyectos, habilidades y cómo puede ayudarte con tu próximo proyecto. ¿Qué te gustaría saber?",
+      "popularQuestions": "Preguntas populares:",
+      "sampleQuestions": {
+        "skills": "¿Cuáles son las principales habilidades de Luis?",
+        "projects": "Muéstrame proyectos recientes",
+        "experience": "¿Experiencia con IA/ML?",
+        "availability": "¿Disponible para freelance?"
+      },
+      "enterToSend": "Presiona Enter para enviar",
+      "readyToHelp": "Listo para ayudar"
     }
   },
   "about": {

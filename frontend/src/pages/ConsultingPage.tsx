@@ -38,8 +38,8 @@ import {
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 
-const MotionCard = motion(Card);
-const MotionBox = motion(Box);
+const MotionCard = motion.div;
+const MotionBox = motion.div;
 
 export const ConsultingPage: React.FC = () => {
   const { t } = useTranslation();
@@ -173,20 +173,22 @@ export const ConsultingPage: React.FC = () => {
               {services.map((service, index) => (
                 <MotionCard
                   key={index}
-                  bg="white"
-                  borderRadius="16px"
-                  boxShadow="0 4px 20px rgba(0, 0, 0, 0.08)"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.1 }}
-                  _hover={{
-                    transform: 'translateY(-8px)',
+                  style={{
+                    backgroundColor: 'white',
+                    borderRadius: '16px',
+                    boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)',
+                    overflow: 'hidden',
+                    transition: 'all 0.3s ease'
+                  }}
+                  whileHover={{
+                    y: -8,
                     boxShadow: '0 12px 40px rgba(0, 0, 0, 0.15)',
                   }}
-                  transitionDuration="0.3s"
-                  overflow="hidden"
                 >
-                  <CardBody p={6}>
+                  <Box p={6}>
                     <VStack align="stretch" spacing={4}>
                       <Box
                         w="60px"
@@ -227,7 +229,7 @@ export const ConsultingPage: React.FC = () => {
                         {t('consulting.learnMoreButton')}
                       </Button>
                     </VStack>
-                  </CardBody>
+                  </Box>
                 </MotionCard>
               ))}
             </SimpleGrid>

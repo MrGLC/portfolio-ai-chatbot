@@ -81,6 +81,25 @@
       "title": "Ready to Transform Your Business?",
       "description": "Let's create something extraordinary together. Available for immediate start with 2-week MVP delivery.",
       "button": "Start Your Project"
+    },
+    "chatbot": {
+      "title": "AI ASSISTANT",
+      "heading": "Ask Me Anything",
+      "description": "Get instant answers about my work, experience, and how I can help your project",
+      "chatTitle": "Chat with Luis AI",
+      "poweredBy": "Powered by Royal AI",
+      "responseTime": "Average response time: 2s",
+      "placeholder": "Ask me anything about Luis's work...",
+      "welcomeMessage": "Hi there! 👋 I'm Luis's AI assistant. I can tell you about his experience, projects, skills, and how he can help with your next project. What would you like to know?",
+      "popularQuestions": "Popular questions:",
+      "sampleQuestions": {
+        "skills": "What are Luis's main skills?",
+        "projects": "Show me recent projects",
+        "experience": "Experience with AI/ML?",
+        "availability": "Available for freelance?"
+      },
+      "enterToSend": "Press Enter to send",
+      "readyToHelp": "Ready to help"
     }
   },
   "about": {
