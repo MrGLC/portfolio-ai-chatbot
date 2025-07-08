@@ -4,6 +4,7 @@ import { Navigation } from './Navigation';
 import { Footer } from './Footer';
 import { ScrollToTop } from './ScrollToTop';
 import ChatWidget from '../ChatWidget';
+import { AnimatedBackground } from '../ThreeBackground';
 
 interface LayoutProps {
   children: React.ReactNode;

@@ -12,21 +12,23 @@ function AnimatedShape({ position, color, size = 1, speed = 1 }: any) {
     if (meshRef.current) {
       meshRef.current.rotation.x += 0.01 * speed;
       meshRef.current.rotation.y += 0.01 * speed;
-      meshRef.current.position.y = position[1] + Math.sin(state.clock.elapsedTime * speed) * 0.3;
+      meshRef.current.position.y = position[1] + Math.sin(state.clock.elapsedTime * speed) * 0.5;
     }
   });
 
   return (
-    <Float speed={speed} rotationIntensity={0.5} floatIntensity={0.5}>
+    <Float speed={speed} rotationIntensity={0.8} floatIntensity={0.8}>
       <mesh ref={meshRef} position={position}>
         <octahedronGeometry args={[size, 0]} />
         <MeshDistortMaterial
           color={color}
           attach="material"
-          distort={0.3}
+          distort={0.4}
           speed={2}
           roughness={0.1}
           metalness={0.8}
+          opacity={0.9}
+          transparent
         />
       </mesh>
     </Float>
@@ -35,7 +37,7 @@ function AnimatedShape({ position, color, size = 1, speed = 1 }: any) {
 
 // Particle field component
 function ParticleField() {
-  const count = 500;
+  const count = 800;
   const mesh = useRef<THREE.Points>(null);
   
   const [positions, colors] = useMemo(() => {
@@ -43,9 +45,9 @@ function ParticleField() {
     const colors = new Float32Array(count * 3);
     
     for (let i = 0; i < count; i++) {
-      positions[i * 3] = (Math.random() - 0.5) * 10;
-      positions[i * 3 + 1] = (Math.random() - 0.5) * 10;
-      positions[i * 3 + 2] = (Math.random() - 0.5) * 10;
+      positions[i * 3] = (Math.random() - 0.5) * 20;
+      positions[i * 3 + 1] = (Math.random() - 0.5) * 20;
+      positions[i * 3 + 2] = (Math.random() - 0.5) * 20;
       
       // Royal red to gold gradient colors
       const t = Math.random();
@@ -59,8 +61,8 @@ function ParticleField() {
   
   useFrame((state) => {
     if (mesh.current) {
-      mesh.current.rotation.y = state.clock.elapsedTime * 0.05;
-      mesh.current.rotation.x = state.clock.elapsedTime * 0.03;
+      mesh.current.rotation.y = state.clock.elapsedTime * 0.02;
+      mesh.current.rotation.x = state.clock.elapsedTime * 0.01;
     }
   });
   
@@ -80,7 +82,7 @@ function ParticleField() {
           itemSize={3}
         />
       </bufferGeometry>
-      <pointsMaterial size={0.03} vertexColors sizeAttenuation={false} opacity={0.6} transparent />
+      <pointsMaterial size={0.04} vertexColors sizeAttenuation={false} opacity={0.5} transparent />
     </points>
   );
 }
@@ -138,7 +140,12 @@ function MouseLight() {
 }
 
 // Main 3D scene component
-export const AnimatedBackground: React.FC<{ intensity?: number }> = ({ intensity = 1 }) => {
+export const AnimatedBackground: React.FC<{ intensity?: number; variant?: 'dark' | 'light' }> = ({ 
+  intensity = 1,
+  variant = 'dark' 
+}) => {
+  const isDark = variant === 'dark';
+  
   return (
     <Box
       position="absolute"
@@ -151,24 +158,27 @@ export const AnimatedBackground: React.FC<{ intensity?: number }> = ({ intensity
       pointerEvents="none"
     >
       <Canvas
-        camera={{ position: [0, 0, 5], fov: 75 }}
+        camera={{ position: [0, 0, 8], fov: 75 }}
         gl={{ 
           antialias: true,
           alpha: true,
           powerPreference: "high-performance"
         }}
       >
-        <fog attach="fog" args={['#0D0E0E', 5, 15]} />
-        <ambientLight intensity={0.3} />
-        <directionalLight position={[10, 10, 5]} intensity={0.5} />
+        <fog attach="fog" args={[isDark ? '#0D0E0E' : '#FFFFFF', 8, 25]} />
+        <ambientLight intensity={isDark ? 0.3 : 0.5} />
+        <directionalLight position={[10, 10, 5]} intensity={isDark ? 0.5 : 0.7} />
         <MouseLight />
         
-        {/* Floating geometric shapes */}
-        <AnimatedShape position={[-2, 1, 0]} color="#DC143C" size={0.4} speed={1} />
-        <AnimatedShape position={[2, -1, 0]} color="#FFD700" size={0.3} speed={0.8} />
-        <AnimatedShape position={[0, 0, -2]} color="#B91C3C" size={0.5} speed={1.2} />
-        <AnimatedShape position={[-1.5, -0.5, 1]} color="#FFED4E" size={0.35} speed={0.9} />
-        <AnimatedShape position={[1.5, 0.5, -1]} color="#E85D75" size={0.25} speed={1.1} />
+        {/* Floating geometric shapes - more and bigger */}
+        <AnimatedShape position={[-4, 2, 0]} color={isDark ? "#DC143C" : "#FFB6C1"} size={0.6} speed={1} />
+        <AnimatedShape position={[4, -2, 0]} color={isDark ? "#FFD700" : "#FFA500"} size={0.5} speed={0.8} />
+        <AnimatedShape position={[0, 0, -3]} color={isDark ? "#B91C3C" : "#FF69B4"} size={0.8} speed={1.2} />
+        <AnimatedShape position={[-3, -1, 2]} color={isDark ? "#FFED4E" : "#FFD700"} size={0.5} speed={0.9} />
+        <AnimatedShape position={[3, 1, -2]} color={isDark ? "#E85D75" : "#FF1493"} size={0.4} speed={1.1} />
+        <AnimatedShape position={[-2, 3, 1]} color={isDark ? "#DC143C" : "#FFB6C1"} size={0.7} speed={0.7} />
+        <AnimatedShape position={[2, -3, -1]} color={isDark ? "#FFD700" : "#FFA500"} size={0.6} speed={1.3} />
+        <AnimatedShape position={[0, 2, 2]} color={isDark ? "#E85D75" : "#FF69B4"} size={0.5} speed={0.85} />
         
         {/* Particle field */}
         <ParticleField />
@@ -179,6 +189,7 @@ export const AnimatedBackground: React.FC<{ intensity?: number }> = ({ intensity
         <OrbitControls
           enableZoom={false}
           enablePan={false}
+          enableRotate={false}
           maxPolarAngle={Math.PI / 2}
           minPolarAngle={Math.PI / 3}
         />

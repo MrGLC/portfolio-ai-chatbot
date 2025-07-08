@@ -29,7 +29,7 @@ import {
   ArrowForwardIcon
 } from '@chakra-ui/icons';
 import { variants, durations, easings, delays, springs, createStaggerAnimation } from '../theme/animations';
-import { AnimatedBackground, FlowingRibbons, GeometricPattern } from '../components/ThreeBackground';
+import { AnimatedBackground, LightPattern } from '../components/ThreeBackground';
 
 const MotionBox = motion(Box);
 const MotionCard = motion.div;
@@ -59,41 +59,17 @@ export const HomePage: React.FC = () => {
         {/* 3D Animated Background */}
         <AnimatedBackground intensity={0.7} />
         
-        {/* Background gradient overlay */}
+        {/* Background gradient overlay for hero */}
         <Box
           position="absolute"
           top={0}
           left={0}
           right={0}
           bottom={0}
-          bgGradient="radial-gradient(circle at 30% 50%, rgba(232, 93, 117, 0.2), transparent 40%), 
-                      radial-gradient(circle at 70% 80%, rgba(185, 28, 60, 0.2), transparent 50%)"
+          bgGradient="radial-gradient(circle at 30% 50%, rgba(232, 93, 117, 0.3), transparent 40%), 
+                      radial-gradient(circle at 70% 80%, rgba(185, 28, 60, 0.3), transparent 50%)"
           opacity={0.3}
           pointerEvents="none"
-        />
-        
-        {/* Animated background shapes */}
-        <Box
-          position="absolute"
-          top="-50%"
-          right="-20%"
-          width="80%"
-          height="80%"
-          borderRadius="50%"
-          bg="radial-gradient(circle, rgba(255, 215, 0, 0.1), transparent)"
-          filter="blur(40px)"
-          animation="float 25s cubic-bezier(0.4, 0, 0.2, 1) infinite"
-        />
-        <Box
-          position="absolute"
-          bottom="-30%"
-          left="-20%"
-          width="60%"
-          height="60%"
-          borderRadius="50%"
-          bg="radial-gradient(circle, rgba(220, 20, 60, 0.1), transparent)"
-          filter="blur(40px)"
-          animation="float 20s cubic-bezier(0.4, 0, 0.2, 1) infinite reverse"
         />
         
         <Container maxW="1400px" position="relative" zIndex={1} h="85vh">
@@ -183,12 +159,15 @@ export const HomePage: React.FC = () => {
         </Container>
       </MotionBox>
 
-      {/* Services Section */}
+      {/* Services Section - White background with pattern */}
       <Box 
         bg="brand.primary" 
         position="relative"
         overflow="hidden"
       >
+        {/* Light pattern background for white section */}
+        <LightPattern intensity={0.5} />
+        
         {/* Diagonal shape transition */}
         <Box
           position="absolute"
@@ -333,9 +312,16 @@ export const HomePage: React.FC = () => {
         </Container>
       </Box>
 
-      {/* Portfolio Preview Section */}
-      <Box bg="brand.secondary" py={{ base: 20, md: 32 }}>
-        <Container maxW="1400px">
+      {/* Portfolio Preview Section - Red background showing 3D animation */}
+      <Box 
+        bg="brand.secondary" 
+        py={{ base: 20, md: 32 }}
+        position="relative"
+        overflow="hidden"
+      >
+        {/* 3D Animated Background */}
+        <AnimatedBackground intensity={0.7} />
+        <Container maxW="1400px" position="relative" zIndex={1}>
           <VStack spacing={16}>
             {/* Section Header */}
             <VStack spacing={4} textAlign="center">
@@ -417,13 +403,16 @@ export const HomePage: React.FC = () => {
         </Container>
       </Box>
 
-      {/* Contact CTA Section */}
+      {/* Contact CTA Section - White background with pattern */}
       <Box 
         bg="brand.primary" 
         py={{ base: 20, md: 32 }}
         position="relative"
         overflow="hidden"
       >
+        {/* Light pattern background for white section */}
+        <LightPattern intensity={0.3} />
+        
         {/* Background decoration */}
         <Box
           position="absolute"
@@ -432,7 +421,7 @@ export const HomePage: React.FC = () => {
           width="100%"
           height="100%"
           borderRadius="50%"
-          bg="radial-gradient(circle, rgba(255, 215, 0, 0.05), transparent)"
+          bg="radial-gradient(circle, rgba(255, 215, 0, 0.1), transparent)"
         />
         
         <Container maxW="4xl" textAlign="center" position="relative">
