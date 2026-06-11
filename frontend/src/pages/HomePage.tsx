@@ -33,7 +33,9 @@ import { variants, durations, easings, delays, springs, createStaggerAnimation }
 const LightPattern = lazy(() =>
   import('../components/ThreeBackground/LightPattern').then((m) => ({ default: m.LightPattern }))
 );
-import { ThreeJsChatbot } from '../components/Chatbot/ThreeJsChatbot';
+const ThreeJsChatbot = lazy(() =>
+  import('../components/Chatbot/ThreeJsChatbot').then((m) => ({ default: m.ThreeJsChatbot }))
+);
 
 const MotionBox = motion.create(Box);
 const MotionCard = motion.div;
@@ -408,7 +410,9 @@ export const HomePage: React.FC = () => {
               </VStack>
 
               {/* Three.js Chatbot Component */}
-              <ThreeJsChatbot />
+              <Suspense fallback={null}>
+                <ThreeJsChatbot />
+              </Suspense>
             </VStack>
           </MotionBox>
         </Container>
