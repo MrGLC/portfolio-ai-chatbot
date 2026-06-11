@@ -145,9 +145,9 @@ export const ContactPage: React.FC = () => {
               <Text fontSize="xl" color="whiteAlpha.900" maxW="800px" mx="auto" mb={6}>
                 {t('contact.hero.description')}
               </Text>
-              <HStack spacing={4} justify="center">
-                <Badge 
-                  bg="brand.accent" 
+              <HStack spacing={4} justify="center" flexWrap="wrap" rowGap={2}>
+                <Badge
+                  bg="brand.accent"
                   color="brand.text" 
                   px={4} 
                   py={2} 
