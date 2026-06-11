@@ -188,7 +188,7 @@ export const ContactPage: React.FC = () => {
                   <CardBody p={8}>
                     <VStack spacing={6} align="stretch">
                       <Box>
-                        <Heading textStyle="sectionTitle" color="brand.text" mb={2}>
+                        <Heading textStyle="cardTitle" as="h2" color="brand.text" mb={2}>
                           {t('contact.form.title')}
                         </Heading>
                         <Text color="brand.textSecondary">
@@ -332,7 +332,7 @@ export const ContactPage: React.FC = () => {
                 <VStack spacing={6} align="stretch">
                   {/* Quick Contact Info */}
                   <Box>
-                    <Heading textStyle="sectionTitle" mb={4}>{t('contact.info.title')}</Heading>
+                    <Heading textStyle="cardTitle" as="h2" mb={4}>{t('contact.info.title')}</Heading>
                     <VStack spacing={4} align="stretch">
                       {contactMethods.map((method, index) => (
                         <MotionCard
