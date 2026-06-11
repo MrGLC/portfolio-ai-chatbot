@@ -124,7 +124,9 @@ export const HomePage: React.FC = () => {
           zIndex={1}
         />
         
-        <Container maxW="1400px" position="relative" zIndex={2} h="100vh">
+        {/* pointerEvents none on the full-height wrapper so touches in the gem's
+            area fall through to the canvas; the text/CTA stack re-enables them */}
+        <Container maxW="1400px" position="relative" zIndex={2} h="100vh" pointerEvents="none">
           <Flex
             h="100%"
             align="flex-start"
@@ -139,6 +141,8 @@ export const HomePage: React.FC = () => {
               align={{ base: "center", lg: "flex-start" }}
               textAlign={{ base: "center", lg: "left" }}
               flex={1}
+              pointerEvents="auto"
+              h="fit-content"
             >
               {/* Enhanced luxury subtitle with better styling */}
               <Text

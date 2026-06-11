@@ -524,17 +524,23 @@ export const JewelRig: React.FC<JewelRigProps> = ({ onFirstInteraction }) => {
 
   const handlePointerDown = (e: ThreeEvent<PointerEvent>) => {
     e.stopPropagation();
-    const el = e.target as Element & { setPointerCapture(id: number): void };
-    el.setPointerCapture(e.pointerId);
-    // r3f's MeshProps has no onLostPointerCapture — listen on the capturing
-    // DOM element so an OS-interrupted drag can never get stuck active.
-    el.addEventListener(
-      'lostpointercapture',
-      () => {
-        dragRef.current.active = false;
-      },
-      { once: true }
-    );
+    // In r3f, e.target is the Object3D with setPointerCapture POLYFILLED onto
+    // it — it is NOT a DOM element. addEventListener must go on the real
+    // canvas (nativeEvent.target), or this handler throws and the drag never
+    // starts (bug found in production verification).
+    (e.target as unknown as { setPointerCapture(id: number): void }).setPointerCapture(e.pointerId);
+    const dom = e.nativeEvent.target as HTMLElement | null;
+    if (dom && typeof dom.addEventListener === 'function') {
+      // r3f's MeshProps has no onLostPointerCapture — listen on the DOM canvas
+      // so an OS-interrupted drag can never get stuck active.
+      dom.addEventListener(
+        'lostpointercapture',
+        () => {
+          dragRef.current.active = false;
+        },
+        { once: true }
+      );
+    }
     dragRef.current = { active: true, lastX: e.clientX, lastY: e.clientY, moved: 0 };
     document.body.style.cursor = 'grabbing';
     // Notify parent that the user has interacted for the first time (hint dismiss).
