@@ -207,7 +207,7 @@ export const ProjectsPage: React.FC = () => {
       </Box>
 
       {/* Filter Section with Cream Background */}
-      <Box bg="#FFF8E7" py={8}>
+      <Box bg="brand.creamWarm" py={8}>
         <Container maxW="7xl">
           <Wrap spacing={4} justify="center">
             {categories.map((category) => (
@@ -248,7 +248,7 @@ export const ProjectsPage: React.FC = () => {
             >
               <SimpleGrid
                 columns={{ base: 1, md: 2, lg: 3 }}
-                spacing={8}
+                spacing={{ base: 4, md: 8 }}
               >
                 {filteredProjects.map((project, index) => (
                   <MotionCard
@@ -367,7 +367,7 @@ export const ProjectsPage: React.FC = () => {
       </Box>
 
       {/* CTA Section with Cream Background */}
-      <Box bg="#FFF8E7" py={20}>
+      <Box bg="brand.creamWarm" py={20}>
         <Container maxW="4xl">
           <Card
             bg="white"

@@ -116,12 +116,13 @@ export const HomePage: React.FC = () => {
           position="absolute"
           top="20%"
           right="-10%"
-          width="500px"
-          height="500px"
+          width={{ base: '280px', md: '500px' }}
+          height={{ base: '280px', md: '500px' }}
           borderRadius="full"
           bg="radial-gradient(circle, rgba(255, 215, 0, 0.1), transparent)"
           filter="blur(40px)"
           animation={`${floatAnimation} 8s ease-in-out infinite`}
+          pointerEvents="none"
         />
         
         <Container maxW="1400px" position="relative" zIndex={1} h="100vh">
@@ -145,7 +146,7 @@ export const HomePage: React.FC = () => {
                 fontWeight="600"
                 letterSpacing="4px"
                 textTransform="uppercase"
-                color="#FFD700"
+                color="brand.accent"
                 variants={staggerAnimation.child}
                 position="relative"
                 textShadow="0 2px 10px rgba(0,0,0,0.5)"
@@ -157,7 +158,7 @@ export const HomePage: React.FC = () => {
                   transform: { base: 'translateX(-50%)', lg: 'none' },
                   width: '60px',
                   height: '2px',
-                  bg: '#FFD700',
+                  bg: 'brand.accent',
                   opacity: 0.8
                 }}
               >
@@ -391,9 +392,8 @@ export const HomePage: React.FC = () => {
                 >
                   {t('home.chatbot.title')}
                 </Text>
-                <Heading 
-                  size="3xl" 
-                  color="brand.text" 
+                <Heading
+                  color="brand.text"
                   fontFamily="heading"
                   fontSize={{ base: "3xl", md: "4xl", lg: "5xl" }}
                   lineHeight="1.2"
@@ -467,9 +467,8 @@ export const HomePage: React.FC = () => {
                 >
                   {t('home.portfolio.subtitle')}
                 </Text>
-                <Heading 
-                  size="3xl" 
-                  color="brand.primary" 
+                <Heading
+                  color="brand.primary"
                   fontFamily="heading"
                   fontSize={{ base: "3xl", md: "4xl", lg: "5xl" }}
                   lineHeight="1.2"
@@ -650,21 +649,23 @@ export const HomePage: React.FC = () => {
           position="absolute"
           top="-30%"
           right="-20%"
-          width="600px"
-          height="600px"
+          width={{ base: '320px', md: '600px' }}
+          height={{ base: '320px', md: '600px' }}
           borderRadius="50%"
           bg="radial-gradient(circle, rgba(255, 215, 0, 0.08), transparent)"
           filter="blur(60px)"
+          pointerEvents="none"
         />
         <Box
           position="absolute"
           bottom="-30%"
           left="-20%"
-          width="600px"
-          height="600px"
+          width={{ base: '320px', md: '600px' }}
+          height={{ base: '320px', md: '600px' }}
           borderRadius="50%"
           bg="radial-gradient(circle, rgba(220, 20, 60, 0.08), transparent)"
           filter="blur(60px)"
+          pointerEvents="none"
         />
         
         <Container maxW="5xl" textAlign="center" position="relative">
@@ -676,9 +677,8 @@ export const HomePage: React.FC = () => {
           >
             <VStack spacing={10}>
               <VStack spacing={6} maxW="900px" mx="auto">
-                <Heading 
-                  size="2xl" 
-                  color="brand.text" 
+                <Heading
+                  color="brand.text"
                   fontFamily="heading"
                   fontSize={{ base: "3xl", md: "4xl", lg: "5xl", xl: "6xl" }}
                   lineHeight="1.1"

@@ -99,7 +99,20 @@
         "availability": "¿Disponible para freelance?"
       },
       "enterToSend": "Presiona Enter para enviar",
-      "readyToHelp": "Listo para ayudar"
+      "readyToHelp": "Listo para ayudar",
+      "assistantName": "Asistente IA de Luis",
+      "demoBadge": "Demo",
+      "demoNotice": "Modo demo — respuestas predefinidas. El asistente real llega pronto.",
+      "errorFallback": "Lo siento, no pude procesar tu solicitud.",
+      "errorGeneric": "Lo siento, algo salió mal. Inténtalo de nuevo.",
+      "send": "Enviar mensaje",
+      "typing": "El asistente está escribiendo",
+      "cannedAnswers": {
+        "skills": "Luis es Ingeniero Biomédico trabajando en IA: modelos de machine learning para finanzas, sistemas de entrevistas con IA, visión por computadora e infraestructura LLM self-hosted. Stack: Python, PyTorch, FastAPI, React, Docker.",
+        "projects": "Destacados: modelos de trading con IA para finanzas, un sistema de entrevistas con IA para una empresa de préstamos laborales, visión por computadora biomédica y un homelab de IA self-hosted (hub de mensajería, asistente personal, RAG sobre sus notas). ¡Pregunta por cualquiera!",
+        "experience": "Luis combina ingeniería biomédica con IA en producción — actualmente construye IA para finanzas en Primero Trader y sistemas de entrevistas con IA. También administra un laboratorio de IA self-hosted completo.",
+        "availability": "Luis acepta proyectos de consultoría en IA/ML — desarrollo de modelos, integraciones LLM y productos end-to-end. Usa la página de Contacto y te responderá rápido."
+      }
     }
   },
   "about": {

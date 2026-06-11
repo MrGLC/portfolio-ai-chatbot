@@ -1,6 +1,6 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
-import { Float, OrbitControls, Environment, Sphere, MeshTransmissionMaterial } from '@react-three/drei';
+import { Float, OrbitControls, Environment, Sphere } from '@react-three/drei';
 import * as THREE from 'three';
 import {
   Box,
@@ -16,12 +16,14 @@ import {
   InputGroup,
   InputRightElement,
   useColorModeValue,
+  Badge,
 } from '@chakra-ui/react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowForwardIcon } from '@chakra-ui/icons';
 import { keyframes } from '@emotion/react';
 import { useTranslation } from 'react-i18next';
 import { chatbotAPI } from '../../services/api';
+import { usePerfProfile } from '../../hooks/usePerfProfile';
 
 const MotionBox = motion.create(Box);
 
@@ -41,85 +43,16 @@ const colors = {
   glass: 'rgba(255, 248, 231, 0.1)',
 };
 
-// 3D Avatar Components
-function MiniAssistantOrb({ scale = 1 }: { scale?: number }) {
-  const meshRef = useRef<THREE.Mesh>(null);
-  
-  useFrame((state) => {
-    if (meshRef.current) {
-      meshRef.current.rotation.y += 0.01;
-      const time = state.clock.elapsedTime;
-      meshRef.current.scale.setScalar(scale * (1 + Math.sin(time * 2) * 0.05));
-    }
-  });
-
-  return (
-    <group scale={scale}>
-      <mesh ref={meshRef}>
-        <octahedronGeometry args={[1, 2]} />
-        <meshPhysicalMaterial
-          color={colors.lightBrown}
-          metalness={0.8}
-          roughness={0.1}
-          emissive={colors.brown}
-          emissiveIntensity={0.3}
-          envMapIntensity={2}
-          clearcoat={1}
-          clearcoatRoughness={0}
-        />
-      </mesh>
-      <mesh scale={1.3}>
-        <octahedronGeometry args={[1, 0]} />
-        <meshBasicMaterial
-          color={colors.cream}
-          transparent
-          opacity={0.2}
-        />
-      </mesh>
-    </group>
-  );
-}
-
-function UserGem({ scale = 1 }: { scale?: number }) {
-  const meshRef = useRef<THREE.Mesh>(null);
-  
-  useFrame((state) => {
-    if (meshRef.current) {
-      meshRef.current.rotation.y -= 0.008;
-      meshRef.current.rotation.z += 0.005;
-    }
-  });
-
-  return (
-    <group scale={scale}>
-      <mesh ref={meshRef}>
-        <icosahedronGeometry args={[1, 0]} />
-        <meshPhysicalMaterial
-          color="#FFD700"
-          metalness={0.5}
-          roughness={0.2}
-          transmission={0.5}
-          thickness={0.5}
-          envMapIntensity={1}
-          clearcoat={1}
-          clearcoatRoughness={0}
-          ior={1.5}
-        />
-      </mesh>
-      <pointLight position={[0, 0, 0]} intensity={0.5} color={colors.lightBrown} />
-    </group>
-  );
-}
 
 // 3D Assistant Orb Component
-function AssistantOrb({ isTyping, hasNewMessage }: { isTyping: boolean; hasNewMessage: boolean }) {
+function AssistantOrb({ isTyping, hasNewMessage, particleScale = 1 }: { isTyping: boolean; hasNewMessage: boolean; particleScale?: number }) {
   const meshRef = useRef<THREE.Mesh>(null);
   const innerRef = useRef<THREE.Mesh>(null);
   const particlesRef = useRef<THREE.Points>(null);
 
   // Particle system
   const particles = React.useMemo(() => {
-    const count = 100;
+    const count = Math.round(100 * particleScale);
     const positions = new Float32Array(count * 3);
     const colors = new Float32Array(count * 3);
     
@@ -140,7 +73,7 @@ function AssistantOrb({ isTyping, hasNewMessage }: { isTyping: boolean; hasNewMe
     }
     
     return { positions, colors };
-  }, []);
+  }, [particleScale]);
 
   useFrame((state) => {
     if (meshRef.current) {
@@ -176,7 +109,6 @@ function AssistantOrb({ isTyping, hasNewMessage }: { isTyping: boolean; hasNewMe
         const y = positions[i + 1];
         const z = positions[i + 2];
         
-        const distance = Math.sqrt(x * x + y * y + z * z);
         const wave = Math.sin(time * 2 + idx * 0.1) * 0.05;
         
         positions[i] = x * (1 + wave);
@@ -313,47 +245,39 @@ function FloatingElements() {
 }
 
 // 3D Scene Component
-function ChatScene({ isTyping, hasNewMessage }: { isTyping: boolean; hasNewMessage: boolean }) {
+function ChatScene({ isTyping, hasNewMessage, particleScale }: { isTyping: boolean; hasNewMessage: boolean; particleScale: number }) {
   return (
     <>
       <ambientLight intensity={0.5} />
       <pointLight position={[10, 10, 10]} intensity={1} color={colors.cream} />
       <pointLight position={[-10, -10, -10]} intensity={0.5} color={colors.lightBrown} />
       <directionalLight position={[0, 5, 5]} intensity={0.8} color="#ffffff" />
-      
-      <AssistantOrb isTyping={isTyping} hasNewMessage={hasNewMessage} />
+
+      <AssistantOrb isTyping={isTyping} hasNewMessage={hasNewMessage} particleScale={particleScale} />
       <FloatingElements />
-      
+
       <Environment preset="apartment" />
     </>
   );
 }
 
-// 3D Avatar for Message Bubbles
-function Avatar3D({ isUser }: { isUser: boolean }) {
-  return (
-    <Box
-      w={8}
-      h={8}
-      display="flex"
-      alignItems="center"
-      justifyContent="center"
-      flexShrink={0}
-      position="relative"
-    >
-      <Canvas
-        camera={{ position: [0, 0, 3], fov: 40 }}
-        style={{ width: '100%', height: '100%' }}
-        dpr={[1, 2]}
-      >
-        <ambientLight intensity={0.6} />
-        <pointLight position={[2, 2, 2]} intensity={0.7} color={colors.cream} />
-        <pointLight position={[-2, -2, 2]} intensity={0.3} color={colors.lightBrown} />
-        {isUser ? <UserGem scale={1} /> : <MiniAssistantOrb scale={1} />}
-      </Canvas>
-    </Box>
-  );
-}
+// Static CSS gem avatar — replaces per-message WebGL canvases
+const StaticAvatar: React.FC<{ isUser: boolean }> = ({ isUser }) => (
+  <Box
+    w="24px"
+    h="24px"
+    flexShrink={0}
+    transform="rotate(45deg)"
+    borderRadius="4px"
+    bgGradient={isUser
+      ? 'linear(135deg, #FFD700, #B8860B)'
+      : 'linear(135deg, #DC143C, #8B0000)'}
+    boxShadow={isUser
+      ? '0 0 8px rgba(255, 215, 0, 0.5)'
+      : '0 0 8px rgba(220, 20, 60, 0.5)'}
+    aria-hidden="true"
+  />
+);
 
 // Message Bubble Component with enhanced design
 function MessageBubble({ message, isUser }: { message: string; isUser: boolean }) {
@@ -364,7 +288,7 @@ function MessageBubble({ message, isUser }: { message: string; isUser: boolean }
       transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
     >
       <Flex justify={isUser ? 'flex-end' : 'flex-start'} mb={4} align="flex-start" gap={2}>
-        {!isUser && <Avatar3D isUser={false} />}
+        {!isUser && <StaticAvatar isUser={false} />}
         
         <Box maxW="75%">
           <Box
@@ -432,7 +356,7 @@ function MessageBubble({ message, isUser }: { message: string; isUser: boolean }
           </HStack>
         </Box>
         
-        {isUser && <Avatar3D isUser={true} />}
+        {isUser && <StaticAvatar isUser={true} />}
       </Flex>
     </MotionBox>
   );
@@ -441,6 +365,7 @@ function MessageBubble({ message, isUser }: { message: string; isUser: boolean }
 // Main Chatbot Component
 export const ThreeJsChatbot: React.FC = () => {
   const { t } = useTranslation();
+  const profile = usePerfProfile();
   const [messages, setMessages] = useState([
     {
       id: 1,
@@ -451,6 +376,18 @@ export const ThreeJsChatbot: React.FC = () => {
   const [input, setInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const [hasNewMessage, setHasNewMessage] = useState(false);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const hasInteracted = useRef(false);
+
+  useEffect(() => {
+    // Skip the mount run — scrolling the welcome message into view would
+    // drag the whole page down to the chatbot section on every Home visit.
+    if (!hasInteracted.current) {
+      hasInteracted.current = true;
+      return;
+    }
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
+  }, [messages, isTyping]);
 
   const sampleQuestions = [
     t('home.chatbot.sampleQuestions.skills'),
@@ -459,30 +396,46 @@ export const ThreeJsChatbot: React.FC = () => {
     t('home.chatbot.sampleQuestions.availability'),
   ];
 
-  const handleSend = () => {
-    if (input.trim()) {
-      const userMessage = input;
-      setMessages(prev => [...prev, { id: Date.now(), text: userMessage, isUser: true }]);
-      setInput('');
-      setIsTyping(true);
+  const CANNED_KEYS = ['skills', 'projects', 'experience', 'availability'] as const;
+  const cannedFor = (msg: string): string | null => {
+    const hit = CANNED_KEYS.find((k) => t(`home.chatbot.sampleQuestions.${k}`) === msg);
+    return hit ? t(`home.chatbot.cannedAnswers.${hit}`) : null;
+  };
 
-      chatbotAPI.sendMessage(userMessage)
-        .then((res: { data: { response?: string; message?: string } }) => {
-          const text = res.data.response ?? res.data.message ?? 'Sorry, I could not process your request.';
-          setIsTyping(false);
-          setHasNewMessage(true);
-          setMessages(prev => [...prev, { id: Date.now(), text, isUser: false }]);
-          setTimeout(() => setHasNewMessage(false), 1000);
-        })
-        .catch(() => {
-          setIsTyping(false);
-          setMessages(prev => [...prev, {
-            id: Date.now(),
-            text: 'Sorry, something went wrong. Please try again.',
-            isUser: false,
-          }]);
-        });
+  const handleSend = (text?: string) => {
+    const message = (text ?? input).trim();
+    if (!message) return;
+
+    setMessages(prev => [...prev, { id: Date.now(), text: message, isUser: true }]);
+    setInput('');
+
+    const canned = cannedFor(message);
+    if (canned) {
+      setIsTyping(true);
+      setTimeout(() => {
+        setMessages(prev => [...prev, { id: Date.now(), text: canned, isUser: false }]);
+        setIsTyping(false);
+      }, 800);
+      return;
     }
+
+    setIsTyping(true);
+    chatbotAPI.sendMessage(message)
+      .then((res: { data: { response?: string; message?: string } }) => {
+        const responseText = res.data.response ?? res.data.message ?? t('home.chatbot.errorFallback');
+        setIsTyping(false);
+        setHasNewMessage(true);
+        setMessages(prev => [...prev, { id: Date.now(), text: responseText, isUser: false }]);
+        setTimeout(() => setHasNewMessage(false), 1000);
+      })
+      .catch(() => {
+        setIsTyping(false);
+        setMessages(prev => [...prev, {
+          id: Date.now(),
+          text: t('home.chatbot.errorGeneric'),
+          isUser: false,
+        }]);
+      });
   };
 
   return (
@@ -501,8 +454,8 @@ export const ThreeJsChatbot: React.FC = () => {
             border="1px solid"
             borderColor={`${colors.brown}20`}
           >
-            <Canvas camera={{ position: [0, 0, 5], fov: 45 }}>
-              <ChatScene isTyping={isTyping} hasNewMessage={hasNewMessage} />
+            <Canvas camera={{ position: [0, 0, 5], fov: 45 }} dpr={profile.dpr} frameloop={profile.animate ? 'always' : 'never'}>
+              <ChatScene isTyping={isTyping} hasNewMessage={hasNewMessage} particleScale={profile.particleScale} />
             </Canvas>
             
             {/* Assistant Info */}
@@ -516,7 +469,7 @@ export const ThreeJsChatbot: React.FC = () => {
             >
               <VStack align="flex-start" spacing={2}>
                 <Heading size="md" color={colors.darkBrown}>
-                  Luis AI Assistant
+                  {t('home.chatbot.assistantName')}
                 </Heading>
                 <HStack spacing={2}>
                   <Box w={2} h={2} bg="green.400" borderRadius="full" />
@@ -573,9 +526,14 @@ export const ThreeJsChatbot: React.FC = () => {
                     boxShadow="0 0 10px rgba(72, 187, 120, 0.5)"
                   />
                   <VStack align="flex-start" spacing={0}>
-                    <Heading size="sm" color={colors.darkBrown}>
-                      {t('home.chatbot.chatTitle')}
-                    </Heading>
+                    <HStack spacing={2}>
+                      <Heading size="sm" color={colors.darkBrown}>
+                        {t('home.chatbot.chatTitle')}
+                      </Heading>
+                      <Badge colorScheme="yellow" fontSize="xs" title={t('home.chatbot.demoNotice')}>
+                        {t('home.chatbot.demoBadge')}
+                      </Badge>
+                    </HStack>
                     <Text fontSize="xs" color={colors.brown} opacity={0.8}>
                       {t('home.chatbot.poweredBy')} • {t('home.chatbot.responseTime')}
                     </Text>
@@ -600,6 +558,9 @@ export const ThreeJsChatbot: React.FC = () => {
               pb="100px"
               position="relative"
               zIndex={1}
+              role="log"
+              aria-live="polite"
+              aria-label={t('home.chatbot.chatTitle')}
               css={{
                 '&::-webkit-scrollbar': {
                   width: '8px',
@@ -621,7 +582,7 @@ export const ThreeJsChatbot: React.FC = () => {
                   <MessageBubble key={msg.id} message={msg.text} isUser={msg.isUser} />
                 ))}
               </AnimatePresence>
-              
+
               {isTyping && (
                 <MotionBox
                   initial={{ opacity: 0, y: 10 }}
@@ -629,8 +590,8 @@ export const ThreeJsChatbot: React.FC = () => {
                   exit={{ opacity: 0, y: 10 }}
                   transition={{ duration: 0.3 }}
                 >
-                  <Flex justify="flex-start" mb={4} align="flex-start" gap={2}>
-                    <Avatar3D isUser={false} />
+                  <Flex justify="flex-start" mb={4} align="flex-start" gap={2} aria-label={t('home.chatbot.typing')}>
+                    <StaticAvatar isUser={false} />
                     <Box
                       px={6}
                       py={4}
@@ -738,7 +699,7 @@ export const ThreeJsChatbot: React.FC = () => {
                             opacity: 0,
                             transition: 'opacity 0.3s ease',
                           }}
-                          onClick={() => setInput(question)}
+                          onClick={() => handleSend(question)}
                         >
                           <HStack spacing={3} align="center">
                             <Text fontSize="lg">💬</Text>
@@ -750,6 +711,8 @@ export const ThreeJsChatbot: React.FC = () => {
                   </SimpleGrid>
                 </MotionBox>
               )}
+
+              <div ref={messagesEndRef} />
             </Box>
 
             {/* Input Area */}
@@ -770,6 +733,7 @@ export const ThreeJsChatbot: React.FC = () => {
                       onChange={(e) => setInput(e.target.value)}
                       onKeyPress={(e) => e.key === 'Enter' && handleSend()}
                       placeholder={t('home.chatbot.placeholder')}
+                      aria-label={t('home.chatbot.placeholder')}
                       bg={`linear-gradient(135deg, ${colors.lightCream}, ${colors.cream})`}
                       border="2px solid"
                       borderColor={`${colors.brown}30`}
@@ -802,7 +766,8 @@ export const ThreeJsChatbot: React.FC = () => {
                       spacing={2}
                     >
                       <Button
-                        onClick={handleSend}
+                        onClick={() => handleSend()}
+                        aria-label={t('home.chatbot.send')}
                         bg={`linear-gradient(135deg, ${colors.lightBrown}, ${colors.brown})`}
                         color={colors.cream}
                         size="md"
