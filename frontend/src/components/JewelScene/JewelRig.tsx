@@ -402,6 +402,14 @@ export const JewelRig: React.FC<JewelRigProps> = ({ onFirstInteraction }) => {
       ? Math.min(1, Math.max(0, 1 - scrollRef.current / (heroBottom * 0.8)))
       : 1;
 
+    // Over the cream sections, high transmission turns the jewel into a beige
+    // glass ball (it transmits the page background). Dial transmission down and
+    // emissive up as the hero fades so the ruby identity survives the journey.
+    // Both props are uniform-backed while transmission > 0 — no recompile.
+    const heroF = fadeUniform.value;
+    material.transmission = 0.35 + 0.55 * heroF;
+    material.emissiveIntensity = 0.18 + (1 - heroF) * 0.3;
+
     // Scroll-driven morph: align the controller pair, then own progress.
     // 'gemBreath' counts as 'gem' so the tap toggle survives scrolling.
     if (frame) {
