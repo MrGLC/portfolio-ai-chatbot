@@ -1,28 +1,33 @@
 import React, { useMemo } from 'react';
-import { Canvas, useFrame, useThree } from '@react-three/fiber';
+import { useFrame, useThree } from '@react-three/fiber';
 import * as THREE from 'three';
-import { usePerfProfile } from '../../../hooks/usePerfProfile';
+import { usePerfProfile } from '../../hooks/usePerfProfile';
 
 /**
- * Prototype hero scene B: "Generative Intelligence Field"
+ * FieldLayer — "Generative Intelligence Field" production layer.
  *
- * Flowing curl-noise particle field, fully GPU-animated. 3500 points
- * (scaled down by perf profile) drift along an analytic curl of a
- * sin-based vector potential, forming a loose horizontal data-stream
- * band across the lower 2/3 of the viewport. All motion lives in the
- * vertex shader; JS only writes a single shared uTime uniform per frame.
+ * Evolved from prototypes/ProtoField: a flowing curl-noise particle band
+ * plus depth glow sprites, fully GPU-animated. This is a scene-graph-only
+ * component (renders a <group>; the composition root owns the Canvas and
+ * background). Adds pointer parting: particles are pushed away from the
+ * cursor's projection onto the z=0 plane via a uPointer uniform.
+ *
+ * All motion lives in the vertex shaders; JS writes a single shared uTime
+ * uniform (plus a smoothed uPointer vec3) per frame for every material.
  */
 
 const PARTICLE_BASE_COUNT = 3500;
+const MIN_PARTICLE_COUNT = 50;
 const BAND_SPAN_X = 18; // world-units width of the wrapped stream
 
 // ---------------------------------------------------------------------------
-// Shaders
+// Shaders (carried from ProtoField; particle vertex gains pointer parting)
 // ---------------------------------------------------------------------------
 
 const particleVertex = /* glsl */ `
   uniform float uTime;
   uniform float uPixelRatio;
+  uniform vec3 uPointer; // xy = world coords on z=0 plane, z = strength 0..1
 
   attribute float aSeed;
   attribute float aSize;
@@ -52,29 +57,36 @@ const particleVertex = /* glsl */ `
   }
 
   void main() {
-    vec3 pos = position;
+    vec3 p = position;
     float span = ${BAND_SPAN_X.toFixed(1)};
 
     // Continuous horizontal stream: each particle drifts right at its own
     // speed and wraps around the band.
     float speed = 0.25 + aSeed * 0.35;
-    pos.x = mod(pos.x + uTime * speed + span * 0.5, span) - span * 0.5;
+    p.x = mod(p.x + uTime * speed + span * 0.5, span) - span * 0.5;
 
     // Slow travelling wave shapes the band into a neural-current ribbon.
-    pos.y += sin(pos.x * 0.35 + uTime * 0.4 + aSeed * 6.2831) * 0.45;
+    p.y += sin(p.x * 0.35 + uTime * 0.4 + aSeed * 6.2831) * 0.45;
 
     // Curl-noise displacement (anisotropic: flatter in y to keep the band).
-    vec3 c = curlField(pos * 0.45, uTime * 0.3);
-    pos += c * vec3(0.55, 0.38, 0.5);
+    vec3 c = curlField(p * 0.45, uTime * 0.3);
+    p += c * vec3(0.55, 0.38, 0.5);
 
-    vec4 mv = modelViewMatrix * vec4(pos, 1.0);
+    // Pointer parting: push particles radially away from the cursor's
+    // world-space position on the z=0 plane, scaled by strength (uPointer.z).
+    vec2 toPointer = p.xy - uPointer.xy;
+    float dist = length(toPointer);
+    float push = uPointer.z * smoothstep(2.2, 0.0, dist);
+    p.xy += normalize(toPointer + vec2(1e-4)) * push * 0.9;
+
+    vec4 mv = modelViewMatrix * vec4(p, 1.0);
 
     // Subtle per-particle pulse + depth size attenuation.
     float pulse = 1.0 + 0.25 * sin(uTime * 2.0 + aSeed * 31.4159);
     gl_PointSize = aSize * uPixelRatio * pulse * (84.0 / -mv.z);
 
     // Fade out near the wrap seam so respawns are invisible.
-    vFade = smoothstep(span * 0.5, span * 0.5 - 2.0, abs(pos.x));
+    vFade = smoothstep(span * 0.5, span * 0.5 - 2.0, abs(p.x));
     vSeed = aSeed;
     vDepth = clamp((-mv.z - 4.0) / 10.0, 0.0, 1.0);
 
@@ -138,17 +150,30 @@ const glowFragment = /* glsl */ `
 `;
 
 // ---------------------------------------------------------------------------
-// Scene internals
+// Shared uniforms
 // ---------------------------------------------------------------------------
 
 type TimeUniform = THREE.IUniform<number>;
+type PointerUniform = THREE.IUniform<THREE.Vector3>;
+
+interface SharedUniforms {
+  uTime: TimeUniform;
+  uPointer: PointerUniform;
+}
+
+// One module-scope scratch vector for pointer unprojection (no per-frame allocs).
+const scratch = new THREE.Vector3();
+
+// ---------------------------------------------------------------------------
+// Scene internals
+// ---------------------------------------------------------------------------
 
 interface ParticlesProps {
   count: number;
-  timeUniform: TimeUniform;
+  shared: SharedUniforms;
 }
 
-const FieldParticles: React.FC<ParticlesProps> = ({ count, timeUniform }) => {
+const FieldParticles: React.FC<ParticlesProps> = ({ count, shared }) => {
   const pixelRatio = useThree((state) => state.gl.getPixelRatio());
 
   const geometry = useMemo(() => {
@@ -158,7 +183,7 @@ const FieldParticles: React.FC<ParticlesProps> = ({ count, timeUniform }) => {
     const sizes = new Float32Array(count);
 
     for (let i = 0; i < count; i += 1) {
-      // Loose horizontal band: gaussian-ish vertical spread around y=-1.4
+      // Loose horizontal band: gaussian-ish vertical spread around y=-2.8
       // so the field occupies the lower 2/3 of the hero.
       const gauss = (Math.random() + Math.random() + Math.random()) / 3 - 0.5;
       positions[i * 3 + 0] = (Math.random() - 0.5) * BAND_SPAN_X;
@@ -175,8 +200,13 @@ const FieldParticles: React.FC<ParticlesProps> = ({ count, timeUniform }) => {
   }, [count]);
 
   const material = useMemo(() => {
-    const uniforms: { uTime: TimeUniform; uPixelRatio: THREE.IUniform<number> } = {
-      uTime: timeUniform,
+    const uniforms: {
+      uTime: TimeUniform;
+      uPointer: PointerUniform;
+      uPixelRatio: THREE.IUniform<number>;
+    } = {
+      uTime: shared.uTime, // shared reference -> single write animates all
+      uPointer: shared.uPointer,
       uPixelRatio: { value: pixelRatio },
     };
     return new THREE.ShaderMaterial({
@@ -187,7 +217,7 @@ const FieldParticles: React.FC<ParticlesProps> = ({ count, timeUniform }) => {
       depthWrite: false,
       blending: THREE.AdditiveBlending,
     });
-  }, [timeUniform, pixelRatio]);
+  }, [shared, pixelRatio]);
 
   return <points geometry={geometry} material={material} frustumCulled={false} />;
 };
@@ -241,53 +271,67 @@ const GlowSprite: React.FC<GlowProps> = ({ spec, timeUniform }) => {
   );
 };
 
-interface FieldSceneProps {
-  particleScale: number;
-  tier: 'full' | 'lite';
-}
-
-const FieldScene: React.FC<FieldSceneProps> = ({ particleScale, tier }) => {
-  // Single shared time uniform: one JS uniform write per frame drives
-  // every material (particles + glows reference the same object).
-  const timeUniform = useMemo<TimeUniform>(() => ({ value: 0 }), []);
-
-  useFrame(({ clock }) => {
-    timeUniform.value = clock.getElapsedTime();
-  });
-
-  const count = Math.max(1, Math.round(PARTICLE_BASE_COUNT * particleScale));
-  const glows = tier === 'full' ? GLOWS : GLOWS.slice(0, 2);
-
-  return (
-    <>
-      <FieldParticles count={count} timeUniform={timeUniform} />
-      {glows.map((spec) => (
-        <GlowSprite key={`${spec.color}-${spec.phase}`} spec={spec} timeUniform={timeUniform} />
-      ))}
-    </>
-  );
-};
-
 // ---------------------------------------------------------------------------
 // Public component
 // ---------------------------------------------------------------------------
 
-export const ProtoField: React.FC = () => {
+export interface FieldLayerProps {
+  /** Particle density multiplier (1 = full hero field; <0.5 skips glows). */
+  density?: number;
+  /** Enable cursor parting (only active on the 'full' perf tier). */
+  interactive?: boolean;
+}
+
+export const FieldLayer: React.FC<FieldLayerProps> = ({ density = 1, interactive = true }) => {
   const profile = usePerfProfile();
 
+  // Shared uniform objects: one JS write per frame drives every material.
+  const shared = useMemo<SharedUniforms>(
+    () => ({
+      uTime: { value: 0 },
+      uPointer: { value: new THREE.Vector3(0, 0, 0) },
+    }),
+    []
+  );
+
+  useFrame((state, delta) => {
+    shared.uTime.value += delta;
+
+    const pointer = shared.uPointer.value;
+    const k = 1 - Math.exp(-6 * delta);
+
+    if (interactive && profile.tier === 'full') {
+      // Unproject NDC pointer to a ray, intersect the z=0 plane.
+      scratch.set(state.pointer.x, state.pointer.y, 0.5).unproject(state.camera);
+      scratch.sub(state.camera.position).normalize();
+      const t = -state.camera.position.z / scratch.z; // intersect z=0
+      const px = state.camera.position.x + scratch.x * t;
+      const py = state.camera.position.y + scratch.y * t;
+
+      pointer.x += (px - pointer.x) * k;
+      pointer.y += (py - pointer.y) * k;
+      pointer.z += (1 - pointer.z) * k;
+    } else {
+      pointer.z += (0 - pointer.z) * k;
+    }
+  });
+
+  const count = Math.max(
+    MIN_PARTICLE_COUNT,
+    Math.round(PARTICLE_BASE_COUNT * density * profile.particleScale)
+  );
+  const showGlows = density >= 0.5;
+  const glows = profile.tier === 'full' ? GLOWS : GLOWS.slice(0, 2);
+
   return (
-    <div style={{ position: 'absolute', inset: 0, overflow: 'hidden' }} aria-hidden>
-      <Canvas
-        dpr={profile.dpr}
-        frameloop={profile.animate ? 'always' : 'never'}
-        gl={{ antialias: false, alpha: false, powerPreference: 'high-performance' }}
-        camera={{ position: [0, 0.6, 9], fov: 55, near: 0.1, far: 60 }}
-      >
-        <color attach="background" args={['#140306']} />
-        <FieldScene particleScale={profile.particleScale} tier={profile.tier} />
-      </Canvas>
-    </div>
+    <group>
+      <FieldParticles count={count} shared={shared} />
+      {showGlows &&
+        glows.map((spec) => (
+          <GlowSprite key={`${spec.color}-${spec.phase}`} spec={spec} timeUniform={shared.uTime} />
+        ))}
+    </group>
   );
 };
 
-export default ProtoField;
+export default FieldLayer;

@@ -7,6 +7,7 @@
  */
 import React, { useMemo, useRef } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
+import { Environment } from '@react-three/drei';
 import * as THREE from 'three';
 import { usePerfProfile } from '../../../hooks/usePerfProfile';
 import type { PerfProfile } from '../../../hooks/usePerfProfile';
@@ -45,7 +46,7 @@ const Backdrop: React.FC<BackdropProps> = ({ focusX }) => {
   const uniforms = useMemo(
     () => ({
       uEdgeColor: { value: new THREE.Color('#1A0508') },
-      uCenterColor: { value: new THREE.Color('#4A0A14') },
+      uCenterColor: { value: new THREE.Color('#5A1020') },
       uFocus: { value: new THREE.Vector2(focusX, 0.5) },
     }),
     // Rebuild only if composition changes (full <-> lite).
@@ -95,16 +96,19 @@ const Gem: React.FC<GemProps> = ({ position, scale, animate }) => {
         {/* The ONE physical material in the scene. */}
         <meshPhysicalMaterial
           color="#8B0000"
-          emissive="#DC143C"
-          emissiveIntensity={0.06}
+          emissive="#6B0F1F"
+          emissiveIntensity={0.18}
           transmission={0.9}
           thickness={2}
           ior={2.4}
-          roughness={0.08}
+          roughness={0.05}
           metalness={0}
           flatShading
-          specularIntensity={1}
-          specularColor="#DC143C"
+          specularIntensity={1.2}
+          specularColor="#FFD700"
+          envMapIntensity={2.8}
+          clearcoat={1}
+          clearcoatRoughness={0.05}
         />
       </mesh>
     </group>
@@ -144,7 +148,7 @@ const DUST_FRAGMENT = /* glsl */ `
     float d = length(gl_PointCoord - vec2(0.5));
     if (d > 0.5) discard;
     float twinkle = 0.65 + 0.35 * sin(uTime * 0.6 + vSeed * 31.4159);
-    float alpha = smoothstep(0.5, 0.05, d) * twinkle * 0.55;
+    float alpha = smoothstep(0.5, 0.05, d) * twinkle * 0.82;
     gl_FragColor = vec4(vColor * alpha, alpha);
   }
 `;
@@ -171,7 +175,7 @@ const Dust: React.FC<DustProps> = ({ count, animate }) => {
       pos[i * 3 + 1] = (Math.random() - 0.5) * 9;
       pos[i * 3 + 2] = (Math.random() - 0.5) * 8 - 2;
       seed[i] = Math.random();
-      size[i] = 0.012 + Math.random() * 0.035;
+      size[i] = 0.025 + Math.random() * 0.07;
       c.set(DUST_PALETTE[Math.floor(Math.random() * DUST_PALETTE.length)]);
       col[i * 3] = c.r;
       col[i * 3 + 1] = c.g;
@@ -224,10 +228,13 @@ const Scene: React.FC<{ profile: PerfProfile }> = ({ profile }) => {
 
   return (
     <>
-      {/* Lighting: gold key (upper-left), cool fill, deep red ambient */}
-      <directionalLight color="#FFD700" intensity={3.2} position={[-5, 6, 4]} />
+      {/* Lighting: gold key (upper-left), gold rimlight (behind-right), cool fill, deep red ambient */}
+      <directionalLight color="#FFD700" intensity={3.8} position={[-5, 6, 4]} />
+      <directionalLight color="#FFD060" intensity={2.0} position={[5, 2, -4]} />
       <directionalLight color="#7E9BC4" intensity={0.45} position={[4, -3, 2]} />
       <ambientLight color="#3A0A0E" intensity={0.6} />
+      {/* HDR environment — city preset balances warm gold and cool sky tones well for ruby+gold */}
+      <Environment preset="city" />
 
       <Backdrop focusX={focusX} />
       <Gem position={[gemX, 0, 0]} scale={gemScale} animate={profile.animate} />
