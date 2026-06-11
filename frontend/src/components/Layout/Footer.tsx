@@ -89,7 +89,9 @@ export const Footer: React.FC = () => {
                   href={social.url}
                   isExternal
                   variant="ghost"
-                  size="sm"
+                  size="md"
+                  minW="44px"
+                  minH="44px"
                   aria-label={social.name}
                   color="brand.cream"
                   _hover={{

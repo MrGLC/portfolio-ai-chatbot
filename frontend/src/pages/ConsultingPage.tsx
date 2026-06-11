@@ -112,7 +112,7 @@ export const ConsultingPage: React.FC = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
             >
-              <Heading size="4xl" mb={4}>
+              <Heading fontSize={{ base: '3xl', md: '5xl' }} mb={4}>
                 {t('consulting.hero.title')}
               </Heading>
               <Text fontSize="xl" maxW="800px" mx="auto" opacity={0.95}>

@@ -248,7 +248,7 @@ export const ProjectsPage: React.FC = () => {
             >
               <SimpleGrid
                 columns={{ base: 1, md: 2, lg: 3 }}
-                spacing={8}
+                spacing={{ base: 4, md: 8 }}
               >
                 {filteredProjects.map((project, index) => (
                   <MotionCard
