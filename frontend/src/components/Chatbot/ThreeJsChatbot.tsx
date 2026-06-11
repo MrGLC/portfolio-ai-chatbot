@@ -16,6 +16,7 @@ import {
   InputGroup,
   InputRightElement,
   useColorModeValue,
+  Badge,
 } from '@chakra-ui/react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowForwardIcon } from '@chakra-ui/icons';
@@ -375,6 +376,11 @@ export const ThreeJsChatbot: React.FC = () => {
   const [input, setInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const [hasNewMessage, setHasNewMessage] = useState(false);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
+  }, [messages, isTyping]);
 
   const sampleQuestions = [
     t('home.chatbot.sampleQuestions.skills'),
@@ -383,30 +389,46 @@ export const ThreeJsChatbot: React.FC = () => {
     t('home.chatbot.sampleQuestions.availability'),
   ];
 
-  const handleSend = () => {
-    if (input.trim()) {
-      const userMessage = input;
-      setMessages(prev => [...prev, { id: Date.now(), text: userMessage, isUser: true }]);
-      setInput('');
-      setIsTyping(true);
+  const CANNED_KEYS = ['skills', 'projects', 'experience', 'availability'] as const;
+  const cannedFor = (msg: string): string | null => {
+    const hit = CANNED_KEYS.find((k) => t(`home.chatbot.sampleQuestions.${k}`) === msg);
+    return hit ? t(`home.chatbot.cannedAnswers.${hit}`) : null;
+  };
 
-      chatbotAPI.sendMessage(userMessage)
-        .then((res: { data: { response?: string; message?: string } }) => {
-          const text = res.data.response ?? res.data.message ?? 'Sorry, I could not process your request.';
-          setIsTyping(false);
-          setHasNewMessage(true);
-          setMessages(prev => [...prev, { id: Date.now(), text, isUser: false }]);
-          setTimeout(() => setHasNewMessage(false), 1000);
-        })
-        .catch(() => {
-          setIsTyping(false);
-          setMessages(prev => [...prev, {
-            id: Date.now(),
-            text: 'Sorry, something went wrong. Please try again.',
-            isUser: false,
-          }]);
-        });
+  const handleSend = (text?: string) => {
+    const message = (text ?? input).trim();
+    if (!message) return;
+
+    setMessages(prev => [...prev, { id: Date.now(), text: message, isUser: true }]);
+    setInput('');
+
+    const canned = cannedFor(message);
+    if (canned) {
+      setIsTyping(true);
+      setTimeout(() => {
+        setMessages(prev => [...prev, { id: Date.now(), text: canned, isUser: false }]);
+        setIsTyping(false);
+      }, 800);
+      return;
     }
+
+    setIsTyping(true);
+    chatbotAPI.sendMessage(message)
+      .then((res: { data: { response?: string; message?: string } }) => {
+        const responseText = res.data.response ?? res.data.message ?? t('home.chatbot.errorFallback');
+        setIsTyping(false);
+        setHasNewMessage(true);
+        setMessages(prev => [...prev, { id: Date.now(), text: responseText, isUser: false }]);
+        setTimeout(() => setHasNewMessage(false), 1000);
+      })
+      .catch(() => {
+        setIsTyping(false);
+        setMessages(prev => [...prev, {
+          id: Date.now(),
+          text: t('home.chatbot.errorGeneric'),
+          isUser: false,
+        }]);
+      });
   };
 
   return (
@@ -440,7 +462,7 @@ export const ThreeJsChatbot: React.FC = () => {
             >
               <VStack align="flex-start" spacing={2}>
                 <Heading size="md" color={colors.darkBrown}>
-                  Luis AI Assistant
+                  {t('home.chatbot.assistantName')}
                 </Heading>
                 <HStack spacing={2}>
                   <Box w={2} h={2} bg="green.400" borderRadius="full" />
@@ -497,9 +519,14 @@ export const ThreeJsChatbot: React.FC = () => {
                     boxShadow="0 0 10px rgba(72, 187, 120, 0.5)"
                   />
                   <VStack align="flex-start" spacing={0}>
-                    <Heading size="sm" color={colors.darkBrown}>
-                      {t('home.chatbot.chatTitle')}
-                    </Heading>
+                    <HStack spacing={2}>
+                      <Heading size="sm" color={colors.darkBrown}>
+                        {t('home.chatbot.chatTitle')}
+                      </Heading>
+                      <Badge colorScheme="yellow" fontSize="xs" title={t('home.chatbot.demoNotice')}>
+                        {t('home.chatbot.demoBadge')}
+                      </Badge>
+                    </HStack>
                     <Text fontSize="xs" color={colors.brown} opacity={0.8}>
                       {t('home.chatbot.poweredBy')} • {t('home.chatbot.responseTime')}
                     </Text>
@@ -524,6 +551,9 @@ export const ThreeJsChatbot: React.FC = () => {
               pb="100px"
               position="relative"
               zIndex={1}
+              role="log"
+              aria-live="polite"
+              aria-label={t('home.chatbot.chatTitle')}
               css={{
                 '&::-webkit-scrollbar': {
                   width: '8px',
@@ -545,7 +575,7 @@ export const ThreeJsChatbot: React.FC = () => {
                   <MessageBubble key={msg.id} message={msg.text} isUser={msg.isUser} />
                 ))}
               </AnimatePresence>
-              
+
               {isTyping && (
                 <MotionBox
                   initial={{ opacity: 0, y: 10 }}
@@ -553,7 +583,7 @@ export const ThreeJsChatbot: React.FC = () => {
                   exit={{ opacity: 0, y: 10 }}
                   transition={{ duration: 0.3 }}
                 >
-                  <Flex justify="flex-start" mb={4} align="flex-start" gap={2}>
+                  <Flex justify="flex-start" mb={4} align="flex-start" gap={2} aria-label={t('home.chatbot.typing')}>
                     <StaticAvatar isUser={false} />
                     <Box
                       px={6}
@@ -662,7 +692,7 @@ export const ThreeJsChatbot: React.FC = () => {
                             opacity: 0,
                             transition: 'opacity 0.3s ease',
                           }}
-                          onClick={() => setInput(question)}
+                          onClick={() => handleSend(question)}
                         >
                           <HStack spacing={3} align="center">
                             <Text fontSize="lg">💬</Text>
@@ -674,6 +704,8 @@ export const ThreeJsChatbot: React.FC = () => {
                   </SimpleGrid>
                 </MotionBox>
               )}
+
+              <div ref={messagesEndRef} />
             </Box>
 
             {/* Input Area */}
@@ -694,6 +726,7 @@ export const ThreeJsChatbot: React.FC = () => {
                       onChange={(e) => setInput(e.target.value)}
                       onKeyPress={(e) => e.key === 'Enter' && handleSend()}
                       placeholder={t('home.chatbot.placeholder')}
+                      aria-label={t('home.chatbot.placeholder')}
                       bg={`linear-gradient(135deg, ${colors.lightCream}, ${colors.cream})`}
                       border="2px solid"
                       borderColor={`${colors.brown}30`}
@@ -726,7 +759,8 @@ export const ThreeJsChatbot: React.FC = () => {
                       spacing={2}
                     >
                       <Button
-                        onClick={handleSend}
+                        onClick={() => handleSend()}
+                        aria-label={t('home.chatbot.send')}
                         bg={`linear-gradient(135deg, ${colors.lightBrown}, ${colors.brown})`}
                         color={colors.cream}
                         size="md"

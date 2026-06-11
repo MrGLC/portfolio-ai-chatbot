@@ -99,7 +99,20 @@
         "availability": "Available for freelance?"
       },
       "enterToSend": "Press Enter to send",
-      "readyToHelp": "Ready to help"
+      "readyToHelp": "Ready to help",
+      "assistantName": "Luis AI Assistant",
+      "demoBadge": "Demo",
+      "demoNotice": "Demo mode — scripted responses. The real assistant arrives soon.",
+      "errorFallback": "Sorry, I could not process your request.",
+      "errorGeneric": "Sorry, something went wrong. Please try again.",
+      "send": "Send message",
+      "typing": "Assistant is typing",
+      "cannedAnswers": {
+        "skills": "Luis is a Biomedical Engineer working in AI: machine-learning models for finance, AI interviewing systems, computer vision, and self-hosted LLM infrastructure. Stack: Python, PyTorch, FastAPI, React, Docker.",
+        "projects": "Highlights: AI trading models for finance, an AI interviewing system for a labor-lending company, biomedical computer-vision work, and a self-hosted AI homelab (messaging hub, personal assistant, RAG over his notes). Ask about any of them!",
+        "experience": "Luis combines biomedical engineering with production AI work — currently building AI for finance at Primero Trader and AI interviewing systems. He also runs a full self-hosted AI lab.",
+        "availability": "Luis takes consulting projects in AI/ML — model development, LLM integrations, and end-to-end product builds. Use the Contact page and he'll get back to you quickly."
+      }
     }
   },
   "about": {
