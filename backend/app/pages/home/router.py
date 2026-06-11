@@ -2,7 +2,7 @@ from fastapi import APIRouter
 
 router = APIRouter()
 
-@router.get("/")
+@router.get("")
 async def get_home_data():
     return {
         "title": "Welcome to My Portfolio",

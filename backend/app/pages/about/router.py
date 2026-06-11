@@ -2,7 +2,7 @@ from fastapi import APIRouter
 
 router = APIRouter()
 
-@router.get("/")
+@router.get("")
 async def get_about_data():
     return {
         "bio": "Experienced developer specializing in chatbot development and AI integration",

@@ -11,7 +11,7 @@ class Project(BaseModel):
     technologies: List[str]
     link: str = ""
 
-@router.get("/")
+@router.get("")
 async def get_projects():
     return [
         {
