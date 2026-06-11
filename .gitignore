@@ -13,4 +13,6 @@ frontend_iterations/
 *.log
 *.csv
 *.txt   
-inspiration/
+inspiration/__pycache__/
+*.pyc
+.venv/
