@@ -454,7 +454,7 @@ export const ThreeJsChatbot: React.FC = () => {
             border="1px solid"
             borderColor={`${colors.brown}20`}
           >
-            <Canvas camera={{ position: [0, 0, 5], fov: 45 }} dpr={profile.dpr}>
+            <Canvas camera={{ position: [0, 0, 5], fov: 45 }} dpr={profile.dpr} frameloop={profile.animate ? 'always' : 'never'}>
               <ChatScene isTyping={isTyping} hasNewMessage={hasNewMessage} particleScale={profile.particleScale} />
             </Canvas>
             
