@@ -30,9 +30,7 @@ import {
   ArrowForwardIcon
 } from '@chakra-ui/icons';
 import { variants, durations, easings, delays, springs, createStaggerAnimation } from '../theme/animations';
-const LightPattern = lazy(() =>
-  import('../components/ThreeBackground/LightPattern').then((m) => ({ default: m.LightPattern }))
-);
+const JewelScene = lazy(() => import('../components/JewelScene'));
 const ThreeJsChatbot = lazy(() =>
   import('../components/Chatbot/ThreeJsChatbot').then((m) => ({ default: m.ThreeJsChatbot }))
 );
@@ -99,6 +97,11 @@ export const HomePage: React.FC = () => {
         variants={staggerAnimation.parent}
         style={{ y: heroY }}
       >
+        {/* Living Jewel scene — absolute background behind all hero content */}
+        <Suspense fallback={null}>
+          <JewelScene />
+        </Suspense>
+
         {/* Extended red gradient overlay to cover gap */}
         <Box
           position="absolute"
@@ -125,7 +128,7 @@ export const HomePage: React.FC = () => {
           pointerEvents="none"
         />
         
-        <Container maxW="1400px" position="relative" zIndex={1} h="100vh">
+        <Container maxW="1400px" position="relative" zIndex={2} h="100vh">
           <Flex
             h="100%"
             align="flex-start"
@@ -334,11 +337,6 @@ export const HomePage: React.FC = () => {
           pointerEvents="none"
           zIndex={2}
         />
-        
-        {/* Enhanced pattern background */}
-        <Suspense fallback={null}>
-          <LightPattern intensity={0.5} />
-        </Suspense>
         
         {/* Smooth transition shape */}
         <Box
@@ -620,11 +618,6 @@ export const HomePage: React.FC = () => {
         position="relative"
         overflow="hidden"
       >
-        {/* Pattern background */}
-        <Suspense fallback={null}>
-          <LightPattern intensity={0.3} />
-        </Suspense>
-        
         {/* Decorative elements */}
         <Box
           position="absolute"

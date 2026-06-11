@@ -18,18 +18,14 @@ vi.mock('@react-three/drei', () => ({
   MeshTransmissionMaterial: () => null,
 }));
 
-// All ThreeBackground components render Canvas directly — stub the whole module
-vi.mock('../components/ThreeBackground', () => ({
-  RedJewelBackground: () => null,
-  LightPattern: () => null,
+// Lazy-loaded JewelScene components render Canvas directly — stub the modules
+vi.mock('../components/JewelScene', () => ({
+  default: () => null,
+  JewelScene: () => null,
 }));
-
-// Lazy-loaded ThreeBackground components — stub the individual modules
-vi.mock('../components/ThreeBackground/RedJewelBackground', () => ({
-  RedJewelBackground: () => null,
-}));
-vi.mock('../components/ThreeBackground/LightPattern', () => ({
-  LightPattern: () => null,
+vi.mock('../components/JewelScene/FieldAccent', () => ({
+  default: () => null,
+  FieldAccent: () => null,
 }));
 
 // ThreeJsChatbot also renders Canvas — stub it

@@ -4,9 +4,7 @@ import { Navigation } from './Navigation';
 import { Footer } from './Footer';
 import { ScrollToTop } from './ScrollToTop';
 
-const RedJewelBackground = lazy(() =>
-  import('../ThreeBackground/RedJewelBackground').then((m) => ({ default: m.RedJewelBackground }))
-);
+const FieldAccent = lazy(() => import('../JewelScene/FieldAccent'));
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -15,9 +13,9 @@ interface LayoutProps {
 export const Layout: React.FC<LayoutProps> = ({ children }) => {
   return (
     <>
-      {/* Red Jewel Background with sharp, shiny red crystals */}
+      {/* Site-wide sparse particle accent layer */}
       <Suspense fallback={null}>
-        <RedJewelBackground intensity={1} />
+        <FieldAccent />
       </Suspense>
       
       {/* Global red tint overlay */}
