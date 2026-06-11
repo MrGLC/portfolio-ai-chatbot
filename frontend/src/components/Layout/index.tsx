@@ -1,9 +1,12 @@
-import React from 'react';
+import React, { Suspense, lazy } from 'react';
 import { Box, Container } from '@chakra-ui/react';
 import { Navigation } from './Navigation';
 import { Footer } from './Footer';
 import { ScrollToTop } from './ScrollToTop';
-import { AnimatedBackground, EnhancedAnimatedBackground, RoyalAnimatedBackground, ModernAnimatedBackground, ModernAnimatedBackgroundV2, RedJewelBackground } from '../ThreeBackground';
+
+const RedJewelBackground = lazy(() =>
+  import('../ThreeBackground/RedJewelBackground').then((m) => ({ default: m.RedJewelBackground }))
+);
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -13,7 +16,9 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
   return (
     <>
       {/* Red Jewel Background with sharp, shiny red crystals */}
-      <RedJewelBackground intensity={1} />
+      <Suspense fallback={null}>
+        <RedJewelBackground intensity={1} />
+      </Suspense>
       
       {/* Global red tint overlay */}
       <Box

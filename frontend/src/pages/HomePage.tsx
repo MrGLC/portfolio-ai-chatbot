@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Suspense, lazy } from 'react';
 import {
   Box,
   Container,
@@ -30,7 +30,9 @@ import {
   ArrowForwardIcon
 } from '@chakra-ui/icons';
 import { variants, durations, easings, delays, springs, createStaggerAnimation } from '../theme/animations';
-import { AnimatedBackground, LightPattern } from '../components/ThreeBackground';
+const LightPattern = lazy(() =>
+  import('../components/ThreeBackground/LightPattern').then((m) => ({ default: m.LightPattern }))
+);
 import { ThreeJsChatbot } from '../components/Chatbot/ThreeJsChatbot';
 
 const MotionBox = motion.create(Box);
@@ -340,7 +342,9 @@ export const HomePage: React.FC = () => {
         />
         
         {/* Enhanced pattern background */}
-        <LightPattern intensity={0.5} />
+        <Suspense fallback={null}>
+          <LightPattern intensity={0.5} />
+        </Suspense>
         
         {/* Smooth transition shape */}
         <Box
@@ -633,7 +637,9 @@ export const HomePage: React.FC = () => {
         overflow="hidden"
       >
         {/* Pattern background */}
-        <LightPattern intensity={0.3} />
+        <Suspense fallback={null}>
+          <LightPattern intensity={0.3} />
+        </Suspense>
         
         {/* Decorative elements */}
         <Box
