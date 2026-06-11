@@ -82,6 +82,9 @@
       "description": "Creemos algo extraordinario juntos. Disponible para comenzar de inmediato con entrega de MVP en 2 semanas.",
       "button": "Comienza tu Proyecto"
     },
+    "jewel": {
+      "hint": "Arrástrame · toca para transformar"
+    },
     "chatbot": {
       "title": "ASISTENTE IA",
       "heading": "Pregúntame lo que quieras",

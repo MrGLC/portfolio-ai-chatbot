@@ -1,7 +1,4 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { Canvas, useFrame, useThree } from '@react-three/fiber';
-import { Float, OrbitControls, Environment, Sphere } from '@react-three/drei';
-import * as THREE from 'three';
 import {
   Box,
   Container,
@@ -23,7 +20,6 @@ import { ArrowForwardIcon } from '@chakra-ui/icons';
 import { keyframes } from '@emotion/react';
 import { useTranslation } from 'react-i18next';
 import { chatbotAPI } from '../../services/api';
-import { usePerfProfile } from '../../hooks/usePerfProfile';
 
 const MotionBox = motion.create(Box);
 
@@ -43,223 +39,6 @@ const colors = {
   glass: 'rgba(255, 248, 231, 0.1)',
 };
 
-
-// 3D Assistant Orb Component
-function AssistantOrb({ isTyping, hasNewMessage, particleScale = 1 }: { isTyping: boolean; hasNewMessage: boolean; particleScale?: number }) {
-  const meshRef = useRef<THREE.Mesh>(null);
-  const innerRef = useRef<THREE.Mesh>(null);
-  const particlesRef = useRef<THREE.Points>(null);
-
-  // Particle system
-  const particles = React.useMemo(() => {
-    const count = Math.round(100 * particleScale);
-    const positions = new Float32Array(count * 3);
-    const colors = new Float32Array(count * 3);
-    
-    for (let i = 0; i < count; i++) {
-      const theta = Math.random() * Math.PI * 2;
-      const phi = Math.acos(Math.random() * 2 - 1);
-      const radius = 1.5 + Math.random() * 0.5;
-      
-      positions[i * 3] = radius * Math.sin(phi) * Math.cos(theta);
-      positions[i * 3 + 1] = radius * Math.sin(phi) * Math.sin(theta);
-      positions[i * 3 + 2] = radius * Math.cos(phi);
-      
-      // Cream to brown gradient
-      const t = Math.random();
-      colors[i * 3] = 0.545 + t * 0.42; // R
-      colors[i * 3 + 1] = 0.435 + t * 0.34; // G
-      colors[i * 3 + 2] = 0.278 + t * 0.22; // B
-    }
-    
-    return { positions, colors };
-  }, [particleScale]);
-
-  useFrame((state) => {
-    if (meshRef.current) {
-      const time = state.clock.elapsedTime;
-      
-      // Base rotation
-      meshRef.current.rotation.y += 0.005;
-      meshRef.current.rotation.z = Math.sin(time * 0.5) * 0.1;
-      
-      // Typing animation
-      if (isTyping) {
-        const scale = 1 + Math.sin(time * 8) * 0.05;
-        meshRef.current.scale.setScalar(scale);
-      } else {
-        const scale = 1 + Math.sin(time * 2) * 0.02;
-        meshRef.current.scale.setScalar(scale);
-      }
-    }
-    
-    if (innerRef.current) {
-      innerRef.current.rotation.x -= 0.01;
-      innerRef.current.rotation.y -= 0.008;
-    }
-    
-    // Particle animation
-    if (particlesRef.current && particlesRef.current.geometry.attributes.position) {
-      const positions = particlesRef.current.geometry.attributes.position.array as Float32Array;
-      const time = state.clock.elapsedTime;
-      
-      for (let i = 0; i < positions.length; i += 3) {
-        const idx = i / 3;
-        const x = positions[i];
-        const y = positions[i + 1];
-        const z = positions[i + 2];
-        
-        const wave = Math.sin(time * 2 + idx * 0.1) * 0.05;
-        
-        positions[i] = x * (1 + wave);
-        positions[i + 1] = y * (1 + wave);
-        positions[i + 2] = z * (1 + wave);
-      }
-      
-      particlesRef.current.geometry.attributes.position.needsUpdate = true;
-      particlesRef.current.rotation.y += 0.002;
-    }
-  });
-
-  return (
-    <group>
-      {/* Particles */}
-      <points ref={particlesRef}>
-        <bufferGeometry>
-          <bufferAttribute
-            attach="attributes-position"
-            count={particles.positions.length / 3}
-            array={particles.positions}
-            itemSize={3}
-          />
-          <bufferAttribute
-            attach="attributes-color"
-            count={particles.colors.length / 3}
-            array={particles.colors}
-            itemSize={3}
-          />
-        </bufferGeometry>
-        <pointsMaterial
-          size={0.05}
-          vertexColors
-          transparent
-          opacity={0.6}
-          sizeAttenuation
-          blending={THREE.AdditiveBlending}
-        />
-      </points>
-      
-      {/* Main orb */}
-      <Float speed={2} rotationIntensity={0.5} floatIntensity={0.5}>
-        <mesh ref={meshRef}>
-          <sphereGeometry args={[1, 64, 64]} />
-          <meshPhysicalMaterial
-            color={colors.lightBrown}
-            metalness={0.2}
-            roughness={0.1}
-            transmission={0.6}
-            thickness={1.5}
-            envMapIntensity={1}
-            clearcoat={1}
-            clearcoatRoughness={0}
-            ior={1.5}
-            opacity={0.8}
-            transparent
-          />
-        </mesh>
-        
-        {/* Inner core */}
-        <mesh ref={innerRef} scale={0.6}>
-          <octahedronGeometry args={[1, 2]} />
-          <meshPhysicalMaterial
-            color={colors.brown}
-            emissive={colors.brown}
-            emissiveIntensity={0.5}
-            metalness={0.8}
-            roughness={0.2}
-          />
-        </mesh>
-        
-        {/* Glow effect */}
-        {hasNewMessage && (
-          <mesh scale={1.2}>
-            <sphereGeometry args={[1, 32, 32]} />
-            <meshBasicMaterial
-              color={colors.cream}
-              transparent
-              opacity={0.2}
-              side={THREE.BackSide}
-            />
-          </mesh>
-        )}
-      </Float>
-    </group>
-  );
-}
-
-// Floating geometric background elements
-function FloatingElements() {
-  const groupRef = useRef<THREE.Group>(null);
-  
-  useFrame((state) => {
-    if (groupRef.current) {
-      groupRef.current.rotation.y = state.clock.elapsedTime * 0.05;
-    }
-  });
-  
-  return (
-    <group ref={groupRef}>
-      {/* Floating shapes */}
-      {[...Array(8)].map((_, i) => {
-        const angle = (i / 8) * Math.PI * 2;
-        const radius = 3 + Math.sin(i) * 1.5;
-        const y = Math.sin(i * 0.5) * 2;
-        
-        return (
-          <Float key={i} speed={1 + i * 0.2} floatIntensity={0.5}>
-            <mesh position={[
-              Math.cos(angle) * radius,
-              y,
-              Math.sin(angle) * radius
-            ]}>
-              {i % 3 === 0 ? (
-                <tetrahedronGeometry args={[0.3]} />
-              ) : i % 3 === 1 ? (
-                <octahedronGeometry args={[0.3]} />
-              ) : (
-                <dodecahedronGeometry args={[0.3]} />
-              )}
-              <meshPhysicalMaterial
-                color={i % 2 === 0 ? colors.cream : colors.lightBrown}
-                metalness={0.5}
-                roughness={0.5}
-                opacity={0.3}
-                transparent
-              />
-            </mesh>
-          </Float>
-        );
-      })}
-    </group>
-  );
-}
-
-// 3D Scene Component
-function ChatScene({ isTyping, hasNewMessage, particleScale }: { isTyping: boolean; hasNewMessage: boolean; particleScale: number }) {
-  return (
-    <>
-      <ambientLight intensity={0.5} />
-      <pointLight position={[10, 10, 10]} intensity={1} color={colors.cream} />
-      <pointLight position={[-10, -10, -10]} intensity={0.5} color={colors.lightBrown} />
-      <directionalLight position={[0, 5, 5]} intensity={0.8} color="#ffffff" />
-
-      <AssistantOrb isTyping={isTyping} hasNewMessage={hasNewMessage} particleScale={particleScale} />
-      <FloatingElements />
-
-      <Environment preset="apartment" />
-    </>
-  );
-}
 
 // Static CSS gem avatar — replaces per-message WebGL canvases
 const StaticAvatar: React.FC<{ isUser: boolean }> = ({ isUser }) => (
@@ -365,7 +144,6 @@ function MessageBubble({ message, isUser }: { message: string; isUser: boolean }
 // Main Chatbot Component
 export const ThreeJsChatbot: React.FC = () => {
   const { t } = useTranslation();
-  const profile = usePerfProfile();
   const [messages, setMessages] = useState([
     {
       id: 1,
@@ -442,45 +220,6 @@ export const ThreeJsChatbot: React.FC = () => {
     <Box position="relative" zIndex={3}>
       <Container maxW="1200px">
         <Flex gap={8} align="stretch" minH="600px">
-          {/* 3D Assistant Side */}
-          <Box
-            flex="0 0 400px"
-            display={{ base: 'none', lg: 'block' }}
-            position="relative"
-            borderRadius="24px"
-            overflow="hidden"
-            bg={colors.glass}
-            backdropFilter="blur(10px)"
-            border="1px solid"
-            borderColor={`${colors.brown}20`}
-          >
-            <Canvas camera={{ position: [0, 0, 5], fov: 45 }} dpr={profile.dpr} frameloop={profile.animate ? 'always' : 'never'}>
-              <ChatScene isTyping={isTyping} hasNewMessage={hasNewMessage} particleScale={profile.particleScale} />
-            </Canvas>
-            
-            {/* Assistant Info */}
-            <Box
-              position="absolute"
-              bottom={0}
-              left={0}
-              right={0}
-              p={4}
-              bg={`linear-gradient(to top, ${colors.cream}DD, transparent)`}
-            >
-              <VStack align="flex-start" spacing={2}>
-                <Heading size="md" color={colors.darkBrown}>
-                  {t('home.chatbot.assistantName')}
-                </Heading>
-                <HStack spacing={2}>
-                  <Box w={2} h={2} bg="green.400" borderRadius="full" />
-                  <Text fontSize="sm" color={colors.brown}>
-                    {t('home.chatbot.readyToHelp')}
-                  </Text>
-                </HStack>
-              </VStack>
-            </Box>
-          </Box>
-
           {/* Chat Interface */}
           <Box
             flex={1}

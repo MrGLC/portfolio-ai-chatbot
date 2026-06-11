@@ -37,8 +37,12 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
           {children}
         </Box>
         
-        <Footer />
-        
+        {/* Above <main> (zIndex 2): the Home scroll-story canvas is fixed
+            inside main and would otherwise intercept clicks on footer links */}
+        <Box position="relative" zIndex={3}>
+          <Footer />
+        </Box>
+
         {/* Fixed Position Elements */}
         <ScrollToTop />
       </Box>

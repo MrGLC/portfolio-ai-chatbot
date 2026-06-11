@@ -22,7 +22,7 @@ import {
 } from '@chakra-ui/react';
 import { keyframes } from '@emotion/react';
 import { Link as RouterLink } from 'react-router-dom';
-import { motion, useScroll, useTransform } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { 
   CheckCircleIcon, 
@@ -78,30 +78,24 @@ const pulseAnimation = keyframes`
 export const HomePage: React.FC = () => {
   const isMobile = useBreakpointValue({ base: true, lg: false });
   const { t } = useTranslation();
-  const { scrollY } = useScroll();
-  
-  // Parallax effects
-  const heroY = useTransform(scrollY, [0, 500], [0, -150]);
-  const heroOpacity = useTransform(scrollY, [0, 300], [1, 0]);
 
   return (
     <Box overflowX="hidden">
-      {/* Hero Section - Enhanced with better spacing and hierarchy */}
+      {/* Hero Section — paints its own dark bg UNDER the fixed jewel canvas.
+          Stacking contract: the hero stays position:relative with z-index AUTO
+          (no transform, no zIndex) so it does NOT create a stacking context —
+          its background paints before the later-in-DOM z0 canvas, while its
+          positioned children (zIndex >= 1) paint above the canvas. */}
       <MotionBox
+        id="story-hero"
         minH="100vh"
-        bg="transparent"
+        bg="#140306"
         position="relative"
         overflow="visible"
         initial="initial"
         animate="animate"
         variants={staggerAnimation.parent}
-        style={{ y: heroY }}
       >
-        {/* Living Jewel scene — absolute background behind all hero content */}
-        <Suspense fallback={null}>
-          <JewelScene />
-        </Suspense>
-
         {/* Soft bottom fade only — the jewel scene supplies the hero mood; a
             full red wash on top of it flattens the 3D into a pink silhouette */}
         <Box
@@ -127,21 +121,28 @@ export const HomePage: React.FC = () => {
           filter="blur(40px)"
           animation={`${floatAnimation} 8s ease-in-out infinite`}
           pointerEvents="none"
+          zIndex={1}
         />
         
-        <Container maxW="1400px" position="relative" zIndex={2} h="100vh">
+        {/* pointerEvents none on the full-height wrapper so touches in the gem's
+            area fall through to the canvas; the text/CTA stack re-enables them */}
+        <Container maxW="1400px" position="relative" zIndex={2} h="100vh" pointerEvents="none">
           <Flex
             h="100%"
             align="flex-start"
             justify={{ base: "center", lg: "space-between" }}
             pt={{ base: "100px", md: "125px" }}
           >
-            <VStack 
-              spacing={10} 
-              maxW="700px" 
-              align={{ base: "center", lg: "flex-start" }} 
+            {/* Editorial lane: text owns the LEFT 52% on desktop; the jewel
+                (gem keyframe x +1.5) owns the negative space on the right. */}
+            <VStack
+              spacing={10}
+              maxW={{ base: 'full', lg: '52%' }}
+              align={{ base: "center", lg: "flex-start" }}
               textAlign={{ base: "center", lg: "left" }}
               flex={1}
+              pointerEvents="auto"
+              h="fit-content"
             >
               {/* Enhanced luxury subtitle with better styling */}
               <Text
@@ -182,7 +183,7 @@ export const HomePage: React.FC = () => {
                 as={MotionText}
                 textStyle="lead"
                 color="white"
-                maxW="600px"
+                maxW="46ch"
                 variants={staggerAnimation.child}
                 textAlign={{ base: "center", lg: "left" }}
                 textShadow="0 2px 10px rgba(0,0,0,0.6)"
@@ -291,6 +292,7 @@ export const HomePage: React.FC = () => {
           left="50%"
           transform="translateX(-50%)"
           variants={staggerAnimation.child}
+          zIndex={2}
         >
           <VStack spacing={2} cursor="pointer" onClick={() => window.scrollTo({ top: window.innerHeight, behavior: 'smooth' })}>
             <Text fontSize="sm" color="brand.cream" opacity={0.7}>
@@ -321,10 +323,20 @@ export const HomePage: React.FC = () => {
         </MotionBox>
       </MotionBox>
 
+      {/* Living Jewel scroll story — fixed transparent canvas behind every
+          section (z0). MUST come after the hero in DOM so the canvas paints
+          above the hero's #140306 background; sections below carry zIndex 1
+          so their content always sits above the traveling jewel. */}
+      <Suspense fallback={null}>
+        <JewelScene />
+      </Suspense>
+
       {/* AI Assistant Section - Interactive Chatbot */}
-      <Box 
-        bg="brand.primary" 
+      <Box
+        id="story-chatbot"
+        bg="transparent"
         position="relative"
+        zIndex={1}
         overflow="hidden"
       >
         {/* Red transition overlay at top */}
@@ -352,7 +364,11 @@ export const HomePage: React.FC = () => {
         />
         
         <Container maxW="1400px" py={{ base: 12, md: 20 }} position="relative" zIndex={3}>
+          {/* Editorial lane: content shifts RIGHT on desktop — the neural
+              jewel (keyframe x −2.2) owns the left lane's negative space. */}
           <MotionBox
+            ml={{ base: 0, lg: '28%' }}
+            maxW={{ base: 'full', lg: '68%' }}
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, margin: "-100px" }}
@@ -405,20 +421,34 @@ export const HomePage: React.FC = () => {
 
       {/* Portfolio Preview Section - Enhanced interactions */}
       <Box
+        id="story-portfolio"
         bg="transparent"
         py={{ base: 12, md: 20 }}
         position="relative"
+        zIndex={1}
         overflow="hidden"
       >
-        {/* Red overlay to maintain consistency */}
+        {/* Red overlay — masked OUT of the right lane on desktop so the
+            lattice jewel (keyframe x +2.2) reads through clear canvas instead
+            of a muting red wash; mobile keeps the full-bleed gradient. */}
         <Box
           position="absolute"
           top={0}
           left={0}
           right={0}
           bottom={0}
-          bgGradient="linear(to-b, rgba(139, 0, 0, 0.6), rgba(220, 20, 60, 0.4), rgba(139, 0, 0, 0.5))"
+          bgGradient="linear(to-b, rgba(139, 0, 0, 0.55), rgba(220, 20, 60, 0.35), rgba(139, 0, 0, 0.45))"
           pointerEvents="none"
+          sx={{
+            maskImage: {
+              base: 'none',
+              lg: 'linear-gradient(to right, black 0%, black 50%, rgba(0,0,0,0.35) 70%, rgba(0,0,0,0.12) 100%)',
+            },
+            WebkitMaskImage: {
+              base: 'none',
+              lg: 'linear-gradient(to right, black 0%, black 50%, rgba(0,0,0,0.35) 70%, rgba(0,0,0,0.12) 100%)',
+            },
+          }}
         />
         
         <Container maxW="1400px" position="relative" zIndex={1}>
@@ -429,8 +459,19 @@ export const HomePage: React.FC = () => {
             variants={scrollReveal}
           >
             <VStack spacing={20}>
-              {/* Enhanced section header */}
-              <VStack spacing={6} textAlign="center" maxW="800px" mx="auto">
+              {/* Editorial lane: header hugs the LEFT 64% on desktop — the
+                  lattice jewel owns the right lane. The project grid below
+                  stays full width. */}
+              <VStack
+                spacing={6}
+                textAlign={{ base: 'center', lg: 'start' }}
+                align={{ base: 'center', lg: 'flex-start' }}
+                alignSelf={{ base: 'center', lg: 'flex-start' }}
+                w="full"
+                maxW={{ base: '800px', lg: '64%' }}
+                mx={{ base: 'auto', lg: 0 }}
+                mr={{ base: 'auto', lg: '30%' }}
+              >
                 <Text
                   textStyle="eyebrow"
                   color="brand.accent"
@@ -439,8 +480,8 @@ export const HomePage: React.FC = () => {
                     content: '""',
                     position: 'absolute',
                     bottom: '-12px',
-                    left: '50%',
-                    transform: 'translateX(-50%)',
+                    left: { base: '50%', lg: 0 },
+                    transform: { base: 'translateX(-50%)', lg: 'none' },
                     width: '80px',
                     height: '3px',
                     bg: 'brand.accent',
@@ -614,9 +655,11 @@ export const HomePage: React.FC = () => {
 
       {/* Contact CTA Section - More compelling design */}
       <Box
-        bg="brand.primary"
+        id="story-cta"
+        bg="transparent"
         py={{ base: 12, md: 20 }}
         position="relative"
+        zIndex={1}
         overflow="hidden"
       >
         {/* Decorative elements */}
