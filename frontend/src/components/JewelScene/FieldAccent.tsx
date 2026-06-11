@@ -1,32 +1,35 @@
-import React, { Suspense } from 'react';
-import { Canvas } from '@react-three/fiber';
+import React, { Suspense, lazy } from 'react';
 import { Box } from '@chakra-ui/react';
 import { usePerfProfile } from '../../hooks/usePerfProfile';
-import FieldLayer from './FieldLayer';
+
+// Lazy: the three.js graph only downloads when the full tier mounts it.
+const FieldAccentCanvas = lazy(() => import('./FieldAccentCanvas'));
 
 /**
- * FieldAccent — site-wide ambient accent layer.
+ * FieldAccent — site-wide ambient accent layer (tier gate, three-free).
  *
- * A sparse, non-interactive instance of the FieldLayer particle stream that
- * sits fixed behind every page (zIndex 0, pointer-events disabled). Transparent
- * canvas: page background shows through; density 0.15 keeps it subtle and
- * skips the glow sprites per FieldLayer's props contract.
+ * Lite tier (phones / reduced motion): a static CSS radial gradient stands in
+ * for the particle stream — no Canvas, no three.js chunk ever requested.
+ * Full tier: lazy-mounts FieldAccentCanvas (the real particle layer).
  */
 export const FieldAccent: React.FC = () => {
   const profile = usePerfProfile();
+  if (profile.tier === 'lite') {
+    return (
+      <Box
+        position="fixed"
+        inset={0}
+        zIndex={0}
+        pointerEvents="none"
+        aria-hidden="true"
+        bgGradient="radial(rgba(220,20,60,0.06) 0%, transparent 60%)"
+      />
+    );
+  }
   return (
-    <Box position="fixed" inset={0} zIndex={0} pointerEvents="none" aria-hidden="true">
-      <Canvas
-        dpr={profile.dpr}
-        frameloop={profile.animate ? 'always' : 'never'}
-        gl={{ antialias: false, alpha: true, powerPreference: 'high-performance' }}
-        camera={{ position: [0, 0, 8], fov: 40 }}
-      >
-        <Suspense fallback={null}>
-          <FieldLayer density={0.15} interactive={false} />
-        </Suspense>
-      </Canvas>
-    </Box>
+    <Suspense fallback={null}>
+      <FieldAccentCanvas />
+    </Suspense>
   );
 };
 
