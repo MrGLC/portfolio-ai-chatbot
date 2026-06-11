@@ -6,6 +6,7 @@ import {
   Text,
   VStack,
   HStack,
+  Stack,
   SimpleGrid,
   Card,
   CardBody,
@@ -120,11 +121,12 @@ export const ConsultingPage: React.FC = () => {
               </Text>
             </MotionBox>
             
-            <HStack spacing={4} mt={8}>
+            <Stack direction={{ base: 'column', sm: 'row' }} spacing={4} mt={8} w={{ base: 'full', sm: 'auto' }}>
               <Button
                 size="lg"
                 bg="white"
                 color="red.600"
+                w={{ base: 'full', sm: 'auto' }}
                 _hover={{ bg: 'whiteAlpha.900', transform: 'translateY(-2px)' }}
                 transition="all 0.2s"
               >
@@ -135,11 +137,12 @@ export const ConsultingPage: React.FC = () => {
                 variant="outline"
                 color="white"
                 borderColor="white"
+                w={{ base: 'full', sm: 'auto' }}
                 _hover={{ bg: 'whiteAlpha.200' }}
               >
                 {t('consulting.hero.viewPricingButton')}
               </Button>
-            </HStack>
+            </Stack>
           </VStack>
         </Container>
 
@@ -352,8 +355,9 @@ export const ConsultingPage: React.FC = () => {
               border="1px solid"
               borderColor="whiteAlpha.300"
               borderRadius="24px"
-              p={8}
+              p={{ base: 4, md: 8 }}
               maxW="800px"
+              w="full"
               mx="auto"
             >
               <CardBody>
@@ -438,11 +442,12 @@ export const ConsultingPage: React.FC = () => {
                   {t('consulting.finalCta.description')}
                 </Text>
                 
-                <HStack spacing={4}>
+                <Stack direction={{ base: 'column', sm: 'row' }} spacing={4} w={{ base: 'full', sm: 'auto' }}>
                   <Button
                     size="lg"
                     bgGradient="linear(135deg, red.600, brand.secondary)"
                     color="white"
+                    w={{ base: 'full', sm: 'auto' }}
                     leftIcon={<CalendarIcon />}
                     _hover={{ transform: 'translateY(-2px)' }}
                     transition="all 0.2s"
@@ -454,12 +459,13 @@ export const ConsultingPage: React.FC = () => {
                     variant="outline"
                     color="red.600"
                     borderColor="red.600"
+                    w={{ base: 'full', sm: 'auto' }}
                     leftIcon={<PhoneIcon />}
                     _hover={{ bg: 'red.600', color: 'white' }}
                   >
                     {t('consulting.finalCta.contactButton')}
                   </Button>
-                </HStack>
+                </Stack>
 
                 <Text fontSize="sm" color="brand.textMuted" fontStyle="italic">
                   {t('consulting.finalCta.consultationNote')}

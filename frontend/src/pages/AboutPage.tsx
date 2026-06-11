@@ -5,6 +5,7 @@ import {
   Heading,
   Text,
   VStack,
+  Stack,
   SimpleGrid,
   Card,
   CardBody,
@@ -151,13 +152,14 @@ export const AboutPage: React.FC = () => {
                   {t('about.hero.badges.english')}
                 </Badge>
               </HStack>
-              <HStack spacing={4} pt={4}>
+              <Stack direction={{ base: 'column', sm: 'row' }} spacing={4} pt={4} w={{ base: 'full', sm: 'auto' }}>
                 <Button
                   variant="primary"
                   size="lg"
                   rightIcon={<ArrowForwardIcon />}
                   as="a"
                   href="mailto:ingbmluisgomez@gmail.com"
+                  w={{ base: 'full', sm: 'auto' }}
                 >
                   {t('about.hero.getInTouch')}
                 </Button>
@@ -166,6 +168,7 @@ export const AboutPage: React.FC = () => {
                   size="lg"
                   borderColor="white"
                   color="white"
+                  w={{ base: 'full', sm: 'auto' }}
                   _hover={{
                     bg: 'whiteAlpha.200',
                     borderColor: 'white',
@@ -175,7 +178,7 @@ export const AboutPage: React.FC = () => {
                 >
                   {t('about.hero.viewProjects')}
                 </Button>
-              </HStack>
+              </Stack>
             </VStack>
           </MotionBox>
         </Container>
@@ -422,11 +425,12 @@ export const AboutPage: React.FC = () => {
                   <Text fontSize="lg" color="whiteAlpha.900" maxW="600px">
                     {t('about.finalCta.description')}
                   </Text>
-                  <HStack spacing={4}>
+                  <Stack direction={{ base: 'column', sm: 'row' }} spacing={4} w={{ base: 'full', sm: 'auto' }}>
                     <Button
                       size="lg"
                       bg="brand.accent"
                       color="brand.text"
+                      w={{ base: 'full', sm: 'auto' }}
                       _hover={{
                         bg: 'brand.accentLight',
                         transform: 'translateY(-2px)',
@@ -439,12 +443,13 @@ export const AboutPage: React.FC = () => {
                     >
                       {t('about.finalCta.startProject')}
                     </Button>
-                    <Link href="https://linkedin.com/in/gomezgg/" isExternal _hover={{ textDecoration: 'none' }}>
+                    <Link href="https://linkedin.com/in/gomezgg/" isExternal _hover={{ textDecoration: 'none' }} w={{ base: 'full', sm: 'auto' }}>
                       <Button
                         size="lg"
                         variant="outline"
                         borderColor="white"
                         color="white"
+                        w={{ base: 'full', sm: 'auto' }}
                         _hover={{
                           bg: 'whiteAlpha.200',
                           borderColor: 'white',
@@ -453,7 +458,7 @@ export const AboutPage: React.FC = () => {
                         {t('about.finalCta.connectLinkedIn')}
                       </Button>
                     </Link>
-                  </HStack>
+                  </Stack>
                 </VStack>
               </CardBody>
             </Card>

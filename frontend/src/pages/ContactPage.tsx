@@ -522,12 +522,13 @@ export const ContactPage: React.FC = () => {
             <Text fontSize="lg" color="brand.textSecondary" maxW="600px">
               {t('contact.cta.description')}
             </Text>
-            <HStack spacing={4}>
+            <Stack direction={{ base: 'column', sm: 'row' }} spacing={4} w={{ base: 'full', sm: 'auto' }}>
               <Button
                 as="a"
                 href="mailto:ingbmluisgomez@gmail.com"
                 variant="secondary"
                 size="lg"
+                w={{ base: 'full', sm: 'auto' }}
                 leftIcon={<EmailIcon />}
               >
                 {t('contact.cta.emailButton')}
@@ -537,11 +538,12 @@ export const ContactPage: React.FC = () => {
                 href="tel:+526143447013"
                 variant="outline"
                 size="lg"
+                w={{ base: 'full', sm: 'auto' }}
                 leftIcon={<PhoneIcon />}
               >
                 {t('contact.cta.callButton')}
               </Button>
-            </HStack>
+            </Stack>
             <Text fontSize="sm" color="brand.textSecondary" fontStyle="italic">
               {t('contact.cta.quote')}
             </Text>
