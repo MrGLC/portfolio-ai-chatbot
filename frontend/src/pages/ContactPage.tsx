@@ -120,7 +120,7 @@ export const ContactPage: React.FC = () => {
   return (
     <>
       {/* Hero Section with Red Background */}
-      <Box bg="brand.secondary" py={20}>
+      <Box bg="brand.secondary" py={{ base: 16, md: 24 }}>
         <Container maxW="7xl">
           <VStack spacing={8} textAlign="center">
             <MotionBox
@@ -129,20 +129,17 @@ export const ContactPage: React.FC = () => {
               transition={{ duration: 0.6 }}
             >
               <Text
-                fontSize="sm"
-                fontWeight="300"
-                letterSpacing="2px"
-                textTransform="uppercase"
+                textStyle="eyebrow"
                 color="white"
                 opacity={0.9}
                 mb={4}
               >
                 {t('contact.hero.subtitle')}
               </Text>
-              <Heading size="4xl" color="white" mb={4} fontFamily="heading">
+              <Heading as="h1" textStyle="pageTitle" color="white" mb={4}>
                 {t('contact.hero.title')}
               </Heading>
-              <Text fontSize="xl" color="whiteAlpha.900" maxW="800px" mx="auto" mb={6}>
+              <Text textStyle="lead" color="whiteAlpha.900" maxW="800px" mx="auto" mb={6}>
                 {t('contact.hero.description')}
               </Text>
               <HStack spacing={4} justify="center" flexWrap="wrap" rowGap={2}>
@@ -175,7 +172,7 @@ export const ContactPage: React.FC = () => {
 
       {/* Main Content Section */}
       <Box bg="brand.primary">
-        <Container maxW="7xl" py={20}>
+        <Container maxW="7xl" py={{ base: 12, md: 20 }}>
           <VStack spacing={16} align="stretch">
             <SimpleGrid columns={{ base: 1, lg: 2 }} spacing={12}>
                 {/* Contact Form - White/Cream Card */}
@@ -191,7 +188,7 @@ export const ContactPage: React.FC = () => {
                   <CardBody p={8}>
                     <VStack spacing={6} align="stretch">
                       <Box>
-                        <Heading size="lg" color="brand.text" mb={2} fontFamily="heading">
+                        <Heading textStyle="sectionTitle" color="brand.text" mb={2}>
                           {t('contact.form.title')}
                         </Heading>
                         <Text color="brand.textSecondary">
@@ -335,7 +332,7 @@ export const ContactPage: React.FC = () => {
                 <VStack spacing={6} align="stretch">
                   {/* Quick Contact Info */}
                   <Box>
-                    <Heading size="md" mb={4} fontFamily="heading">{t('contact.info.title')}</Heading>
+                    <Heading textStyle="sectionTitle" mb={4}>{t('contact.info.title')}</Heading>
                     <VStack spacing={4} align="stretch">
                       {contactMethods.map((method, index) => (
                         <MotionCard
@@ -513,13 +510,13 @@ export const ContactPage: React.FC = () => {
       </Box>
 
       {/* Bottom CTA Section with alternating background */}
-      <Box bg="brand.cream" py={20}>
+      <Box bg="brand.cream" py={{ base: 12, md: 20 }}>
         <Container maxW="7xl">
           <VStack spacing={8} textAlign="center">
-            <Heading size="2xl" fontFamily="heading" color="brand.text">
+            <Heading textStyle="sectionTitle" color="brand.text">
               {t('contact.cta.title')}
             </Heading>
-            <Text fontSize="lg" color="brand.textSecondary" maxW="600px">
+            <Text textStyle="lead" color="brand.textSecondary" maxW="600px">
               {t('contact.cta.description')}
             </Text>
             <Stack direction={{ base: 'column', sm: 'row' }} spacing={4} w={{ base: 'full', sm: 'auto' }}>

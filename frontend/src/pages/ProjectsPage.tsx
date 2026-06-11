@@ -181,10 +181,9 @@ export const ProjectsPage: React.FC = () => {
               transition={{ duration: durations.slow, ease: easings.smooth }}
             >
               <Heading
-                size={{ base: "2xl", md: "4xl" }}
+                as="h1"
+                textStyle="pageTitle"
                 color="white"
-                fontWeight="bold"
-                letterSpacing="tight"
               >
                 {t('projects.hero.title')}
               </Heading>
@@ -195,7 +194,7 @@ export const ProjectsPage: React.FC = () => {
               transition={{ duration: durations.slow, delay: delays.staggerNormal * 2, ease: easings.smooth }}
             >
               <Text
-                fontSize={{ base: "lg", md: "xl" }}
+                textStyle="lead"
                 color="whiteAlpha.900"
                 maxW="800px"
                 mx="auto"
@@ -237,7 +236,7 @@ export const ProjectsPage: React.FC = () => {
       </Box>
 
       {/* Projects Grid with Alternating Background */}
-      <Box bg="white" py={16}>
+      <Box bg="white" py={{ base: 12, md: 20 }}>
         <Container maxW="7xl">
           <AnimatePresence mode="wait">
             <motion.div
@@ -306,7 +305,7 @@ export const ProjectsPage: React.FC = () => {
                     <CardBody p={6}>
                       <VStack align="stretch" spacing={4}>
                         <Box>
-                          <Heading size="md" color="gray.800" mb={2}>
+                          <Heading as="h3" textStyle="cardTitle" color="gray.800" mb={2}>
                             {t(project.titleKey)}
                           </Heading>
                           <Text color="gray.600" fontSize="sm" lineHeight="tall">
@@ -368,7 +367,7 @@ export const ProjectsPage: React.FC = () => {
       </Box>
 
       {/* CTA Section with Cream Background */}
-      <Box bg="brand.creamWarm" py={20}>
+      <Box bg="brand.creamWarm" py={{ base: 12, md: 20 }}>
         <Container maxW="4xl">
           <Card
             bg="white"
@@ -387,7 +386,7 @@ export const ProjectsPage: React.FC = () => {
             />
             <CardBody p={{ base: 8, md: 12 }} textAlign="center">
               <VStack spacing={6}>
-                <Heading size="xl" color="gray.800">
+                <Heading textStyle="sectionTitle" color="gray.800">
                   {t('projects.cta.title')}
                 </Heading>
                 <Text fontSize="lg" color="gray.600" maxW="600px">

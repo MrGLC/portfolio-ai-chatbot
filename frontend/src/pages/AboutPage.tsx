@@ -109,22 +109,20 @@ export const AboutPage: React.FC = () => {
             transition={{ duration: durations.slower, ease: easings.smooth }}
           >
             <VStack spacing={6} textAlign="center">
-              <Text variant="luxury" color="brand.accent" fontSize="sm">
+              <Text textStyle="eyebrow" color="brand.accent">
                 {t('about.hero.role')}
               </Text>
-              <Heading 
-                size="4xl" 
+              <Heading
+                as="h1"
+                textStyle="pageTitle"
                 color="white"
-                fontWeight="800"
-                letterSpacing="-0.03em"
               >
                 {t('about.hero.name')}
               </Heading>
-              <Text 
-                fontSize="xl" 
-                color="whiteAlpha.900" 
+              <Text
+                textStyle="lead"
+                color="whiteAlpha.900"
                 maxW="700px"
-                lineHeight="1.8"
               >
                 {t('about.hero.description')}
               </Text>
@@ -197,7 +195,7 @@ export const AboutPage: React.FC = () => {
       </Box>
 
       {/* About/Bio Section - Cream Background */}
-      <Box bg="brand.primary" py={20}>
+      <Box bg="brand.primary" py={{ base: 12, md: 20 }}>
         <Container maxW="6xl">
           <MotionBox
             initial={{ opacity: 0, y: 20 }}
@@ -207,7 +205,7 @@ export const AboutPage: React.FC = () => {
             <VStack spacing={16} align="stretch">
               {/* Bio Section */}
               <Box textAlign="center">
-                <Heading size="3xl" color="brand.text" mb={6}>
+                <Heading textStyle="sectionTitle" color="brand.text" mb={6}>
                   {t('about.bio.title')}
                 </Heading>
                 <Card 
@@ -229,7 +227,7 @@ export const AboutPage: React.FC = () => {
 
               {/* Contact Information */}
               <Box>
-                <Heading size="2xl" color="brand.text" mb={8} textAlign="center">
+                <Heading textStyle="sectionTitle" color="brand.text" mb={8} textAlign="center">
                   {t('about.contact.title')}
                 </Heading>
                 <Card 
@@ -290,7 +288,7 @@ export const AboutPage: React.FC = () => {
       </Box>
 
       {/* Skills Section - White Background */}
-      <Box bg="brand.surface" py={20} position="relative">
+      <Box bg="brand.surface" py={{ base: 12, md: 20 }} position="relative">
         {/* Diagonal transition from cream to white */}
         <Box
           position="absolute"
@@ -305,7 +303,7 @@ export const AboutPage: React.FC = () => {
         
         <Container maxW="6xl">
           <VStack spacing={12} align="stretch">
-            <Heading size="3xl" color="brand.text" textAlign="center">
+            <Heading textStyle="sectionTitle" color="brand.text" textAlign="center">
               {t('about.technicalExpertise.title')}
             </Heading>
             
@@ -321,7 +319,7 @@ export const AboutPage: React.FC = () => {
                 >
                   <CardBody p={{ base: 6, md: 8 }}>
                     <VStack align="stretch" spacing={4}>
-                      <Heading size="md" color="brand.secondary">
+                      <Heading as="h3" textStyle="cardTitle" color="brand.secondary">
                         {category.title}
                       </Heading>
                       <Wrap spacing={3}>
@@ -353,7 +351,7 @@ export const AboutPage: React.FC = () => {
       </Box>
 
       {/* Value Proposition Section - Cream Background */}
-      <Box bg="brand.primary" py={20} position="relative">
+      <Box bg="brand.primary" py={{ base: 12, md: 20 }} position="relative">
         {/* Diagonal transition from white to cream */}
         <Box
           position="absolute"
@@ -369,10 +367,10 @@ export const AboutPage: React.FC = () => {
         <Container maxW="6xl">
           <VStack spacing={12} align="stretch">
             <Box textAlign="center">
-              <Heading size="3xl" color="brand.text" mb={4}>
+              <Heading textStyle="sectionTitle" color="brand.text" mb={4}>
                 {t('about.valueProposition.title')}
               </Heading>
-              <Text fontSize="xl" color="brand.textSecondary" maxW="700px" mx="auto">
+              <Text textStyle="lead" color="brand.textSecondary" maxW="700px" mx="auto">
                 {t('about.valueProposition.subtitle')}
               </Text>
             </Box>
@@ -397,7 +395,7 @@ export const AboutPage: React.FC = () => {
                         <Icon as={prop.icon} boxSize={6} />
                       </Box>
                       <VStack align="start" spacing={2} flex={1}>
-                        <Heading size="md" color="brand.text">
+                        <Heading as="h3" textStyle="cardTitle" color="brand.text">
                           {prop.title}
                         </Heading>
                         <Text color="brand.textSecondary">
@@ -419,7 +417,7 @@ export const AboutPage: React.FC = () => {
             >
               <CardBody p={{ base: 8, md: 12 }}>
                 <VStack spacing={6} textAlign="center">
-                  <Heading size="2xl" color="white">
+                  <Heading textStyle="sectionTitle" color="white">
                     {t('about.finalCta.title')}
                   </Heading>
                   <Text fontSize="lg" color="whiteAlpha.900" maxW="600px">
