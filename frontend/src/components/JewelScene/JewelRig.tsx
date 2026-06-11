@@ -8,6 +8,8 @@ import { buildMorphTargets } from './morphTargets';
 import type { TargetName } from './morphTargets';
 import { useJewelStory } from './useJewelStory';
 import type { JewelStoryState } from './useJewelStory';
+import { resolveStoryFrame, STORY_SECTIONS } from './storyResolver';
+import type { SectionRange, StoryFrame } from './storyResolver';
 
 /**
  * JewelRig — production "Living Jewel" scene layer.
@@ -19,14 +21,22 @@ import type { JewelStoryState } from './useJewelStory';
  *
  * Scene-graph-only component: the composition root owns the <Canvas>.
  *
- * Morph driver handshake:
- *   tap -> story.setTarget(B) -> 'state' event (from=A, to=B, progress=0)
- *     -> subscription writes A into position/normal, B into aTarget*,
- *        sets animatingRef
- *   useFrame advances progressRef (uMorph) until 1 -> story.setProgress(1)
- *     -> controller promotes B->A, emits state (from=to=B, progress=0)
- *     -> subscription rewrites both attribute sets to B; uMorph drops to 0
- *        with identical A/B arrays, so there is no visual pop.
+ * Morph driver handshake (two drivers, scroll wins):
+ *   TAP (settled gem sections only): story.setTarget(B) -> 'state' event
+ *     (from=A, to=B, progress=0) -> subscription writes A into
+ *     position/normal, B into aTarget*, sets animatingRef. useFrame advances
+ *     progressRef (uMorph) until 1 -> story.setProgress(1) -> controller
+ *     promotes B->A, emits state (from=to=B, progress=0) -> subscription
+ *     rewrites both attribute sets to B; uMorph drops to 0 with identical
+ *     A/B arrays, so there is no visual pop.
+ *   SCROLL: useFrame resolves a StoryFrame from window.scrollY. Inside a
+ *     blend zone the rig aligns the controller pair to (frame.from,
+ *     frame.to) — via setTarget(frame.from); setTarget(frame.to) when needed
+ *     — then writes frame.progress into progressRef DIRECTLY and clears
+ *     animatingRef: scroll owns morph progress during transitions. On
+ *     settling, the pair is promoted (setProgress(1)) or rested at 0,
+ *     whichever side of the zone the scroll exited. 'gemBreath' is treated
+ *     as an alias of 'gem' so the tap toggle survives scroll round-trips.
  */
 
 /* ------------------------------------------------------------------ */
@@ -46,24 +56,31 @@ const BG_FRAGMENT = /* glsl */ `
   uniform vec3 uEdgeColor;
   uniform vec3 uCenterColor;
   uniform vec2 uFocus;
+  uniform float uFade;
   void main() {
     // Radial falloff from the glow focus (sits behind the gem).
     float d = distance(vUv, uFocus);
     float t = smoothstep(0.05, 0.62, d);
     vec3 color = mix(uCenterColor, uEdgeColor, t);
-    gl_FragColor = vec4(color, 1.0);
+    // uFade: hero scenery — fully opaque in the hero, gone below it.
+    gl_FragColor = vec4(color, uFade);
   }
 `;
 
-const Backdrop: React.FC<{ focusX: number; focusY: number }> = ({ focusX, focusY }) => {
+const Backdrop: React.FC<{
+  focusX: number;
+  focusY: number;
+  fade: THREE.IUniform<number>;
+}> = ({ focusX, focusY, fade }) => {
   const uniforms = useMemo(
     () => ({
       uEdgeColor: { value: new THREE.Color('#1A0508') },
       uCenterColor: { value: new THREE.Color('#5A1020') },
       uFocus: { value: new THREE.Vector2(focusX, focusY) },
+      uFade: fade, // shared reference — JewelRig's useFrame writes it
     }),
     // Rebuild only if composition changes (full <-> lite).
-    [focusX, focusY]
+    [focusX, focusY, fade]
   );
 
   return (
@@ -74,6 +91,7 @@ const Backdrop: React.FC<{ focusX: number; focusY: number }> = ({ focusX, focusY
         vertexShader={BG_VERTEX}
         fragmentShader={BG_FRAGMENT}
         uniforms={uniforms}
+        transparent
         depthWrite={false}
       />
     </mesh>
@@ -107,13 +125,15 @@ const DUST_VERTEX = /* glsl */ `
 
 const DUST_FRAGMENT = /* glsl */ `
   uniform float uTime;
+  uniform float uFade;
   varying vec3 vColor;
   varying float vSeed;
   void main() {
     float d = length(gl_PointCoord - vec2(0.5));
     if (d > 0.5) discard;
     float twinkle = 0.65 + 0.35 * sin(uTime * 0.6 + vSeed * 31.4159);
-    float alpha = smoothstep(0.5, 0.05, d) * twinkle * 0.82;
+    // uFade: dust is hero scenery like the backdrop — fades out with it.
+    float alpha = smoothstep(0.5, 0.05, d) * twinkle * 0.82 * uFade;
     gl_FragColor = vec4(vColor * alpha, alpha);
   }
 `;
@@ -121,7 +141,11 @@ const DUST_FRAGMENT = /* glsl */ `
 const DUST_PALETTE = ['#FFD700', '#F5E6C8', '#E8C547', '#FFF4D6'];
 const DUST_BASE_COUNT = 300;
 
-const Dust: React.FC<{ count: number; animate: boolean }> = ({ count, animate }) => {
+const Dust: React.FC<{ count: number; animate: boolean; fade: THREE.IUniform<number> }> = ({
+  count,
+  animate,
+  fade,
+}) => {
   const materialRef = useRef<THREE.ShaderMaterial>(null);
 
   const { positions, seeds, sizes, colors } = useMemo(() => {
@@ -144,7 +168,7 @@ const Dust: React.FC<{ count: number; animate: boolean }> = ({ count, animate })
     return { positions: pos, seeds: seed, sizes: size, colors: col };
   }, [count]);
 
-  const uniforms = useMemo(() => ({ uTime: { value: 0 } }), []);
+  const uniforms = useMemo(() => ({ uTime: { value: 0 }, uFade: fade }), [fade]);
 
   useFrame(({ clock }) => {
     if (!animate || !materialRef.current) return;
@@ -215,6 +239,13 @@ export const JewelRig: React.FC = () => {
   const angularVelRef = useRef({ x: 0, y: 0 }); // drag inertia
   const dragRef = useRef<DragState>({ active: false, lastX: 0, lastY: 0, moved: 0 });
   const lastPairRef = useRef<{ from: TargetName; to: TargetName }>({ from: 'gem', to: 'gem' });
+
+  // Scroll story plumbing — all refs/uniforms, zero React re-renders.
+  const scrollRef = useRef(0);
+  const rangesRef = useRef<SectionRange[]>([]);
+  const frameRef = useRef<StoryFrame | null>(null); // last resolved frame (tap gating)
+  const scaleRef = useRef(baseScale); // smoothed story scale (pulse multiplies on top)
+  const fadeUniform = useMemo<THREE.IUniform<number>>(() => ({ value: 1 }), []);
 
   /* ---- Geometry + morph attributes (built once) ---- */
   const { geometry, targets } = useMemo(() => {
@@ -307,12 +338,92 @@ export const JewelRig: React.FC = () => {
     };
   }, []);
 
+  /* ---- Scroll story: passive scroll listener + section range measurement ---- */
+  useEffect(() => {
+    const measure = () => {
+      const ranges: SectionRange[] = [];
+      for (const id of Object.keys(STORY_SECTIONS)) {
+        const el = document.getElementById(id);
+        if (!el) continue;
+        // Document coordinates via rect + scrollY: offsetTop would be relative
+        // to the positioned <main> wrapper (92px header offset) — wrong frame.
+        const rect = el.getBoundingClientRect();
+        const top = rect.top + window.scrollY;
+        ranges.push({ id, top, bottom: top + rect.height });
+      }
+      rangesRef.current = ranges;
+    };
+    const onScroll = () => {
+      scrollRef.current = window.scrollY;
+    };
+    onScroll();
+    measure();
+    // Lazy-loaded content (chatbot canvas chunk) shifts section offsets after
+    // mount — re-measure once the layout has had time to settle.
+    const remeasure = window.setTimeout(measure, 1500);
+    window.addEventListener('resize', measure);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => {
+      window.clearTimeout(remeasure);
+      window.removeEventListener('resize', measure);
+      window.removeEventListener('scroll', onScroll);
+    };
+  }, []);
+
   /* ---- Single per-frame driver ---- */
   useFrame(({ clock }, delta) => {
     const group = gemGroupRef.current;
     if (!group) return;
 
-    // Morph driver: advance until 1, then hand back to the controller —
+    // Resolve the story frame for the current scroll position. Until the
+    // sections are measured (first effect tick) fall back to the hero pose.
+    const ranges = rangesRef.current;
+    const frame =
+      ranges.length > 0
+        ? resolveStoryFrame(scrollRef.current, ranges, window.innerHeight, lite)
+        : null;
+    frameRef.current = frame;
+
+    // Hero scenery fade: backdrop + dust are gone once the hero scrolls out.
+    const heroBottom = ranges.length > 0 ? ranges[0].bottom : Number.POSITIVE_INFINITY;
+    fadeUniform.value = Number.isFinite(heroBottom)
+      ? Math.min(1, Math.max(0, 1 - scrollRef.current / (heroBottom * 0.8)))
+      : 1;
+
+    // Scroll-driven morph: align the controller pair, then own progress.
+    // 'gemBreath' counts as 'gem' so the tap toggle survives scrolling.
+    if (frame) {
+      const st = story.state;
+      if (frame.from !== frame.to) {
+        // Inside a blend zone.
+        const fromMatches =
+          st.from === frame.from || (frame.from === 'gem' && st.from === 'gemBreath');
+        if (!(fromMatches && st.to === frame.to)) {
+          const fromCompatible =
+            st.to === frame.from || (frame.from === 'gem' && st.to === 'gemBreath');
+          if (!fromCompatible) story.setTarget(frame.from); // realign A first
+          story.setTarget(frame.to);
+        }
+        animatingRef.current = false; // tap driver yields to scroll
+        progressRef.current = frame.progress;
+      } else if (!animatingRef.current) {
+        // Settled in a section (and no tap morph in flight).
+        const t = frame.to;
+        const breathAlias = t === 'gem' && (st.to === 'gemBreath' || st.from === 'gemBreath');
+        if (!breathAlias && (st.from !== t || st.to !== t)) {
+          if (st.to === t) {
+            story.setProgress(1); // exited a blend zone forward -> promote
+          } else if (st.from === t) {
+            progressRef.current = 0; // exited backward -> rest on the from shape
+          } else {
+            story.setTarget(t); // teleport (resize / anchor jump): snap to target
+            story.setProgress(1);
+          }
+        }
+      }
+    }
+
+    // Tap morph driver: advance until 1, then hand back to the controller —
     // setProgress(1) promotes B->A and the subscription rewrites attributes.
     if (animatingRef.current) {
       progressRef.current = Math.min(1, progressRef.current + delta * 1.5);
@@ -326,10 +437,9 @@ export const JewelRig: React.FC = () => {
 
     const dragging = dragRef.current.active;
 
-    // Ambient motion — suppressed for reduced motion; drag stays user-initiated.
-    if (profile.animate) {
-      if (!dragging) group.rotation.y += delta * ROTATION_SPEED;
-      group.position.y = gemY + Math.sin(clock.getElapsedTime() * 0.5) * floatAmplitude;
+    // Ambient rotation — suppressed for reduced motion; drag stays user-initiated.
+    if (profile.animate && !dragging) {
+      group.rotation.y += delta * ROTATION_SPEED;
     }
 
     // Drag inertia: velocity applies when the finger is off, always decays.
@@ -342,9 +452,23 @@ export const JewelRig: React.FC = () => {
     vel.x *= inertiaDecay;
     vel.y *= inertiaDecay;
 
-    // Tap pulse: quick scale swell, exponential settle.
-    const s = baseScale * (1 + pulseRef.current * 0.12);
-    group.scale.setScalar(s);
+    // Position: exponential approach toward the story frame (float bob rides
+    // on top of the frame's y as before).
+    const k = 1 - Math.exp(-5 * delta);
+    const floatY = profile.animate
+      ? Math.sin(clock.getElapsedTime() * 0.5) * floatAmplitude
+      : 0;
+    const tx = frame ? frame.position[0] : gemX;
+    const ty = (frame ? frame.position[1] : gemY) + floatY;
+    const tz = frame ? frame.position[2] : 0;
+    group.position.x += (tx - group.position.x) * k;
+    group.position.y += (ty - group.position.y) * k;
+    group.position.z += (tz - group.position.z) * k;
+
+    // Scale: smoothed story scale; tap pulse swells multiplicatively on top.
+    const targetScale = frame ? frame.scale : baseScale;
+    scaleRef.current += (targetScale - scaleRef.current) * k;
+    group.scale.setScalar(scaleRef.current * (1 + pulseRef.current * 0.12));
     pulseRef.current *= Math.pow(0.85, delta * 60);
   });
 
@@ -401,9 +525,15 @@ export const JewelRig: React.FC = () => {
       // Capture may already be released (e.g. lost capture fired first).
     }
     if (drag.moved < 6) {
-      // Tap (not a drag): pulse + toggle morph target.
+      // Tap (not a drag): always pulse; toggle the breath morph ONLY when the
+      // story is settled on the gem (hero/CTA) — elsewhere scroll owns the
+      // shape and a toggle would fight the story.
       story.pulse();
-      story.setTarget(story.state.to === 'gem' ? 'gemBreath' : 'gem');
+      const frame = frameRef.current;
+      const settledOnGem = !frame || (frame.from === frame.to && frame.to === 'gem');
+      if (settledOnGem) {
+        story.setTarget(story.state.to === 'gem' ? 'gemBreath' : 'gem');
+      }
     }
     drag.active = false;
     document.body.style.cursor = 'grab';
@@ -432,7 +562,7 @@ export const JewelRig: React.FC = () => {
         </Environment>
       )}
 
-      <Backdrop focusX={focusX} focusY={focusY} />
+      <Backdrop focusX={focusX} focusY={focusY} fade={fadeUniform} />
 
       <group ref={gemGroupRef} position={[gemX, gemY, 0]} rotation={[0.35, 0, -0.15]}>
         <mesh
@@ -446,7 +576,7 @@ export const JewelRig: React.FC = () => {
         />
       </group>
 
-      <Dust count={dustCount} animate={profile.animate} />
+      <Dust count={dustCount} animate={profile.animate} fade={fadeUniform} />
     </>
   );
 };

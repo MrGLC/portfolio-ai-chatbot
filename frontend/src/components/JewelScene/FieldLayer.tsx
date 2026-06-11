@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo, useRef } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
 import * as THREE from 'three';
 import { usePerfProfile } from '../../hooks/usePerfProfile';
@@ -95,6 +95,8 @@ const particleVertex = /* glsl */ `
 `;
 
 const particleFragment = /* glsl */ `
+  uniform float uFade; // hero-scroll fade (1 = hero in view, 0 = scrolled out)
+
   varying float vSeed;
   varying float vFade;
   varying float vDepth;
@@ -113,7 +115,7 @@ const particleFragment = /* glsl */ `
     vec3 col = mix(cream, red, mixT);
     col = mix(col, gold, step(0.9, fract(vSeed * 13.7)));
 
-    float alpha = circle * vFade * (0.35 - 0.18 * vDepth);
+    float alpha = circle * vFade * (0.35 - 0.18 * vDepth) * uFade;
     if (alpha < 0.01) discard;
     gl_FragColor = vec4(col * 0.55, alpha);
   }
@@ -138,6 +140,7 @@ const glowVertex = /* glsl */ `
 const glowFragment = /* glsl */ `
   uniform vec3 uColor;
   uniform float uIntensity;
+  uniform float uFade;
 
   varying vec2 vUv;
 
@@ -145,6 +148,7 @@ const glowFragment = /* glsl */ `
     float d = length(vUv - 0.5);
     float alpha = smoothstep(0.5, 0.0, d);
     alpha *= alpha * uIntensity; // quadratic falloff = blurry core
+    alpha *= uFade; // hero-scroll fade
     gl_FragColor = vec4(uColor, alpha);
   }
 `;
@@ -159,6 +163,7 @@ type PointerUniform = THREE.IUniform<THREE.Vector3>;
 interface SharedUniforms {
   uTime: TimeUniform;
   uPointer: PointerUniform;
+  uFade: TimeUniform; // 1 in the hero, ->0 as the hero scrolls out (fadeWithHero)
 }
 
 // One module-scope scratch vector for pointer unprojection (no per-frame allocs).
@@ -203,10 +208,12 @@ const FieldParticles: React.FC<ParticlesProps> = ({ count, shared }) => {
     const uniforms: {
       uTime: TimeUniform;
       uPointer: PointerUniform;
+      uFade: TimeUniform;
       uPixelRatio: THREE.IUniform<number>;
     } = {
       uTime: shared.uTime, // shared reference -> single write animates all
       uPointer: shared.uPointer,
+      uFade: shared.uFade,
       uPixelRatio: { value: pixelRatio },
     };
     return new THREE.ShaderMaterial({
@@ -239,17 +246,20 @@ const GLOWS: GlowSpec[] = [
 interface GlowProps {
   spec: GlowSpec;
   timeUniform: TimeUniform;
+  fadeUniform: TimeUniform;
 }
 
-const GlowSprite: React.FC<GlowProps> = ({ spec, timeUniform }) => {
+const GlowSprite: React.FC<GlowProps> = ({ spec, timeUniform, fadeUniform }) => {
   const material = useMemo(() => {
     const uniforms: {
       uTime: TimeUniform;
+      uFade: TimeUniform;
       uPhase: THREE.IUniform<number>;
       uColor: THREE.IUniform<THREE.Color>;
       uIntensity: THREE.IUniform<number>;
     } = {
       uTime: timeUniform, // shared reference -> single write animates all
+      uFade: fadeUniform,
       uPhase: { value: spec.phase },
       uColor: { value: new THREE.Color(spec.color) },
       uIntensity: { value: spec.intensity },
@@ -262,7 +272,7 @@ const GlowSprite: React.FC<GlowProps> = ({ spec, timeUniform }) => {
       depthWrite: false,
       blending: THREE.AdditiveBlending,
     });
-  }, [spec, timeUniform]);
+  }, [spec, timeUniform, fadeUniform]);
 
   return (
     <mesh position={spec.position} scale={spec.scale} material={material} frustumCulled={false}>
@@ -280,9 +290,19 @@ export interface FieldLayerProps {
   density?: number;
   /** Enable cursor parting (only active on the 'full' perf tier). */
   interactive?: boolean;
+  /**
+   * Fade the whole layer out as the #story-hero section scrolls away (the
+   * hero jewel scene uses this). MUST stay off for the site-wide FieldAccent
+   * canvas, which shares this component and must persist below the hero.
+   */
+  fadeWithHero?: boolean;
 }
 
-export const FieldLayer: React.FC<FieldLayerProps> = ({ density = 1, interactive = true }) => {
+export const FieldLayer: React.FC<FieldLayerProps> = ({
+  density = 1,
+  interactive = true,
+  fadeWithHero = false,
+}) => {
   const profile = usePerfProfile();
 
   // Shared uniform objects: one JS write per frame drives every material.
@@ -290,12 +310,42 @@ export const FieldLayer: React.FC<FieldLayerProps> = ({ density = 1, interactive
     () => ({
       uTime: { value: 0 },
       uPointer: { value: new THREE.Vector3(0, 0, 0) },
+      uFade: { value: 1 },
     }),
     []
   );
 
+  // Hero bottom edge in document coordinates (Infinity = no hero on the page).
+  const heroBottomRef = useRef(Number.POSITIVE_INFINITY);
+  useEffect(() => {
+    if (!fadeWithHero) return;
+    const measure = () => {
+      const el = document.getElementById('story-hero');
+      if (!el) {
+        heroBottomRef.current = Number.POSITIVE_INFINITY;
+        return;
+      }
+      const rect = el.getBoundingClientRect();
+      heroBottomRef.current = rect.top + window.scrollY + rect.height;
+    };
+    measure();
+    const remeasure = window.setTimeout(measure, 1500); // lazy content shifts offsets
+    window.addEventListener('resize', measure);
+    return () => {
+      window.clearTimeout(remeasure);
+      window.removeEventListener('resize', measure);
+    };
+  }, [fadeWithHero]);
+
   useFrame((state, delta) => {
     shared.uTime.value += delta;
+
+    if (fadeWithHero) {
+      const heroBottom = heroBottomRef.current;
+      shared.uFade.value = Number.isFinite(heroBottom)
+        ? Math.min(1, Math.max(0, 1 - window.scrollY / (heroBottom * 0.8)))
+        : 1;
+    }
 
     const pointer = shared.uPointer.value;
     const k = 1 - Math.exp(-6 * delta);
@@ -328,7 +378,12 @@ export const FieldLayer: React.FC<FieldLayerProps> = ({ density = 1, interactive
       <FieldParticles count={count} shared={shared} />
       {showGlows &&
         glows.map((spec) => (
-          <GlowSprite key={`${spec.color}-${spec.phase}`} spec={spec} timeUniform={shared.uTime} />
+          <GlowSprite
+            key={`${spec.color}-${spec.phase}`}
+            spec={spec}
+            timeUniform={shared.uTime}
+            fadeUniform={shared.uFade}
+          />
         ))}
     </group>
   );

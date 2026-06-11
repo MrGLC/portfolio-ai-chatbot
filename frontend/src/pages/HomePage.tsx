@@ -22,7 +22,7 @@ import {
 } from '@chakra-ui/react';
 import { keyframes } from '@emotion/react';
 import { Link as RouterLink } from 'react-router-dom';
-import { motion, useScroll, useTransform } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { 
   CheckCircleIcon, 
@@ -78,30 +78,24 @@ const pulseAnimation = keyframes`
 export const HomePage: React.FC = () => {
   const isMobile = useBreakpointValue({ base: true, lg: false });
   const { t } = useTranslation();
-  const { scrollY } = useScroll();
-  
-  // Parallax effects
-  const heroY = useTransform(scrollY, [0, 500], [0, -150]);
-  const heroOpacity = useTransform(scrollY, [0, 300], [1, 0]);
 
   return (
     <Box overflowX="hidden">
-      {/* Hero Section - Enhanced with better spacing and hierarchy */}
+      {/* Hero Section — paints its own dark bg UNDER the fixed jewel canvas.
+          Stacking contract: the hero stays position:relative with z-index AUTO
+          (no transform, no zIndex) so it does NOT create a stacking context —
+          its background paints before the later-in-DOM z0 canvas, while its
+          positioned children (zIndex >= 1) paint above the canvas. */}
       <MotionBox
+        id="story-hero"
         minH="100vh"
-        bg="transparent"
+        bg="#140306"
         position="relative"
         overflow="visible"
         initial="initial"
         animate="animate"
         variants={staggerAnimation.parent}
-        style={{ y: heroY }}
       >
-        {/* Living Jewel scene — absolute background behind all hero content */}
-        <Suspense fallback={null}>
-          <JewelScene />
-        </Suspense>
-
         {/* Soft bottom fade only — the jewel scene supplies the hero mood; a
             full red wash on top of it flattens the 3D into a pink silhouette */}
         <Box
@@ -127,6 +121,7 @@ export const HomePage: React.FC = () => {
           filter="blur(40px)"
           animation={`${floatAnimation} 8s ease-in-out infinite`}
           pointerEvents="none"
+          zIndex={1}
         />
         
         <Container maxW="1400px" position="relative" zIndex={2} h="100vh">
@@ -291,6 +286,7 @@ export const HomePage: React.FC = () => {
           left="50%"
           transform="translateX(-50%)"
           variants={staggerAnimation.child}
+          zIndex={2}
         >
           <VStack spacing={2} cursor="pointer" onClick={() => window.scrollTo({ top: window.innerHeight, behavior: 'smooth' })}>
             <Text fontSize="sm" color="brand.cream" opacity={0.7}>
@@ -321,10 +317,20 @@ export const HomePage: React.FC = () => {
         </MotionBox>
       </MotionBox>
 
+      {/* Living Jewel scroll story — fixed transparent canvas behind every
+          section (z0). MUST come after the hero in DOM so the canvas paints
+          above the hero's #140306 background; sections below carry zIndex 1
+          so their content always sits above the traveling jewel. */}
+      <Suspense fallback={null}>
+        <JewelScene />
+      </Suspense>
+
       {/* AI Assistant Section - Interactive Chatbot */}
-      <Box 
-        bg="brand.primary" 
+      <Box
+        id="story-chatbot"
+        bg="transparent"
         position="relative"
+        zIndex={1}
         overflow="hidden"
       >
         {/* Red transition overlay at top */}
@@ -405,9 +411,11 @@ export const HomePage: React.FC = () => {
 
       {/* Portfolio Preview Section - Enhanced interactions */}
       <Box
+        id="story-portfolio"
         bg="transparent"
         py={{ base: 12, md: 20 }}
         position="relative"
+        zIndex={1}
         overflow="hidden"
       >
         {/* Red overlay to maintain consistency */}
@@ -614,9 +622,11 @@ export const HomePage: React.FC = () => {
 
       {/* Contact CTA Section - More compelling design */}
       <Box
-        bg="brand.primary"
+        id="story-cta"
+        bg="transparent"
         py={{ base: 12, md: 20 }}
         position="relative"
+        zIndex={1}
         overflow="hidden"
       >
         {/* Decorative elements */}
