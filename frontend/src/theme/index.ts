@@ -85,7 +85,7 @@ const config: ThemeConfig = {
 const fonts = {
   heading: "'Playfair Display', Georgia, serif",
   body: "'Inter', -apple-system, BlinkMacSystemFont, sans-serif",
-  mono: "'IBM Plex Mono', Menlo, Monaco, Consolas, monospace",
+  mono: "Menlo, Monaco, Consolas, monospace",
 };
 
 const styles = {

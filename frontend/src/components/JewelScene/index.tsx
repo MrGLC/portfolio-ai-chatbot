@@ -2,6 +2,7 @@ import React, { Suspense } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { Box } from '@chakra-ui/react';
 import { usePerfProfile } from '../../hooks/usePerfProfile';
+import { resolveFrameloop, useInViewport } from './visibility';
 import { JewelStoryProvider } from './useJewelStory';
 import FieldLayer from './FieldLayer';
 import JewelRig from './JewelRig';
@@ -25,13 +26,15 @@ class SceneErrorBoundary extends React.Component<
 
 export const JewelScene: React.FC = () => {
   const profile = usePerfProfile();
+  // Pause rendering when the hero is scrolled offscreen (battery/GPU saver).
+  const { ref, visible } = useInViewport<HTMLDivElement>();
   return (
-    <Box position="absolute" inset={0} aria-hidden="true">
+    <Box ref={ref} position="absolute" inset={0} aria-hidden="true">
       <SceneErrorBoundary>
         <JewelStoryProvider>
           <Canvas
             dpr={profile.dpr}
-            frameloop={profile.animate ? 'always' : 'never'}
+            frameloop={resolveFrameloop(visible, !profile.animate)}
             gl={{ antialias: profile.tier === 'full', alpha: false, powerPreference: 'high-performance' }}
             camera={{ position: [0, 0, 8], fov: 40 }}
           >

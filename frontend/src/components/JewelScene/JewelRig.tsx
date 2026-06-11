@@ -55,22 +55,22 @@ const BG_FRAGMENT = /* glsl */ `
   }
 `;
 
-const Backdrop: React.FC<{ focusX: number }> = ({ focusX }) => {
+const Backdrop: React.FC<{ focusX: number; focusY: number }> = ({ focusX, focusY }) => {
   const uniforms = useMemo(
     () => ({
       uEdgeColor: { value: new THREE.Color('#1A0508') },
       uCenterColor: { value: new THREE.Color('#5A1020') },
-      uFocus: { value: new THREE.Vector2(focusX, 0.5) },
+      uFocus: { value: new THREE.Vector2(focusX, focusY) },
     }),
     // Rebuild only if composition changes (full <-> lite).
-    [focusX]
+    [focusX, focusY]
   );
 
   return (
     <mesh position={[0, 0, -18]} frustumCulled={false}>
       <planeGeometry args={[90, 50]} />
       <shaderMaterial
-        key={focusX}
+        key={`${focusX}-${focusY}`}
         vertexShader={BG_VERTEX}
         fragmentShader={BG_FRAGMENT}
         uniforms={uniforms}
@@ -196,9 +196,16 @@ export const JewelRig: React.FC = () => {
   const story = useJewelStory();
 
   const lite = profile.tier === 'lite';
+  // Lite (mobile): gem sits in the hero's lower third, below the CTA buttons,
+  // among the field particles — visible and clearly tappable instead of hiding
+  // behind the centered copy. Full (desktop): offset right of the text column.
   const gemX = lite ? 0 : 1.5;
-  const baseScale = lite ? 0.7 : 1;
+  const gemY = lite ? -2.05 : 0;
+  const baseScale = lite ? 0.8 : 1;
+  const floatAmplitude = lite ? 0.08 : 0.15;
+  // Glow focus tracks the gem so its silhouette reads against the backdrop.
   const focusX = lite ? 0.5 : 0.62;
+  const focusY = lite ? 0.3 : 0.5;
   const dustCount = Math.round(DUST_BASE_COUNT * profile.particleScale);
 
   const gemGroupRef = useRef<THREE.Group>(null);
@@ -322,7 +329,7 @@ export const JewelRig: React.FC = () => {
     // Ambient motion — suppressed for reduced motion; drag stays user-initiated.
     if (profile.animate) {
       if (!dragging) group.rotation.y += delta * ROTATION_SPEED;
-      group.position.y = Math.sin(clock.getElapsedTime() * 0.5) * 0.15;
+      group.position.y = gemY + Math.sin(clock.getElapsedTime() * 0.5) * floatAmplitude;
     }
 
     // Drag inertia: velocity applies when the finger is off, always decays.
@@ -425,9 +432,9 @@ export const JewelRig: React.FC = () => {
         </Environment>
       )}
 
-      <Backdrop focusX={focusX} />
+      <Backdrop focusX={focusX} focusY={focusY} />
 
-      <group ref={gemGroupRef} position={[gemX, 0, 0]} rotation={[0.35, 0, -0.15]}>
+      <group ref={gemGroupRef} position={[gemX, gemY, 0]} rotation={[0.35, 0, -0.15]}>
         <mesh
           geometry={geometry}
           material={material}
