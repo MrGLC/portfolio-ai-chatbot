@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Suspense, lazy } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { ChakraProvider } from '@chakra-ui/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -7,11 +7,12 @@ import './i18n/config';
 
 import theme from './theme';
 import { Layout } from './components/Layout';
-import { HomePage } from './pages/HomePage';
-import { AboutPage } from './pages/AboutPage';
-import { ProjectsPage } from './pages/ProjectsPage';
-import { ConsultingPage } from './pages/ConsultingPage';
-import { ContactPage } from './pages/ContactPage';
+
+const HomePage = lazy(() => import('./pages/HomePage').then((m) => ({ default: m.HomePage })));
+const AboutPage = lazy(() => import('./pages/AboutPage').then((m) => ({ default: m.AboutPage })));
+const ProjectsPage = lazy(() => import('./pages/ProjectsPage').then((m) => ({ default: m.ProjectsPage })));
+const ConsultingPage = lazy(() => import('./pages/ConsultingPage').then((m) => ({ default: m.ConsultingPage })));
+const ContactPage = lazy(() => import('./pages/ContactPage').then((m) => ({ default: m.ContactPage })));
 // Debug system removed for production
 
 // Create a client for React Query
@@ -30,15 +31,17 @@ function App() {
       <ChakraProvider theme={theme}>
         <Router>
           <Layout>
-            <AnimatePresence mode="wait">
-              <Routes>
-                <Route path="/" element={<HomePage />} />
-                <Route path="/about" element={<AboutPage />} />
-                <Route path="/projects" element={<ProjectsPage />} />
-                <Route path="/consulting" element={<ConsultingPage />} />
-                <Route path="/contact" element={<ContactPage />} />
-              </Routes>
-            </AnimatePresence>
+            <Suspense fallback={null}>
+              <AnimatePresence mode="wait">
+                <Routes>
+                  <Route path="/" element={<HomePage />} />
+                  <Route path="/about" element={<AboutPage />} />
+                  <Route path="/projects" element={<ProjectsPage />} />
+                  <Route path="/consulting" element={<ConsultingPage />} />
+                  <Route path="/contact" element={<ContactPage />} />
+                </Routes>
+              </AnimatePresence>
+            </Suspense>
           </Layout>
         </Router>
       </ChakraProvider>
