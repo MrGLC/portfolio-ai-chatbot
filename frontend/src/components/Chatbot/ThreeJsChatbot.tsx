@@ -377,8 +377,15 @@ export const ThreeJsChatbot: React.FC = () => {
   const [isTyping, setIsTyping] = useState(false);
   const [hasNewMessage, setHasNewMessage] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const hasInteracted = useRef(false);
 
   useEffect(() => {
+    // Skip the mount run — scrolling the welcome message into view would
+    // drag the whole page down to the chatbot section on every Home visit.
+    if (!hasInteracted.current) {
+      hasInteracted.current = true;
+      return;
+    }
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
   }, [messages, isTyping]);
 
