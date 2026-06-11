@@ -7,6 +7,7 @@ import './i18n/config';
 
 import theme from './theme';
 import { Layout } from './components/Layout';
+import { ScrollRestoration } from './components/Layout/ScrollRestoration';
 
 const HomePage = lazy(() => import('./pages/HomePage').then((m) => ({ default: m.HomePage })));
 const AboutPage = lazy(() => import('./pages/AboutPage').then((m) => ({ default: m.AboutPage })));
@@ -30,6 +31,7 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <ChakraProvider theme={theme}>
         <Router>
+          <ScrollRestoration />
           <Layout>
             <Suspense fallback={null}>
               <AnimatePresence mode="wait">
