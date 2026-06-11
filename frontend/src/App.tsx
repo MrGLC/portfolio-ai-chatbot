@@ -14,8 +14,6 @@ const AboutPage = lazy(() => import('./pages/AboutPage').then((m) => ({ default:
 const ProjectsPage = lazy(() => import('./pages/ProjectsPage').then((m) => ({ default: m.ProjectsPage })));
 const ConsultingPage = lazy(() => import('./pages/ConsultingPage').then((m) => ({ default: m.ConsultingPage })));
 const ContactPage = lazy(() => import('./pages/ContactPage').then((m) => ({ default: m.ContactPage })));
-// Temporary 3D prototype harness — phase2d branch only, never merged
-const ProtoView = lazy(() => import('./components/ThreeBackground/prototypes/ProtoView'));
 // Debug system removed for production
 
 // Create a client for React Query
@@ -43,7 +41,6 @@ function App() {
                   <Route path="/projects" element={<ProjectsPage />} />
                   <Route path="/consulting" element={<ConsultingPage />} />
                   <Route path="/contact" element={<ContactPage />} />
-                  <Route path="/proto/:id" element={<ProtoView />} />
                 </Routes>
               </AnimatePresence>
             </Suspense>
