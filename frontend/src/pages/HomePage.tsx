@@ -131,10 +131,12 @@ export const HomePage: React.FC = () => {
             justify={{ base: "center", lg: "space-between" }}
             pt={{ base: "100px", md: "125px" }}
           >
-            <VStack 
-              spacing={10} 
-              maxW="700px" 
-              align={{ base: "center", lg: "flex-start" }} 
+            {/* Editorial lane: text owns the LEFT 52% on desktop; the jewel
+                (gem keyframe x +1.5) owns the negative space on the right. */}
+            <VStack
+              spacing={10}
+              maxW={{ base: 'full', lg: '52%' }}
+              align={{ base: "center", lg: "flex-start" }}
               textAlign={{ base: "center", lg: "left" }}
               flex={1}
             >
@@ -177,7 +179,7 @@ export const HomePage: React.FC = () => {
                 as={MotionText}
                 textStyle="lead"
                 color="white"
-                maxW="600px"
+                maxW="46ch"
                 variants={staggerAnimation.child}
                 textAlign={{ base: "center", lg: "left" }}
                 textShadow="0 2px 10px rgba(0,0,0,0.6)"
@@ -358,7 +360,11 @@ export const HomePage: React.FC = () => {
         />
         
         <Container maxW="1400px" py={{ base: 12, md: 20 }} position="relative" zIndex={3}>
+          {/* Editorial lane: content shifts RIGHT on desktop — the neural
+              jewel (keyframe x −2.2) owns the left lane's negative space. */}
           <MotionBox
+            ml={{ base: 0, lg: '28%' }}
+            maxW={{ base: 'full', lg: '68%' }}
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, margin: "-100px" }}
@@ -418,15 +424,27 @@ export const HomePage: React.FC = () => {
         zIndex={1}
         overflow="hidden"
       >
-        {/* Red overlay to maintain consistency */}
+        {/* Red overlay — masked OUT of the right lane on desktop so the
+            lattice jewel (keyframe x +2.2) reads through clear canvas instead
+            of a muting red wash; mobile keeps the full-bleed gradient. */}
         <Box
           position="absolute"
           top={0}
           left={0}
           right={0}
           bottom={0}
-          bgGradient="linear(to-b, rgba(139, 0, 0, 0.6), rgba(220, 20, 60, 0.4), rgba(139, 0, 0, 0.5))"
+          bgGradient="linear(to-b, rgba(139, 0, 0, 0.55), rgba(220, 20, 60, 0.35), rgba(139, 0, 0, 0.45))"
           pointerEvents="none"
+          sx={{
+            maskImage: {
+              base: 'none',
+              lg: 'linear-gradient(to right, black 0%, black 50%, rgba(0,0,0,0.35) 70%, rgba(0,0,0,0.12) 100%)',
+            },
+            WebkitMaskImage: {
+              base: 'none',
+              lg: 'linear-gradient(to right, black 0%, black 50%, rgba(0,0,0,0.35) 70%, rgba(0,0,0,0.12) 100%)',
+            },
+          }}
         />
         
         <Container maxW="1400px" position="relative" zIndex={1}>
@@ -437,8 +455,19 @@ export const HomePage: React.FC = () => {
             variants={scrollReveal}
           >
             <VStack spacing={20}>
-              {/* Enhanced section header */}
-              <VStack spacing={6} textAlign="center" maxW="800px" mx="auto">
+              {/* Editorial lane: header hugs the LEFT 64% on desktop — the
+                  lattice jewel owns the right lane. The project grid below
+                  stays full width. */}
+              <VStack
+                spacing={6}
+                textAlign={{ base: 'center', lg: 'start' }}
+                align={{ base: 'center', lg: 'flex-start' }}
+                alignSelf={{ base: 'center', lg: 'flex-start' }}
+                w="full"
+                maxW={{ base: '800px', lg: '64%' }}
+                mx={{ base: 'auto', lg: 0 }}
+                mr={{ base: 'auto', lg: '30%' }}
+              >
                 <Text
                   textStyle="eyebrow"
                   color="brand.accent"
@@ -447,8 +476,8 @@ export const HomePage: React.FC = () => {
                     content: '""',
                     position: 'absolute',
                     bottom: '-12px',
-                    left: '50%',
-                    transform: 'translateX(-50%)',
+                    left: { base: '50%', lg: 0 },
+                    transform: { base: 'translateX(-50%)', lg: 'none' },
                     width: '80px',
                     height: '3px',
                     bg: 'brand.accent',

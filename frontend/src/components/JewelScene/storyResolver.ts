@@ -19,7 +19,10 @@ const KEYFRAMES: Record<string, Keyframe> = {
   'story-hero':      { target: 'gem',     pos: [1.5, 0, 0],    mobilePos: [0, -2.05, 0],  scale: 1,   mobileScale: 0.8 },
   'story-chatbot':   { target: 'neural',  pos: [-2.2, 0, 0],   mobilePos: [-0.8, -1.6, 0], scale: 0.7, mobileScale: 0.55 },
   'story-portfolio': { target: 'lattice', pos: [2.2, 0, 0],    mobilePos: [0.8, -1.6, 0],  scale: 0.8, mobileScale: 0.6 },
-  'story-cta':       { target: 'gem',     pos: [1.2, 0, 0],    mobilePos: [0, -1.2, 0],    scale: 1.1, mobileScale: 0.85 },
+  // cta: tucked low-right and under heading scale so the gem reads as a
+  // closing accent beside the centered copy instead of swallowing it (and
+  // ducks behind the opaque footer sooner once the user scrolls past).
+  'story-cta':       { target: 'gem',     pos: [1.4, -0.9, 0], mobilePos: [0, -3.0, 0],    scale: 0.85, mobileScale: 0.45 },
 };
 
 const BLEND = 0.2; // fraction of viewport height on EACH side of a boundary

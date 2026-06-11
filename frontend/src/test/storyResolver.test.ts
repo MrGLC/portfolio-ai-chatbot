@@ -45,8 +45,9 @@ describe('resolveStoryFrame', () => {
     const m = resolveStoryFrame(2800, ranges, 800, true);
     expect(Math.abs(m.position[0])).toBeLessThanOrEqual(0.8 + 1e-6);
   });
-  it('clamps beyond last section to cta frame', () => {
+  it('clamps beyond last section to cta frame (tucked low-right, sub-hero scale)', () => {
     const f = resolveStoryFrame(99999, ranges, 800, false);
-    expect(f.to).toBe('gem'); expect(f.scale).toBeCloseTo(1.1, 1);
+    expect(f.to).toBe('gem'); expect(f.scale).toBeCloseTo(0.85, 1);
+    expect(f.position[1]).toBeLessThan(-0.5);
   });
 });
