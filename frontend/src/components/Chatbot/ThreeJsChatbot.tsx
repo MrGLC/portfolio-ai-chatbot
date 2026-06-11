@@ -21,6 +21,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowForwardIcon } from '@chakra-ui/icons';
 import { keyframes } from '@emotion/react';
 import { useTranslation } from 'react-i18next';
+import { chatbotAPI } from '../../services/api';
 
 const MotionBox = motion.create(Box);
 
@@ -460,22 +461,27 @@ export const ThreeJsChatbot: React.FC = () => {
 
   const handleSend = () => {
     if (input.trim()) {
-      setMessages([...messages, { id: Date.now(), text: input, isUser: true }]);
+      const userMessage = input;
+      setMessages(prev => [...prev, { id: Date.now(), text: userMessage, isUser: true }]);
       setInput('');
       setIsTyping(true);
-      
-      // Simulate response
-      setTimeout(() => {
-        setIsTyping(false);
-        setHasNewMessage(true);
-        setMessages(prev => [...prev, {
-          id: Date.now(),
-          text: "I'm processing your request. This feature will be connected to the backend soon!",
-          isUser: false,
-        }]);
-        
-        setTimeout(() => setHasNewMessage(false), 1000);
-      }, 2000);
+
+      chatbotAPI.sendMessage(userMessage)
+        .then((res: { data: { response?: string; message?: string } }) => {
+          const text = res.data.response ?? res.data.message ?? 'Sorry, I could not process your request.';
+          setIsTyping(false);
+          setHasNewMessage(true);
+          setMessages(prev => [...prev, { id: Date.now(), text, isUser: false }]);
+          setTimeout(() => setHasNewMessage(false), 1000);
+        })
+        .catch(() => {
+          setIsTyping(false);
+          setMessages(prev => [...prev, {
+            id: Date.now(),
+            text: 'Sorry, something went wrong. Please try again.',
+            isUser: false,
+          }]);
+        });
     }
   };
 

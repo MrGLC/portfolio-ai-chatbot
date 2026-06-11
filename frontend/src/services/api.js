@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
-const CHATBOT_API_URL = import.meta.env.VITE_CHATBOT_API_URL || 'http://localhost:5002';
+const CHATBOT_API_URL = import.meta.env.VITE_CHATBOT_API_URL || '';
 
 const api = axios.create({
   baseURL: API_URL,
@@ -31,14 +31,21 @@ export const projectsAPI = {
 
 export const chatbotAPI = {
   // Chat operations
-  sendMessage: (message, userId = 'user123', sessionId = null, options = {}) => chatbotApi.post('/api/chat', { 
-    message, 
-    user_id: userId,
-    session_id: sessionId,
-    processing_mode: options.processingMode || 'immediate',
-    stream: options.stream || false,
-    force_new_session: options.forceNewSession || false
-  }),
+  sendMessage: (message, userId = 'user123', sessionId = null, options = {}) => {
+    // Real chatbot service not deployed yet — fall back to the backend demo endpoint.
+    // Phase 2 swaps this for the configurable provider seam.
+    if (!import.meta.env.VITE_CHATBOT_API_URL) {
+      return api.post('/api/chatbot/demo', { message });
+    }
+    return chatbotApi.post('/api/chat', {
+      message,
+      user_id: userId,
+      session_id: sessionId,
+      processing_mode: options.processingMode || 'immediate',
+      stream: options.stream || false,
+      force_new_session: options.forceNewSession || false,
+    });
+  },
   
   // WebSocket connection
   createWebSocketConnection: (userId = 'user123', sessionId = null, language = 'en') => {
