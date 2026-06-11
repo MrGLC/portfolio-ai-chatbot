@@ -31,8 +31,7 @@ import {
 import { durations, easings, delays, variants, transitions } from '../theme/animations';
 
 const MotionBox = motion(Box);
-// Use motion.div instead of motion(Card) to avoid TypeScript complexity
-const MotionCard = motion.div;
+const MotionCard = motion(Card);
 
 
 
