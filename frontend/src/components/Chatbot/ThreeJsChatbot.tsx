@@ -1,6 +1,6 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
-import { Float, OrbitControls, Environment, Sphere, MeshTransmissionMaterial } from '@react-three/drei';
+import { Float, OrbitControls, Environment, Sphere } from '@react-three/drei';
 import * as THREE from 'three';
 import {
   Box,
@@ -22,6 +22,7 @@ import { ArrowForwardIcon } from '@chakra-ui/icons';
 import { keyframes } from '@emotion/react';
 import { useTranslation } from 'react-i18next';
 import { chatbotAPI } from '../../services/api';
+import { usePerfProfile } from '../../hooks/usePerfProfile';
 
 const MotionBox = motion.create(Box);
 
@@ -112,14 +113,14 @@ function UserGem({ scale = 1 }: { scale?: number }) {
 }
 
 // 3D Assistant Orb Component
-function AssistantOrb({ isTyping, hasNewMessage }: { isTyping: boolean; hasNewMessage: boolean }) {
+function AssistantOrb({ isTyping, hasNewMessage, particleScale = 1 }: { isTyping: boolean; hasNewMessage: boolean; particleScale?: number }) {
   const meshRef = useRef<THREE.Mesh>(null);
   const innerRef = useRef<THREE.Mesh>(null);
   const particlesRef = useRef<THREE.Points>(null);
 
   // Particle system
   const particles = React.useMemo(() => {
-    const count = 100;
+    const count = Math.round(100 * particleScale);
     const positions = new Float32Array(count * 3);
     const colors = new Float32Array(count * 3);
     
@@ -140,7 +141,7 @@ function AssistantOrb({ isTyping, hasNewMessage }: { isTyping: boolean; hasNewMe
     }
     
     return { positions, colors };
-  }, []);
+  }, [particleScale]);
 
   useFrame((state) => {
     if (meshRef.current) {
@@ -176,7 +177,6 @@ function AssistantOrb({ isTyping, hasNewMessage }: { isTyping: boolean; hasNewMe
         const y = positions[i + 1];
         const z = positions[i + 2];
         
-        const distance = Math.sqrt(x * x + y * y + z * z);
         const wave = Math.sin(time * 2 + idx * 0.1) * 0.05;
         
         positions[i] = x * (1 + wave);
@@ -313,17 +313,17 @@ function FloatingElements() {
 }
 
 // 3D Scene Component
-function ChatScene({ isTyping, hasNewMessage }: { isTyping: boolean; hasNewMessage: boolean }) {
+function ChatScene({ isTyping, hasNewMessage, particleScale }: { isTyping: boolean; hasNewMessage: boolean; particleScale: number }) {
   return (
     <>
       <ambientLight intensity={0.5} />
       <pointLight position={[10, 10, 10]} intensity={1} color={colors.cream} />
       <pointLight position={[-10, -10, -10]} intensity={0.5} color={colors.lightBrown} />
       <directionalLight position={[0, 5, 5]} intensity={0.8} color="#ffffff" />
-      
-      <AssistantOrb isTyping={isTyping} hasNewMessage={hasNewMessage} />
+
+      <AssistantOrb isTyping={isTyping} hasNewMessage={hasNewMessage} particleScale={particleScale} />
       <FloatingElements />
-      
+
       <Environment preset="apartment" />
     </>
   );
@@ -441,6 +441,7 @@ function MessageBubble({ message, isUser }: { message: string; isUser: boolean }
 // Main Chatbot Component
 export const ThreeJsChatbot: React.FC = () => {
   const { t } = useTranslation();
+  const profile = usePerfProfile();
   const [messages, setMessages] = useState([
     {
       id: 1,
@@ -501,8 +502,8 @@ export const ThreeJsChatbot: React.FC = () => {
             border="1px solid"
             borderColor={`${colors.brown}20`}
           >
-            <Canvas camera={{ position: [0, 0, 5], fov: 45 }}>
-              <ChatScene isTyping={isTyping} hasNewMessage={hasNewMessage} />
+            <Canvas camera={{ position: [0, 0, 5], fov: 45 }} dpr={profile.dpr}>
+              <ChatScene isTyping={isTyping} hasNewMessage={hasNewMessage} particleScale={profile.particleScale} />
             </Canvas>
             
             {/* Assistant Info */}

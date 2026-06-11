@@ -1,33 +1,33 @@
-import React, { useRef } from 'react';
+import React, { useRef, useMemo } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 import { Box } from '@chakra-ui/react';
+import { usePerfProfile } from '../../hooks/usePerfProfile';
 
 // Floating dots pattern
-function FloatingDots() {
+function FloatingDots({ count }: { count: number }) {
   const groupRef = useRef<THREE.Group>(null);
-  
+
+  // Stable positions keyed on count so they don't re-randomize every render
+  const positions = useMemo(() => {
+    return Array.from({ length: count }, () => [
+      (Math.random() - 0.5) * 15,
+      (Math.random() - 0.5) * 15,
+      (Math.random() - 0.5) * 5,
+    ] as [number, number, number]);
+  }, [count]);
+
   useFrame((state) => {
     if (groupRef.current) {
-      groupRef.current.children.forEach((child, i) => {
-        child.position.y += Math.sin(state.clock.elapsedTime + i) * 0.001;
-        child.position.x += Math.cos(state.clock.elapsedTime + i) * 0.001;
-      });
+      groupRef.current.rotation.z = state.clock.elapsedTime * 0.02;
     }
   });
-  
+
   return (
     <group ref={groupRef}>
-      {Array.from({ length: 50 }).map((_, i) => (
-        <mesh
-          key={i}
-          position={[
-            (Math.random() - 0.5) * 15,
-            (Math.random() - 0.5) * 15,
-            (Math.random() - 0.5) * 5,
-          ]}
-        >
-          <sphereGeometry args={[0.05, 16, 16]} />
+      {positions.map((pos, i) => (
+        <mesh key={i} position={pos}>
+          <sphereGeometry args={[0.05, 8, 8]} />
           <meshBasicMaterial color="#DC143C" opacity={0.2} transparent />
         </mesh>
       ))}
@@ -61,6 +61,9 @@ function GeometricLines() {
 }
 
 export const LightPattern: React.FC<{ intensity?: number }> = ({ intensity = 0.3 }) => {
+  const profile = usePerfProfile();
+  const dotCount = Math.round(50 * profile.particleScale);
+
   return (
     <Box
       position="absolute"
@@ -74,15 +77,17 @@ export const LightPattern: React.FC<{ intensity?: number }> = ({ intensity = 0.3
     >
       <Canvas
         camera={{ position: [0, 0, 10], fov: 50 }}
-        gl={{ 
-          antialias: true,
+        dpr={profile.dpr}
+        frameloop={profile.animate ? 'always' : 'never'}
+        gl={{
+          antialias: false,
           alpha: true,
           powerPreference: "high-performance"
         }}
       >
         <ambientLight intensity={0.5} />
-        
-        <FloatingDots />
+
+        <FloatingDots count={dotCount} />
         <GeometricLines />
       </Canvas>
     </Box>
