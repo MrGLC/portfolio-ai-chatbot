@@ -102,18 +102,19 @@ export const HomePage: React.FC = () => {
           <JewelScene />
         </Suspense>
 
-        {/* Extended red gradient overlay to cover gap */}
+        {/* Soft bottom fade only — the jewel scene supplies the hero mood; a
+            full red wash on top of it flattens the 3D into a pink silhouette */}
         <Box
           position="absolute"
-          top={0}
           left={0}
           right={0}
-          bottom="-200px"
-          bgGradient="linear(to-b, rgba(139, 0, 0, 0.7), rgba(220, 20, 60, 0.5), rgba(139, 0, 0, 0.3), transparent)"
+          bottom="-2px"
+          height="160px"
+          bgGradient="linear(to-b, transparent, brand.cream)"
           pointerEvents="none"
           zIndex={1}
         />
-        
+
         {/* Decorative elements */}
         <Box
           position="absolute"
