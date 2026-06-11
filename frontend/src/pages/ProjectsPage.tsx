@@ -207,7 +207,7 @@ export const ProjectsPage: React.FC = () => {
       </Box>
 
       {/* Filter Section with Cream Background */}
-      <Box bg="#FFF8E7" py={8}>
+      <Box bg="brand.creamWarm" py={8}>
         <Container maxW="7xl">
           <Wrap spacing={4} justify="center">
             {categories.map((category) => (
@@ -367,7 +367,7 @@ export const ProjectsPage: React.FC = () => {
       </Box>
 
       {/* CTA Section with Cream Background */}
-      <Box bg="#FFF8E7" py={20}>
+      <Box bg="brand.creamWarm" py={20}>
         <Container maxW="4xl">
           <Card
             bg="white"

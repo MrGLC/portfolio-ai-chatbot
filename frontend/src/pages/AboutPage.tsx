@@ -310,11 +310,8 @@ export const AboutPage: React.FC = () => {
               {skillCategories.map((category, index) => (
                 <MotionCard
                   key={category.key}
-                  style={{
-                    backgroundColor: 'var(--chakra-colors-brand-cream)',
-                    boxShadow: '0 4px 16px rgba(0, 0, 0, 0.06)',
-                    borderRadius: '16px',
-                  }}
+                  variant="royal"
+                  bg="brand.cream"
                   initial={{ opacity: 0, x: index % 2 === 0 ? -20 : 20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: index * delays.staggerNormal, duration: durations.normal, ease: easings.smooth }}
@@ -381,11 +378,7 @@ export const AboutPage: React.FC = () => {
               {valueProps.map((prop, index) => (
                 <MotionCard
                   key={index}
-                  style={{
-                    backgroundColor: 'var(--chakra-colors-brand-surface)',
-                    boxShadow: '0 4px 16px rgba(0, 0, 0, 0.08)',
-                    borderRadius: '16px',
-                  }}
+                  variant="royal"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * delays.staggerNormal, duration: durations.normal, ease: easings.smooth }}

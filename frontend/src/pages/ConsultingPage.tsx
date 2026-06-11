@@ -38,7 +38,7 @@ import {
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 
-const MotionCard = motion.div;
+const MotionCard = motion.create(Card);
 const MotionBox = motion.div;
 
 export const ConsultingPage: React.FC = () => {
@@ -101,7 +101,7 @@ export const ConsultingPage: React.FC = () => {
       {/* Hero Section with Red Background */}
       <Box
         position="relative"
-        bg="linear-gradient(135deg, #C41E3A 0%, #DC143C 100%)"
+        bgGradient="linear(135deg, red.600, brand.secondary)"
         color="white"
         overflow="hidden"
       >
@@ -124,7 +124,7 @@ export const ConsultingPage: React.FC = () => {
               <Button
                 size="lg"
                 bg="white"
-                color="#C41E3A"
+                color="red.600"
                 _hover={{ bg: 'whiteAlpha.900', transform: 'translateY(-2px)' }}
                 transition="all 0.2s"
               >
@@ -150,21 +150,21 @@ export const ConsultingPage: React.FC = () => {
           left={0}
           right={0}
           height="100px"
-          bg="#FAF0E6"
+          bg="brand.creamSoft"
           transform="skewY(-2deg)"
           transformOrigin="top left"
         />
       </Box>
 
       {/* Services Section - Cream Background */}
-      <Box bg="#FAF0E6" pt={20} pb={32} position="relative">
+      <Box bg="brand.creamSoft" pt={20} pb={32} position="relative">
         <Container maxW="7xl">
           <VStack spacing={12}>
             <Box textAlign="center">
-              <Heading size="3xl" color="#1A1A1A" mb={4}>
+              <Heading size="3xl" color="brand.text" mb={4}>
                 {t('consulting.servicesSection.title')}
               </Heading>
-              <Text fontSize="lg" color="#666666" maxW="600px" mx="auto">
+              <Text fontSize="lg" color="brand.textMuted" maxW="600px" mx="auto">
                 {t('consulting.servicesSection.subtitle')}
               </Text>
             </Box>
@@ -173,27 +173,17 @@ export const ConsultingPage: React.FC = () => {
               {services.map((service, index) => (
                 <MotionCard
                   key={index}
+                  variant="royal"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.1 }}
-                  style={{
-                    backgroundColor: 'white',
-                    borderRadius: '16px',
-                    boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)',
-                    overflow: 'hidden',
-                    transition: 'all 0.3s ease'
-                  }}
-                  whileHover={{
-                    y: -8,
-                    boxShadow: '0 12px 40px rgba(0, 0, 0, 0.15)',
-                  }}
                 >
                   <Box p={6}>
                     <VStack align="stretch" spacing={4}>
                       <Box
                         w="60px"
                         h="60px"
-                        bg="linear-gradient(135deg, #C41E3A, #DC143C)"
+                        bgGradient="linear(135deg, red.600, brand.secondary)"
                         borderRadius="12px"
                         display="flex"
                         alignItems="center"
@@ -203,18 +193,18 @@ export const ConsultingPage: React.FC = () => {
                         <Icon as={service.icon} w={8} h={8} color="white" />
                       </Box>
                       
-                      <Heading size="md" color="#1A1A1A">
+                      <Heading size="md" color="brand.text">
                         {t(`consulting.services.${service.key}.title`)}
                       </Heading>
-                      
-                      <Text color="#666666" fontSize="sm" minH="60px">
+
+                      <Text color="brand.textMuted" fontSize="sm" minH="60px">
                         {t(`consulting.services.${service.key}.description`)}
                       </Text>
                       
                       <List spacing={2}>
                         {Object.keys(t(`consulting.services.${service.key}.features`, { returnObjects: true })).slice(0, 3).map((featureKey, i) => (
-                          <ListItem key={i} fontSize="xs" color="#666666">
-                            <Icon as={CheckCircleIcon} color="#C41E3A" mr={2} />
+                          <ListItem key={i} fontSize="xs" color="brand.textMuted">
+                            <Icon as={CheckCircleIcon} color="red.600" mr={2} />
                             {t(`consulting.services.${service.key}.features.${featureKey}`)}
                           </ListItem>
                         ))}
@@ -222,7 +212,7 @@ export const ConsultingPage: React.FC = () => {
                       
                       <Button
                         variant="ghost"
-                        color="#C41E3A"
+                        color="red.600"
                         rightIcon={<ChevronRightIcon />}
                         mt={2}
                       >
@@ -254,10 +244,10 @@ export const ConsultingPage: React.FC = () => {
         <Container maxW="7xl">
           <VStack spacing={12}>
             <Box textAlign="center">
-              <Heading size="3xl" color="#1A1A1A" mb={4}>
+              <Heading size="3xl" color="brand.text" mb={4}>
                 {t('consulting.process.title')}
               </Heading>
-              <Text fontSize="lg" color="#666666" maxW="600px" mx="auto">
+              <Text fontSize="lg" color="brand.textMuted" maxW="600px" mx="auto">
                 {t('consulting.process.subtitle')}
               </Text>
             </Box>
@@ -284,7 +274,7 @@ export const ConsultingPage: React.FC = () => {
                         bottom={{ base: '-40px', md: 'auto' }}
                         w={{ base: '2px', md: '80px' }}
                         h={{ base: '80px', md: '2px' }}
-                        bg="#C41E3A"
+                        bg="red.600"
                         opacity={0.3}
                         transform={{ base: 'translateX(50%)', md: 'none' }}
                       />
@@ -293,7 +283,7 @@ export const ConsultingPage: React.FC = () => {
                     <Box
                       w="80px"
                       h="80px"
-                      bg="linear-gradient(135deg, #C41E3A, #DC143C)"
+                      bgGradient="linear(135deg, red.600, brand.secondary)"
                       borderRadius="full"
                       display="flex"
                       alignItems="center"
@@ -304,16 +294,16 @@ export const ConsultingPage: React.FC = () => {
                     </Box>
                     
                     <VStack spacing={2} textAlign="center">
-                      <Badge bg="#C41E3A" color="white" px={3} py={1} borderRadius="full">
+                      <Badge bg="red.600" color="white" px={3} py={1} borderRadius="full">
                         {t(`consulting.process.steps.${step.key}.step`)}
                       </Badge>
-                      <Heading size="lg" color="#1A1A1A">
+                      <Heading size="lg" color="brand.text">
                         {t(`consulting.process.steps.${step.key}.title`)}
                       </Heading>
-                      <Text color="#666666" fontSize="sm">
+                      <Text color="brand.textMuted" fontSize="sm">
                         {t(`consulting.process.steps.${step.key}.description`)}
                       </Text>
-                      <Text color="#C41E3A" fontWeight="bold" fontSize="sm">
+                      <Text color="red.600" fontWeight="bold" fontSize="sm">
                         {t(`consulting.process.steps.${step.key}.duration`)}
                       </Text>
                     </VStack>
@@ -331,7 +321,7 @@ export const ConsultingPage: React.FC = () => {
           left={0}
           right={0}
           height="100px"
-          bg="linear-gradient(135deg, #C41E3A 0%, #DC143C 100%)"
+          bgGradient="linear(135deg, red.600, brand.secondary)"
           transform="skewY(-2deg)"
           transformOrigin="top left"
         />
@@ -339,7 +329,7 @@ export const ConsultingPage: React.FC = () => {
 
       {/* Pricing Section - Red Background */}
       <Box
-        bg="linear-gradient(135deg, #C41E3A 0%, #DC143C 100%)"
+        bgGradient="linear(135deg, red.600, brand.secondary)"
         color="white"
         pt={20}
         pb={32}
@@ -416,7 +406,7 @@ export const ConsultingPage: React.FC = () => {
                   <Button
                     size="lg"
                     bg="white"
-                    color="#C41E3A"
+                    color="red.600"
                     width="full"
                     _hover={{ bg: 'whiteAlpha.900', transform: 'translateY(-2px)' }}
                     transition="all 0.2s"
@@ -431,7 +421,7 @@ export const ConsultingPage: React.FC = () => {
       </Box>
 
       {/* Final CTA Section - Cream Background */}
-      <Box bg="#FAF0E6" py={20}>
+      <Box bg="brand.creamSoft" py={20}>
         <Container maxW="7xl">
           <Card
             bg="white"
@@ -441,17 +431,17 @@ export const ConsultingPage: React.FC = () => {
           >
             <CardBody p={{ base: 8, md: 12 }}>
               <VStack spacing={8} textAlign="center">
-                <Heading size="2xl" color="#1A1A1A">
+                <Heading size="2xl" color="brand.text">
                   {t('consulting.finalCta.title')}
                 </Heading>
-                <Text fontSize="lg" color="#666666" maxW="600px">
+                <Text fontSize="lg" color="brand.textMuted" maxW="600px">
                   {t('consulting.finalCta.description')}
                 </Text>
                 
                 <HStack spacing={4}>
                   <Button
                     size="lg"
-                    bg="linear-gradient(135deg, #C41E3A, #DC143C)"
+                    bgGradient="linear(135deg, red.600, brand.secondary)"
                     color="white"
                     leftIcon={<CalendarIcon />}
                     _hover={{ transform: 'translateY(-2px)' }}
@@ -462,16 +452,16 @@ export const ConsultingPage: React.FC = () => {
                   <Button
                     size="lg"
                     variant="outline"
-                    color="#C41E3A"
-                    borderColor="#C41E3A"
+                    color="red.600"
+                    borderColor="red.600"
                     leftIcon={<PhoneIcon />}
-                    _hover={{ bg: '#C41E3A', color: 'white' }}
+                    _hover={{ bg: 'red.600', color: 'white' }}
                   >
                     {t('consulting.finalCta.contactButton')}
                   </Button>
                 </HStack>
 
-                <Text fontSize="sm" color="#666666" fontStyle="italic">
+                <Text fontSize="sm" color="brand.textMuted" fontStyle="italic">
                   {t('consulting.finalCta.consultationNote')}
                 </Text>
               </VStack>

@@ -145,7 +145,7 @@ export const HomePage: React.FC = () => {
                 fontWeight="600"
                 letterSpacing="4px"
                 textTransform="uppercase"
-                color="#FFD700"
+                color="brand.accent"
                 variants={staggerAnimation.child}
                 position="relative"
                 textShadow="0 2px 10px rgba(0,0,0,0.5)"
@@ -157,7 +157,7 @@ export const HomePage: React.FC = () => {
                   transform: { base: 'translateX(-50%)', lg: 'none' },
                   width: '60px',
                   height: '2px',
-                  bg: '#FFD700',
+                  bg: 'brand.accent',
                   opacity: 0.8
                 }}
               >

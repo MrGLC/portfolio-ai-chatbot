@@ -56,6 +56,11 @@ const colors = {
     redLight: '#F5A3A3',
     cream: '#F5E6D3',
     creamDark: '#E8D5B7',
+    // Extended palette (formerly hardcoded in pages)
+    redDeep: '#8B0000',
+    creamSoft: '#FAF0E6',
+    creamWarm: '#FFF8E7',
+    textMuted: '#666666',
   },
   
   gray: {
@@ -278,6 +283,21 @@ const components = {
         _hover: {
           transform: 'translateY(-4px)',
           boxShadow: '0 8px 24px rgba(0, 0, 0, 0.08)',
+        },
+      },
+    },
+    variants: {
+      royal: {
+        container: {
+          bg: 'white',
+          borderRadius: '16px',
+          boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)',
+          overflow: 'hidden',
+          transition: 'box-shadow 0.3s ease, transform 0.3s ease',
+          _hover: {
+            boxShadow: '0 12px 40px rgba(0, 0, 0, 0.15)',
+            transform: 'translateY(-4px)',
+          },
         },
       },
     },
