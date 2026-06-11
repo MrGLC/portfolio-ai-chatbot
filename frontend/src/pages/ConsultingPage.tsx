@@ -25,8 +25,7 @@ import {
   StarIcon, 
   TimeIcon,
   PhoneIcon,
-  CalendarIcon,
-  ChevronRightIcon
+  CalendarIcon
 } from '@chakra-ui/icons';
 import {
   InfoIcon,
@@ -160,11 +159,11 @@ export const ConsultingPage: React.FC = () => {
       </Box>
 
       {/* Services Section - Cream Background */}
-      <Box bg="brand.creamSoft" pt={{ base: 12, md: 20 }} pb={32} position="relative">
+      <Box bg="brand.creamSoft" pt={{ base: 8, md: 20 }} pb={{ base: 28, md: 32 }} position="relative">
         <Container maxW="7xl">
-          <VStack spacing={12}>
+          <VStack spacing={{ base: 6, md: 12 }}>
             <Box textAlign="center">
-              <Heading textStyle="sectionTitle" color="brand.text" mb={4}>
+              <Heading textStyle="sectionTitle" color="brand.text" mb={{ base: 2, md: 4 }}>
                 {t('consulting.servicesSection.title')}
               </Heading>
               <Text textStyle="lead" color="brand.textMuted" maxW="600px" mx="auto">
@@ -172,39 +171,44 @@ export const ConsultingPage: React.FC = () => {
               </Text>
             </Box>
 
-            <SimpleGrid columns={{ base: 1, md: 2, lg: 4 }} spacing={8} width="full">
+            <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={{ base: 3, md: 6 }} width="full">
               {services.map((service, index) => (
                 <MotionCard
-                  key={index}
+                  key={service.key}
                   variant="royal"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.1 }}
+                  transition={{ delay: Math.min(index * 0.06, 0.3) }}
                 >
-                  <Box p={6}>
-                    <VStack align="stretch" spacing={4}>
-                      <Box
-                        w="60px"
-                        h="60px"
-                        bgGradient="linear(135deg, red.600, brand.secondary)"
-                        borderRadius="12px"
-                        display="flex"
-                        alignItems="center"
-                        justifyContent="center"
-                        mb={2}
-                      >
-                        <Icon as={service.icon} w={8} h={8} color="white" />
-                      </Box>
-                      
-                      <Heading as="h3" textStyle="cardTitle" color="brand.text">
+                  <Flex
+                    direction={{ base: 'row', md: 'column' }}
+                    align={{ base: 'center', md: 'stretch' }}
+                    gap={{ base: 3, md: 4 }}
+                    p={{ base: 2.5, md: 6 }}
+                  >
+                    <Box
+                      w={{ base: '40px', md: '60px' }}
+                      h={{ base: '40px', md: '60px' }}
+                      flexShrink={0}
+                      bgGradient="linear(135deg, red.600, brand.secondary)"
+                      borderRadius="12px"
+                      display="flex"
+                      alignItems="center"
+                      justifyContent="center"
+                    >
+                      <Icon as={service.icon} w={{ base: 5, md: 8 }} h={{ base: 5, md: 8 }} color="white" />
+                    </Box>
+
+                    <Box flex="1" minW={0}>
+                      <Heading as="h3" textStyle="cardTitle" color="brand.text" mb={{ base: 0.5, md: 2 }}>
                         {t(`consulting.services.${service.key}.title`)}
                       </Heading>
 
-                      <Text color="brand.textMuted" fontSize="sm" minH="60px">
+                      <Text color="brand.textMuted" fontSize={{ base: 'xs', md: 'sm' }} noOfLines={{ base: 1, md: 3 }}>
                         {t(`consulting.services.${service.key}.description`)}
                       </Text>
-                      
-                      <List spacing={2}>
+
+                      <List spacing={2} mt={3} display={{ base: 'none', md: 'block' }}>
                         {Object.keys(t(`consulting.services.${service.key}.features`, { returnObjects: true })).slice(0, 3).map((featureKey, i) => (
                           <ListItem key={i} fontSize="xs" color="brand.textMuted">
                             <Icon as={CheckCircleIcon} color="red.600" mr={2} />
@@ -212,17 +216,8 @@ export const ConsultingPage: React.FC = () => {
                           </ListItem>
                         ))}
                       </List>
-                      
-                      <Button
-                        variant="ghost"
-                        color="red.600"
-                        rightIcon={<ChevronRightIcon />}
-                        mt={2}
-                      >
-                        {t('consulting.learnMoreButton')}
-                      </Button>
-                    </VStack>
-                  </Box>
+                    </Box>
+                  </Flex>
                 </MotionCard>
               ))}
             </SimpleGrid>
