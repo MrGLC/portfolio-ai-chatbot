@@ -47,7 +47,7 @@ describe('resolveStoryFrame', () => {
   });
   it('clamps beyond last section to cta frame (tucked low-right, sub-hero scale)', () => {
     const f = resolveStoryFrame(99999, ranges, 800, false);
-    expect(f.to).toBe('gem'); expect(f.scale).toBeCloseTo(0.85, 1);
+    expect(f.to).toBe('gem'); expect(f.scale).toBeCloseTo(0.75, 1);
     expect(f.position[1]).toBeLessThan(-0.5);
   });
 });

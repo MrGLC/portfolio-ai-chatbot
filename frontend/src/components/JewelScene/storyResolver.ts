@@ -22,7 +22,7 @@ const KEYFRAMES: Record<string, Keyframe> = {
   // cta: tucked low-right and under heading scale so the gem reads as a
   // closing accent beside the centered copy instead of swallowing it (and
   // ducks behind the opaque footer sooner once the user scrolls past).
-  'story-cta':       { target: 'gem',     pos: [1.4, -0.9, 0], mobilePos: [0, -3.0, 0],    scale: 0.85, mobileScale: 0.45 },
+  'story-cta':       { target: 'gem',     pos: [2.1, -1.4, 0], mobilePos: [0, -3.0, 0],    scale: 0.75, mobileScale: 0.45 },
 };
 
 const BLEND = 0.2; // fraction of viewport height on EACH side of a boundary
