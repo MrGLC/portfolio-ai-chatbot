@@ -1,7 +1,7 @@
 import axios from 'axios';
 
-const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000';
-const CHATBOT_API_URL = process.env.REACT_APP_CHATBOT_API_URL || 'http://localhost:5002';
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+const CHATBOT_API_URL = import.meta.env.VITE_CHATBOT_API_URL || 'http://localhost:5002';
 
 const api = axios.create({
   baseURL: API_URL,
@@ -42,7 +42,7 @@ export const chatbotAPI = {
   
   // WebSocket connection
   createWebSocketConnection: (userId = 'user123', sessionId = null, language = 'en') => {
-    const wsUrl = process.env.REACT_APP_WS_URL || 'ws://localhost:5002';
+    const wsUrl = import.meta.env.VITE_WS_URL || 'ws://localhost:5002';
     const params = new URLSearchParams({
       user_id: userId,
       language: language
