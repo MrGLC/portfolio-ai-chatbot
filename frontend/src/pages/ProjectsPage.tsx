@@ -11,6 +11,7 @@ import {
   Badge,
   Button,
   HStack,
+  Stack,
   Tag,
   Modal,
   ModalOverlay,
@@ -392,13 +393,14 @@ export const ProjectsPage: React.FC = () => {
                 <Text fontSize="lg" color="gray.600" maxW="600px">
                   {t('projects.cta.description')}
                 </Text>
-                <HStack spacing={4}>
+                <Stack direction={{ base: 'column', sm: 'row' }} spacing={4} w={{ base: 'full', sm: 'auto' }}>
                   <Button
                     size="lg"
                     colorScheme="red"
                     bg="red.600"
                     _hover={{ bg: 'red.700' }}
                     rightIcon={<ExternalLinkIcon />}
+                    w={{ base: 'full', sm: 'auto' }}
                   >
                     {t('projects.cta.scheduleConsultation')}
                   </Button>
@@ -407,10 +409,11 @@ export const ProjectsPage: React.FC = () => {
                     variant="outline"
                     colorScheme="gray"
                     borderWidth={2}
+                    w={{ base: 'full', sm: 'auto' }}
                   >
                     {t('projects.cta.downloadPortfolio')}
                   </Button>
-                </HStack>
+                </Stack>
               </VStack>
             </CardBody>
           </Card>
