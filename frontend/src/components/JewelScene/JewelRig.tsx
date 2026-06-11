@@ -215,7 +215,12 @@ interface DragState {
   moved: number;
 }
 
-export const JewelRig: React.FC = () => {
+interface JewelRigProps {
+  /** Called once on the first gem pointerdown (used to dismiss the hint pill). */
+  onFirstInteraction?: () => void;
+}
+
+export const JewelRig: React.FC<JewelRigProps> = ({ onFirstInteraction }) => {
   const profile = usePerfProfile();
   const story = useJewelStory();
 
@@ -233,6 +238,13 @@ export const JewelRig: React.FC = () => {
   const dustCount = Math.round(DUST_BASE_COUNT * profile.particleScale);
 
   const gemGroupRef = useRef<THREE.Group>(null);
+  // Inner group for magnetic lean — wraps the mesh so lean rotation doesn't
+  // fight the outer group's drag/inertia/scroll rotation.
+  const leanRef = useRef<THREE.Group>(null);
+  const leanXRef = useRef(0); // current smoothed lean x
+  const leanYRef = useRef(0); // current smoothed lean y
+  // Ensure onFirstInteraction fires at most once per mount.
+  const firstInteractionFiredRef = useRef(false);
   const progressRef = useRef(0); // 0..1 morph blend (uMorph)
   const animatingRef = useRef(false);
   const pulseRef = useRef(0); // 1 on tap, decays in useFrame
@@ -371,7 +383,7 @@ export const JewelRig: React.FC = () => {
   }, []);
 
   /* ---- Single per-frame driver ---- */
-  useFrame(({ clock }, delta) => {
+  useFrame(({ clock, pointer: statePointer }, delta) => {
     const group = gemGroupRef.current;
     if (!group) return;
 
@@ -452,6 +464,27 @@ export const JewelRig: React.FC = () => {
     vel.x *= inertiaDecay;
     vel.y *= inertiaDecay;
 
+    // Magnetic lean: gem mesh leans gently toward the pointer on full tier
+    // when not being dragged. An inner group (leanRef) isolates this rotation
+    // from the outer group's drag/inertia rotation so they don't fight.
+    const lean = leanRef.current;
+    if (lean) {
+      const leanK = 1 - Math.exp(-4 * delta);
+      if (!lite && !dragging) {
+        // state.pointer is in NDC [-1,1]; scale to ±0.14 rad.
+        const targetLeanX = statePointer.y * 0.14;
+        const targetLeanY = statePointer.x * 0.14;
+        leanXRef.current += (targetLeanX - leanXRef.current) * leanK;
+        leanYRef.current += (targetLeanY - leanYRef.current) * leanK;
+      } else {
+        // Lite tier or dragging: lerp lean back to zero.
+        leanXRef.current += (0 - leanXRef.current) * leanK;
+        leanYRef.current += (0 - leanYRef.current) * leanK;
+      }
+      lean.rotation.x = leanXRef.current;
+      lean.rotation.y = leanYRef.current;
+    }
+
     // Position: exponential approach toward the story frame (float bob rides
     // on top of the frame's y as before).
     const k = 1 - Math.exp(-5 * delta);
@@ -496,6 +529,11 @@ export const JewelRig: React.FC = () => {
     );
     dragRef.current = { active: true, lastX: e.clientX, lastY: e.clientY, moved: 0 };
     document.body.style.cursor = 'grabbing';
+    // Notify parent that the user has interacted for the first time (hint dismiss).
+    if (!firstInteractionFiredRef.current) {
+      firstInteractionFiredRef.current = true;
+      onFirstInteraction?.();
+    }
   };
 
   const handlePointerMove = (e: ThreeEvent<PointerEvent>) => {
@@ -565,15 +603,19 @@ export const JewelRig: React.FC = () => {
       <Backdrop focusX={focusX} focusY={focusY} fade={fadeUniform} />
 
       <group ref={gemGroupRef} position={[gemX, gemY, 0]} rotation={[0.35, 0, -0.15]}>
-        <mesh
-          geometry={geometry}
-          material={material}
-          onPointerOver={handlePointerOver}
-          onPointerOut={handlePointerOut}
-          onPointerDown={handlePointerDown}
-          onPointerMove={handlePointerMove}
-          onPointerUp={handlePointerUp}
-        />
+        {/* Inner group for magnetic lean — isolated so lean doesn't fight
+            the outer group's drag/inertia/ambient-rotation. */}
+        <group ref={leanRef}>
+          <mesh
+            geometry={geometry}
+            material={material}
+            onPointerOver={handlePointerOver}
+            onPointerOut={handlePointerOut}
+            onPointerDown={handlePointerDown}
+            onPointerMove={handlePointerMove}
+            onPointerUp={handlePointerUp}
+          />
+        </group>
       </group>
 
       <Dust count={dustCount} animate={profile.animate} fade={fadeUniform} />

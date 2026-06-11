@@ -77,7 +77,7 @@ const particleVertex = /* glsl */ `
     vec2 toPointer = p.xy - uPointer.xy;
     float dist = length(toPointer);
     float push = uPointer.z * smoothstep(2.2, 0.0, dist);
-    p.xy += normalize(toPointer + vec2(1e-4)) * push * 0.9;
+    p.xy += normalize(toPointer + vec2(1e-4)) * push * 1.8;
 
     vec4 mv = modelViewMatrix * vec4(p, 1.0);
 
