@@ -1,0 +1,28 @@
+# Overlay for the la-realeza VPS: joins the existing Traefik proxy network
+# and publishes the frontend at la-realeza.com via labels. Traefik on this
+# host is managed separately (coolify-proxy container) — we only consume it.
+# Usage: docker compose -f docker-compose.prod.yml -f docker-compose.vps.yml up -d --build
+services:
+  frontend:
+    networks:
+      - default
+      - proxy
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=coolify
+      - traefik.http.routers.larealeza-https.rule=Host(`la-realeza.com`) || Host(`www.la-realeza.com`)
+      - traefik.http.routers.larealeza-https.entryPoints=https
+      - traefik.http.routers.larealeza-https.tls=true
+      - traefik.http.routers.larealeza-https.tls.certresolver=letsencrypt
+      - traefik.http.routers.larealeza-https.service=larealeza
+      - traefik.http.services.larealeza.loadbalancer.server.port=80
+      - traefik.http.routers.larealeza-http.rule=Host(`la-realeza.com`) || Host(`www.la-realeza.com`)
+      - traefik.http.routers.larealeza-http.entryPoints=http
+      - traefik.http.routers.larealeza-http.middlewares=larealeza-redirect
+      - traefik.http.routers.larealeza-http.service=larealeza
+      - traefik.http.middlewares.larealeza-redirect.redirectscheme.scheme=https
+
+networks:
+  proxy:
+    name: coolify
+    external: true
