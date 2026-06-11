@@ -42,75 +42,6 @@ const colors = {
   glass: 'rgba(255, 248, 231, 0.1)',
 };
 
-// 3D Avatar Components
-function MiniAssistantOrb({ scale = 1 }: { scale?: number }) {
-  const meshRef = useRef<THREE.Mesh>(null);
-  
-  useFrame((state) => {
-    if (meshRef.current) {
-      meshRef.current.rotation.y += 0.01;
-      const time = state.clock.elapsedTime;
-      meshRef.current.scale.setScalar(scale * (1 + Math.sin(time * 2) * 0.05));
-    }
-  });
-
-  return (
-    <group scale={scale}>
-      <mesh ref={meshRef}>
-        <octahedronGeometry args={[1, 2]} />
-        <meshPhysicalMaterial
-          color={colors.lightBrown}
-          metalness={0.8}
-          roughness={0.1}
-          emissive={colors.brown}
-          emissiveIntensity={0.3}
-          envMapIntensity={2}
-          clearcoat={1}
-          clearcoatRoughness={0}
-        />
-      </mesh>
-      <mesh scale={1.3}>
-        <octahedronGeometry args={[1, 0]} />
-        <meshBasicMaterial
-          color={colors.cream}
-          transparent
-          opacity={0.2}
-        />
-      </mesh>
-    </group>
-  );
-}
-
-function UserGem({ scale = 1 }: { scale?: number }) {
-  const meshRef = useRef<THREE.Mesh>(null);
-  
-  useFrame((state) => {
-    if (meshRef.current) {
-      meshRef.current.rotation.y -= 0.008;
-      meshRef.current.rotation.z += 0.005;
-    }
-  });
-
-  return (
-    <group scale={scale}>
-      <mesh ref={meshRef}>
-        <icosahedronGeometry args={[1, 0]} />
-        <meshPhysicalMaterial
-          color="#FFD700"
-          metalness={0.5}
-          roughness={0.2}
-          transmission={0.5}
-          thickness={0.5}
-          envMapIntensity={1}
-          clearcoat={1}
-          clearcoatRoughness={0}
-          ior={1.5}
-        />
-      </mesh>
-      <pointLight position={[0, 0, 0]} intensity={0.5} color={colors.lightBrown} />
-    </group>
-  );
-}
 
 // 3D Assistant Orb Component
 function AssistantOrb({ isTyping, hasNewMessage, particleScale = 1 }: { isTyping: boolean; hasNewMessage: boolean; particleScale?: number }) {
@@ -329,31 +260,23 @@ function ChatScene({ isTyping, hasNewMessage, particleScale }: { isTyping: boole
   );
 }
 
-// 3D Avatar for Message Bubbles
-function Avatar3D({ isUser }: { isUser: boolean }) {
-  return (
-    <Box
-      w={8}
-      h={8}
-      display="flex"
-      alignItems="center"
-      justifyContent="center"
-      flexShrink={0}
-      position="relative"
-    >
-      <Canvas
-        camera={{ position: [0, 0, 3], fov: 40 }}
-        style={{ width: '100%', height: '100%' }}
-        dpr={[1, 2]}
-      >
-        <ambientLight intensity={0.6} />
-        <pointLight position={[2, 2, 2]} intensity={0.7} color={colors.cream} />
-        <pointLight position={[-2, -2, 2]} intensity={0.3} color={colors.lightBrown} />
-        {isUser ? <UserGem scale={1} /> : <MiniAssistantOrb scale={1} />}
-      </Canvas>
-    </Box>
-  );
-}
+// Static CSS gem avatar — replaces per-message WebGL canvases
+const StaticAvatar: React.FC<{ isUser: boolean }> = ({ isUser }) => (
+  <Box
+    w="24px"
+    h="24px"
+    flexShrink={0}
+    transform="rotate(45deg)"
+    borderRadius="4px"
+    bgGradient={isUser
+      ? 'linear(135deg, #FFD700, #B8860B)'
+      : 'linear(135deg, #DC143C, #8B0000)'}
+    boxShadow={isUser
+      ? '0 0 8px rgba(255, 215, 0, 0.5)'
+      : '0 0 8px rgba(220, 20, 60, 0.5)'}
+    aria-hidden="true"
+  />
+);
 
 // Message Bubble Component with enhanced design
 function MessageBubble({ message, isUser }: { message: string; isUser: boolean }) {
@@ -364,7 +287,7 @@ function MessageBubble({ message, isUser }: { message: string; isUser: boolean }
       transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
     >
       <Flex justify={isUser ? 'flex-end' : 'flex-start'} mb={4} align="flex-start" gap={2}>
-        {!isUser && <Avatar3D isUser={false} />}
+        {!isUser && <StaticAvatar isUser={false} />}
         
         <Box maxW="75%">
           <Box
@@ -432,7 +355,7 @@ function MessageBubble({ message, isUser }: { message: string; isUser: boolean }
           </HStack>
         </Box>
         
-        {isUser && <Avatar3D isUser={true} />}
+        {isUser && <StaticAvatar isUser={true} />}
       </Flex>
     </MotionBox>
   );
@@ -631,7 +554,7 @@ export const ThreeJsChatbot: React.FC = () => {
                   transition={{ duration: 0.3 }}
                 >
                   <Flex justify="flex-start" mb={4} align="flex-start" gap={2}>
-                    <Avatar3D isUser={false} />
+                    <StaticAvatar isUser={false} />
                     <Box
                       px={6}
                       py={4}
