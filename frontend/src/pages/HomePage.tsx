@@ -30,9 +30,7 @@ import {
   ArrowForwardIcon
 } from '@chakra-ui/icons';
 import { variants, durations, easings, delays, springs, createStaggerAnimation } from '../theme/animations';
-const LightPattern = lazy(() =>
-  import('../components/ThreeBackground/LightPattern').then((m) => ({ default: m.LightPattern }))
-);
+const JewelScene = lazy(() => import('../components/JewelScene'));
 const ThreeJsChatbot = lazy(() =>
   import('../components/Chatbot/ThreeJsChatbot').then((m) => ({ default: m.ThreeJsChatbot }))
 );
@@ -99,18 +97,24 @@ export const HomePage: React.FC = () => {
         variants={staggerAnimation.parent}
         style={{ y: heroY }}
       >
-        {/* Extended red gradient overlay to cover gap */}
+        {/* Living Jewel scene — absolute background behind all hero content */}
+        <Suspense fallback={null}>
+          <JewelScene />
+        </Suspense>
+
+        {/* Soft bottom fade only — the jewel scene supplies the hero mood; a
+            full red wash on top of it flattens the 3D into a pink silhouette */}
         <Box
           position="absolute"
-          top={0}
           left={0}
           right={0}
-          bottom="-200px"
-          bgGradient="linear(to-b, rgba(139, 0, 0, 0.7), rgba(220, 20, 60, 0.5), rgba(139, 0, 0, 0.3), transparent)"
+          bottom="-2px"
+          height="160px"
+          bgGradient="linear(to-b, transparent, brand.cream)"
           pointerEvents="none"
           zIndex={1}
         />
-        
+
         {/* Decorative elements */}
         <Box
           position="absolute"
@@ -125,7 +129,7 @@ export const HomePage: React.FC = () => {
           pointerEvents="none"
         />
         
-        <Container maxW="1400px" position="relative" zIndex={1} h="100vh">
+        <Container maxW="1400px" position="relative" zIndex={2} h="100vh">
           <Flex
             h="100%"
             align="flex-start"
@@ -334,11 +338,6 @@ export const HomePage: React.FC = () => {
           pointerEvents="none"
           zIndex={2}
         />
-        
-        {/* Enhanced pattern background */}
-        <Suspense fallback={null}>
-          <LightPattern intensity={0.5} />
-        </Suspense>
         
         {/* Smooth transition shape */}
         <Box
@@ -620,11 +619,6 @@ export const HomePage: React.FC = () => {
         position="relative"
         overflow="hidden"
       >
-        {/* Pattern background */}
-        <Suspense fallback={null}>
-          <LightPattern intensity={0.3} />
-        </Suspense>
-        
         {/* Decorative elements */}
         <Box
           position="absolute"

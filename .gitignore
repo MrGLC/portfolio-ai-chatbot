@@ -16,3 +16,4 @@ frontend_iterations/
 inspiration/__pycache__/
 *.pyc
 .venv/
+node_modules/
