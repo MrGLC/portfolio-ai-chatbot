@@ -25,8 +25,7 @@ import {
   StarIcon, 
   TimeIcon,
   PhoneIcon,
-  CalendarIcon,
-  ChevronRightIcon
+  CalendarIcon
 } from '@chakra-ui/icons';
 import {
   InfoIcon,
@@ -106,17 +105,17 @@ export const ConsultingPage: React.FC = () => {
         color="white"
         overflow="hidden"
       >
-        <Container maxW="7xl" py={{ base: 20, md: 32 }} position="relative" zIndex={1}>
+        <Container maxW="7xl" py={{ base: 16, md: 24 }} position="relative" zIndex={1}>
           <VStack spacing={8} textAlign="center">
             <MotionBox
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
             >
-              <Heading fontSize={{ base: '3xl', md: '5xl' }} mb={4}>
+              <Heading as="h1" textStyle="pageTitle" mb={4}>
                 {t('consulting.hero.title')}
               </Heading>
-              <Text fontSize="xl" maxW="800px" mx="auto" opacity={0.95}>
+              <Text textStyle="lead" maxW="800px" mx="auto" opacity={0.95}>
                 {t('consulting.hero.description')}
               </Text>
             </MotionBox>
@@ -160,51 +159,56 @@ export const ConsultingPage: React.FC = () => {
       </Box>
 
       {/* Services Section - Cream Background */}
-      <Box bg="brand.creamSoft" pt={20} pb={32} position="relative">
+      <Box bg="brand.creamSoft" pt={{ base: 8, md: 20 }} pb={{ base: 28, md: 32 }} position="relative">
         <Container maxW="7xl">
-          <VStack spacing={12}>
+          <VStack spacing={{ base: 6, md: 12 }}>
             <Box textAlign="center">
-              <Heading size="3xl" color="brand.text" mb={4}>
+              <Heading textStyle="sectionTitle" color="brand.text" mb={{ base: 2, md: 4 }}>
                 {t('consulting.servicesSection.title')}
               </Heading>
-              <Text fontSize="lg" color="brand.textMuted" maxW="600px" mx="auto">
+              <Text textStyle="lead" color="brand.textMuted" maxW="600px" mx="auto">
                 {t('consulting.servicesSection.subtitle')}
               </Text>
             </Box>
 
-            <SimpleGrid columns={{ base: 1, md: 2, lg: 4 }} spacing={8} width="full">
+            <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={{ base: 3, md: 6 }} width="full">
               {services.map((service, index) => (
                 <MotionCard
-                  key={index}
+                  key={service.key}
                   variant="royal"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.1 }}
+                  transition={{ delay: Math.min(index * 0.06, 0.3) }}
                 >
-                  <Box p={6}>
-                    <VStack align="stretch" spacing={4}>
-                      <Box
-                        w="60px"
-                        h="60px"
-                        bgGradient="linear(135deg, red.600, brand.secondary)"
-                        borderRadius="12px"
-                        display="flex"
-                        alignItems="center"
-                        justifyContent="center"
-                        mb={2}
-                      >
-                        <Icon as={service.icon} w={8} h={8} color="white" />
-                      </Box>
-                      
-                      <Heading size="md" color="brand.text">
+                  <Flex
+                    direction={{ base: 'row', md: 'column' }}
+                    align={{ base: 'center', md: 'stretch' }}
+                    gap={{ base: 3, md: 4 }}
+                    p={{ base: 2.5, md: 6 }}
+                  >
+                    <Box
+                      w={{ base: '40px', md: '60px' }}
+                      h={{ base: '40px', md: '60px' }}
+                      flexShrink={0}
+                      bgGradient="linear(135deg, red.600, brand.secondary)"
+                      borderRadius="12px"
+                      display="flex"
+                      alignItems="center"
+                      justifyContent="center"
+                    >
+                      <Icon as={service.icon} w={{ base: 5, md: 8 }} h={{ base: 5, md: 8 }} color="white" />
+                    </Box>
+
+                    <Box flex="1" minW={0}>
+                      <Heading as="h3" textStyle="cardTitle" color="brand.text" mb={{ base: 0.5, md: 2 }}>
                         {t(`consulting.services.${service.key}.title`)}
                       </Heading>
 
-                      <Text color="brand.textMuted" fontSize="sm" minH="60px">
+                      <Text color="brand.textMuted" fontSize={{ base: 'xs', md: 'sm' }} noOfLines={{ base: 1, md: 3 }}>
                         {t(`consulting.services.${service.key}.description`)}
                       </Text>
-                      
-                      <List spacing={2}>
+
+                      <List spacing={2} mt={3} display={{ base: 'none', md: 'block' }}>
                         {Object.keys(t(`consulting.services.${service.key}.features`, { returnObjects: true })).slice(0, 3).map((featureKey, i) => (
                           <ListItem key={i} fontSize="xs" color="brand.textMuted">
                             <Icon as={CheckCircleIcon} color="red.600" mr={2} />
@@ -212,17 +216,8 @@ export const ConsultingPage: React.FC = () => {
                           </ListItem>
                         ))}
                       </List>
-                      
-                      <Button
-                        variant="ghost"
-                        color="red.600"
-                        rightIcon={<ChevronRightIcon />}
-                        mt={2}
-                      >
-                        {t('consulting.learnMoreButton')}
-                      </Button>
-                    </VStack>
-                  </Box>
+                    </Box>
+                  </Flex>
                 </MotionCard>
               ))}
             </SimpleGrid>
@@ -243,14 +238,14 @@ export const ConsultingPage: React.FC = () => {
       </Box>
 
       {/* Process Section - White Background */}
-      <Box bg="white" pt={20} pb={32} position="relative">
+      <Box bg="white" pt={{ base: 12, md: 20 }} pb={32} position="relative">
         <Container maxW="7xl">
           <VStack spacing={12}>
             <Box textAlign="center">
-              <Heading size="3xl" color="brand.text" mb={4}>
+              <Heading textStyle="sectionTitle" color="brand.text" mb={4}>
                 {t('consulting.process.title')}
               </Heading>
-              <Text fontSize="lg" color="brand.textMuted" maxW="600px" mx="auto">
+              <Text textStyle="lead" color="brand.textMuted" maxW="600px" mx="auto">
                 {t('consulting.process.subtitle')}
               </Text>
             </Box>
@@ -300,7 +295,7 @@ export const ConsultingPage: React.FC = () => {
                       <Badge bg="red.600" color="white" px={3} py={1} borderRadius="full">
                         {t(`consulting.process.steps.${step.key}.step`)}
                       </Badge>
-                      <Heading size="lg" color="brand.text">
+                      <Heading as="h3" textStyle="cardTitle" color="brand.text">
                         {t(`consulting.process.steps.${step.key}.title`)}
                       </Heading>
                       <Text color="brand.textMuted" fontSize="sm">
@@ -334,17 +329,17 @@ export const ConsultingPage: React.FC = () => {
       <Box
         bgGradient="linear(135deg, red.600, brand.secondary)"
         color="white"
-        pt={20}
-        pb={32}
+        pt={{ base: 12, md: 20 }}
+        pb={{ base: 12, md: 20 }}
         position="relative"
       >
         <Container maxW="7xl">
           <VStack spacing={12}>
             <Box textAlign="center">
-              <Heading size="3xl" mb={4}>
+              <Heading textStyle="sectionTitle" mb={4}>
                 {t('consulting.pricing.title')}
               </Heading>
-              <Text fontSize="lg" opacity={0.95} maxW="600px" mx="auto">
+              <Text textStyle="lead" opacity={0.95} maxW="600px" mx="auto">
                 {t('consulting.pricing.subtitle')}
               </Text>
             </Box>
@@ -363,7 +358,7 @@ export const ConsultingPage: React.FC = () => {
               <CardBody>
                 <VStack spacing={8}>
                   <Box textAlign="center">
-                    <Heading size="2xl" mb={2}>
+                    <Heading as="h3" textStyle="cardTitle" mb={2}>
                       {t('consulting.pricing.customQuote.title')}
                     </Heading>
                     <Text fontSize="lg" opacity={0.9}>
@@ -425,7 +420,7 @@ export const ConsultingPage: React.FC = () => {
       </Box>
 
       {/* Final CTA Section - Cream Background */}
-      <Box bg="brand.creamSoft" py={20}>
+      <Box bg="brand.creamSoft" py={{ base: 12, md: 20 }}>
         <Container maxW="7xl">
           <Card
             bg="white"
@@ -435,7 +430,7 @@ export const ConsultingPage: React.FC = () => {
           >
             <CardBody p={{ base: 8, md: 12 }}>
               <VStack spacing={8} textAlign="center">
-                <Heading size="2xl" color="brand.text">
+                <Heading textStyle="sectionTitle" color="brand.text">
                   {t('consulting.finalCta.title')}
                 </Heading>
                 <Text fontSize="lg" color="brand.textMuted" maxW="600px">

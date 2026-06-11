@@ -419,6 +419,38 @@ const components = {
   },
 };
 
+// Unified typographic scale - use via textStyle= prop
+const textStyles = {
+  pageTitle: {
+    fontFamily: 'heading',
+    fontWeight: 700,
+    fontSize: { base: '3xl', md: '5xl' },
+    lineHeight: 1.1,
+  },
+  sectionTitle: {
+    fontFamily: 'heading',
+    fontWeight: 600,
+    fontSize: { base: '2xl', md: '4xl' },
+    lineHeight: 1.2,
+  },
+  cardTitle: {
+    fontFamily: 'heading',
+    fontWeight: 600,
+    fontSize: { base: 'lg', md: 'xl' },
+    lineHeight: 1.3,
+  },
+  eyebrow: {
+    fontWeight: 500,
+    fontSize: 'sm',
+    letterSpacing: '2px',
+    textTransform: 'uppercase',
+  },
+  lead: {
+    fontSize: { base: 'md', md: 'xl' },
+    lineHeight: 1.6,
+  },
+};
+
 const breakpoints = {
   sm: '30em',    // 480px
   md: '48em',    // 768px
@@ -458,6 +490,7 @@ export const theme = extendTheme({
   fonts,
   shadows,
   radii,
+  textStyles,
   styles,
   components,
   breakpoints,

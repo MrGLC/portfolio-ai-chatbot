@@ -142,10 +142,7 @@ export const HomePage: React.FC = () => {
               {/* Enhanced luxury subtitle with better styling */}
               <Text
                 as={MotionText}
-                fontSize={{ base: "sm", md: "md" }}
-                fontWeight="600"
-                letterSpacing="4px"
-                textTransform="uppercase"
+                textStyle="eyebrow"
                 color="brand.accent"
                 variants={staggerAnimation.child}
                 position="relative"
@@ -168,12 +165,8 @@ export const HomePage: React.FC = () => {
               {/* Enhanced main title with better typography */}
               <Heading
                 as={MotionHeading}
-                fontSize={{ base: "4xl", md: "6xl", lg: "7xl", xl: "8xl" }}
-                fontWeight="900"
-                lineHeight="0.95"
+                textStyle="pageTitle"
                 color="white"
-                fontFamily="heading"
-                letterSpacing="-3px"
                 variants={staggerAnimation.child}
                 textShadow="0 4px 20px rgba(0,0,0,0.8), 0 0 40px rgba(220,20,60,0.5)"
               >
@@ -183,10 +176,8 @@ export const HomePage: React.FC = () => {
               {/* Enhanced description with better readability */}
               <Text
                 as={MotionText}
-                fontSize={{ base: "lg", md: "xl", lg: "2xl" }}
+                textStyle="lead"
                 color="white"
-                lineHeight="1.7"
-                fontWeight="400"
                 maxW="600px"
                 variants={staggerAnimation.child}
                 textAlign={{ base: "center", lg: "left" }}
@@ -361,7 +352,7 @@ export const HomePage: React.FC = () => {
           boxShadow="0 -20px 40px rgba(0,0,0,0.1)"
         />
         
-        <Container maxW="1400px" py={{ base: 24, md: 36 }} position="relative" zIndex={3}>
+        <Container maxW="1400px" py={{ base: 12, md: 20 }} position="relative" zIndex={3}>
           <MotionBox
             initial="hidden"
             whileInView="visible"
@@ -372,10 +363,7 @@ export const HomePage: React.FC = () => {
               {/* Enhanced section header */}
               <VStack spacing={6} textAlign="center" maxW="800px" mx="auto">
                 <Text
-                  fontSize={{ base: "sm", md: "md" }}
-                  fontWeight="500"
-                  letterSpacing="3px"
-                  textTransform="uppercase"
+                  textStyle="eyebrow"
                   color="brand.secondary"
                   position="relative"
                   _after={{
@@ -393,15 +381,13 @@ export const HomePage: React.FC = () => {
                   {t('home.chatbot.title')}
                 </Text>
                 <Heading
+                  textStyle="sectionTitle"
                   color="brand.text"
-                  fontFamily="heading"
-                  fontSize={{ base: "3xl", md: "4xl", lg: "5xl" }}
-                  lineHeight="1.2"
                 >
                   {t('home.chatbot.heading')}
                 </Heading>
                 <Text
-                  fontSize={{ base: "lg", md: "xl" }}
+                  textStyle="lead"
                   color="brand.textSecondary"
                   maxW="600px"
                 >
@@ -419,9 +405,9 @@ export const HomePage: React.FC = () => {
       </Box>
 
       {/* Portfolio Preview Section - Enhanced interactions */}
-      <Box 
-        bg="transparent" 
-        py={{ base: 24, md: 36 }}
+      <Box
+        bg="transparent"
+        py={{ base: 12, md: 20 }}
         position="relative"
         overflow="hidden"
       >
@@ -447,10 +433,7 @@ export const HomePage: React.FC = () => {
               {/* Enhanced section header */}
               <VStack spacing={6} textAlign="center" maxW="800px" mx="auto">
                 <Text
-                  fontSize={{ base: "sm", md: "md" }}
-                  fontWeight="500"
-                  letterSpacing="3px"
-                  textTransform="uppercase"
+                  textStyle="eyebrow"
                   color="brand.accent"
                   position="relative"
                   _after={{
@@ -468,15 +451,13 @@ export const HomePage: React.FC = () => {
                   {t('home.portfolio.subtitle')}
                 </Text>
                 <Heading
+                  textStyle="sectionTitle"
                   color="brand.primary"
-                  fontFamily="heading"
-                  fontSize={{ base: "3xl", md: "4xl", lg: "5xl" }}
-                  lineHeight="1.2"
                 >
                   {t('home.portfolio.title')}
                 </Heading>
                 <Text
-                  fontSize={{ base: "lg", md: "xl" }}
+                  textStyle="lead"
                   color="brand.cream"
                   maxW="600px"
                   opacity={0.9}
@@ -547,10 +528,10 @@ export const HomePage: React.FC = () => {
                       >
                         {item % 3 === 0 ? t('home.portfolio.branding') : item % 3 === 1 ? t('home.portfolio.webDesign') : t('home.portfolio.marketing')}
                       </Badge>
-                      <Heading 
-                        size="lg" 
-                        color="brand.primary" 
-                        fontFamily="heading"
+                      <Heading
+                        as="h3"
+                        textStyle="cardTitle"
+                        color="brand.primary"
                         mb={2}
                       >
                         {t('home.portfolio.project')} {item}
@@ -633,9 +614,9 @@ export const HomePage: React.FC = () => {
       </Box>
 
       {/* Contact CTA Section - More compelling design */}
-      <Box 
-        bg="brand.primary" 
-        py={{ base: 24, md: 36 }}
+      <Box
+        bg="brand.primary"
+        py={{ base: 12, md: 20 }}
         position="relative"
         overflow="hidden"
       >
@@ -678,18 +659,15 @@ export const HomePage: React.FC = () => {
             <VStack spacing={10}>
               <VStack spacing={6} maxW="900px" mx="auto">
                 <Heading
+                  textStyle="sectionTitle"
                   color="brand.text"
-                  fontFamily="heading"
-                  fontSize={{ base: "3xl", md: "4xl", lg: "5xl", xl: "6xl" }}
-                  lineHeight="1.1"
                 >
                   {t('home.cta.title')}
                 </Heading>
-                <Text 
-                  fontSize={{ base: "lg", md: "xl", lg: "2xl" }} 
-                  color="brand.textSecondary" 
+                <Text
+                  textStyle="lead"
+                  color="brand.textSecondary"
                   maxW="700px"
-                  lineHeight="1.7"
                 >
                   {t('home.cta.description')}
                 </Text>
