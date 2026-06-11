@@ -20,7 +20,6 @@ vi.mock('@react-three/drei', () => ({
 
 // All ThreeBackground components render Canvas directly — stub the whole module
 vi.mock('../components/ThreeBackground', () => ({
-  AnimatedBackground: () => null,
   RedJewelBackground: () => null,
   LightPattern: () => null,
 }));
@@ -28,9 +27,6 @@ vi.mock('../components/ThreeBackground', () => ({
 // Lazy-loaded ThreeBackground components — stub the individual modules
 vi.mock('../components/ThreeBackground/RedJewelBackground', () => ({
   RedJewelBackground: () => null,
-}));
-vi.mock('../components/ThreeBackground/AnimatedBackground', () => ({
-  AnimatedBackground: () => null,
 }));
 vi.mock('../components/ThreeBackground/LightPattern', () => ({
   LightPattern: () => null,
