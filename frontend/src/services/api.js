@@ -47,47 +47,21 @@ export const chatbotAPI = {
       force_new_session: options.forceNewSession || false,
     });
   },
-  
-  // WebSocket connection
+
+  // WebSocket connection — Phase 3 seam
   createWebSocketConnection: (userId = 'user123', sessionId = null, language = 'en') => {
     const wsUrl = import.meta.env.VITE_WS_URL || 'ws://localhost:5002';
     const params = new URLSearchParams({
       user_id: userId,
       language: language
     });
-    
+
     if (sessionId) {
       params.append('session_id', sessionId);
     }
-    
+
     return new WebSocket(`${wsUrl}/ws/query-analyzer?${params.toString()}`);
   },
-  
-  // Session management
-  createNewSession: (userId, title = 'New Chat') => chatbotApi.post('/api/sessions/new', { user_id: userId, title }),
-  getUserConversations: (userId) => chatbotApi.get(`/api/users/${userId}/conversations`),
-  getSessionConversation: (sessionId) => chatbotApi.get(`/api/sessions/${sessionId}/conversation`),
-  
-  // User management
-  getUserFacts: (userId) => chatbotApi.get(`/api/users/${userId}/facts`),
-  updateUserSettings: (userId, settings) => chatbotApi.put(`/api/users/${userId}/settings`, settings),
-  
-  // Model management
-  getModels: () => chatbotApi.get('/models'),
-  getCurrentModel: () => chatbotApi.get('/model'),
-  switchModel: (model) => chatbotApi.post('/model', { model }),
-  
-  // MCP Store integration
-  getMCPServers: () => chatbotApi.get('/api/mcp/servers'),
-  connectMCPServer: (serverConfig) => chatbotApi.post('/api/mcp/servers', serverConfig),
-  getMCPTools: () => chatbotApi.get('/api/mcp/tools'),
-  executeMCPTool: (toolName, params) => chatbotApi.post(`/api/mcp/tools/${toolName}/execute`, params),
-  
-  // Health & status
-  getHealth: () => chatbotApi.get('/health'),
-  
-  // Analysis
-  getAnalysis: (userId) => chatbotApi.get(`/api/analysis/${userId}/latest`)
 };
 
 export default api;

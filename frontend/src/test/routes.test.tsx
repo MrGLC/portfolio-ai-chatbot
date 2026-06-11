@@ -15,7 +15,6 @@ vi.mock('@react-three/drei', () => ({
   OrbitControls: () => null,
   Environment: () => null,
   Sphere: () => null,
-  MeshTransmissionMaterial: () => null,
 }));
 
 // Lazy-loaded JewelScene components render Canvas directly — stub the modules
