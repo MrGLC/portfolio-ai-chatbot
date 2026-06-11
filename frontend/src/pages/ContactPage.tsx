@@ -26,8 +26,8 @@ import { EmailIcon, PhoneIcon, TimeIcon, CalendarIcon, ExternalLinkIcon, CheckIc
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 
-const MotionBox = motion(Box);
-const MotionCard = motion(Card);
+const MotionBox = motion.create(Box);
+const MotionCard = motion.create(Card);
 
 
 export const ContactPage: React.FC = () => {

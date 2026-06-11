@@ -33,7 +33,7 @@ import { variants, durations, easings, delays, springs, createStaggerAnimation }
 import { AnimatedBackground, LightPattern } from '../components/ThreeBackground';
 import { ThreeJsChatbot } from '../components/Chatbot/ThreeJsChatbot';
 
-const MotionBox = motion(Box);
+const MotionBox = motion.create(Box);
 const MotionCard = motion.div;
 const MotionHeading = motion.h1;
 const MotionText = motion.p;

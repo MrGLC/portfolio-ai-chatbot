@@ -31,7 +31,7 @@ import { useTranslation } from 'react-i18next';
 import { durations, easings, delays, variants, transitions, createHoverAnimation } from '../theme/animations';
 
 const MotionCard = motion.div;
-const MotionBox = motion(Box);
+const MotionBox = motion.create(Box);
 
 interface Project {
   id: number;

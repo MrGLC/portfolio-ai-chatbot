@@ -22,7 +22,7 @@ import { ArrowForwardIcon } from '@chakra-ui/icons';
 import { keyframes } from '@emotion/react';
 import { useTranslation } from 'react-i18next';
 
-const MotionBox = motion(Box);
+const MotionBox = motion.create(Box);
 
 // Animations
 const bounceAnimation = keyframes`

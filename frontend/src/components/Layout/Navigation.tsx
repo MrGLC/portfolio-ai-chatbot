@@ -22,7 +22,7 @@ import { useTranslation } from 'react-i18next';
 import { LanguageSwitcher } from '../LanguageSwitcher';
 import { durations, easings, transitions } from '../../theme/animations';
 
-const MotionBox = motion(Box);
+const MotionBox = motion.create(Box);
 
 interface NavItem {
   key: string;

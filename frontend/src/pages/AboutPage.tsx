@@ -30,8 +30,8 @@ import {
 } from '@chakra-ui/icons';
 import { durations, easings, delays, variants, transitions } from '../theme/animations';
 
-const MotionBox = motion(Box);
-const MotionCard = motion(Card);
+const MotionBox = motion.create(Box);
+const MotionCard = motion.create(Card);
 
 
 
