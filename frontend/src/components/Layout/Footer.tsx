@@ -16,7 +16,7 @@ import { Link as RouterLink } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 
-const MotionBox = motion(Box);
+const MotionBox = motion.create(Box);
 
 const socialLinks = [
   { name: 'LinkedIn', url: 'https://linkedin.com/in/placeholder', color: '#0A66C2' },

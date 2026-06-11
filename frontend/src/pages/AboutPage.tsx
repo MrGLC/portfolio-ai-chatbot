@@ -30,9 +30,8 @@ import {
 } from '@chakra-ui/icons';
 import { durations, easings, delays, variants, transitions } from '../theme/animations';
 
-const MotionBox = motion(Box);
-// Use motion.div instead of motion(Card) to avoid TypeScript complexity
-const MotionCard = motion.div;
+const MotionBox = motion.create(Box);
+const MotionCard = motion.create(Card);
 
 
 

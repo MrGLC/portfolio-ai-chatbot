@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Suspense, lazy } from 'react';
 import {
   Box,
   Container,
@@ -30,10 +30,14 @@ import {
   ArrowForwardIcon
 } from '@chakra-ui/icons';
 import { variants, durations, easings, delays, springs, createStaggerAnimation } from '../theme/animations';
-import { AnimatedBackground, LightPattern } from '../components/ThreeBackground';
-import { ThreeJsChatbot } from '../components/Chatbot/ThreeJsChatbot';
+const LightPattern = lazy(() =>
+  import('../components/ThreeBackground/LightPattern').then((m) => ({ default: m.LightPattern }))
+);
+const ThreeJsChatbot = lazy(() =>
+  import('../components/Chatbot/ThreeJsChatbot').then((m) => ({ default: m.ThreeJsChatbot }))
+);
 
-const MotionBox = motion(Box);
+const MotionBox = motion.create(Box);
 const MotionCard = motion.div;
 const MotionHeading = motion.h1;
 const MotionText = motion.p;
@@ -340,7 +344,9 @@ export const HomePage: React.FC = () => {
         />
         
         {/* Enhanced pattern background */}
-        <LightPattern intensity={0.5} />
+        <Suspense fallback={null}>
+          <LightPattern intensity={0.5} />
+        </Suspense>
         
         {/* Smooth transition shape */}
         <Box
@@ -404,7 +410,9 @@ export const HomePage: React.FC = () => {
               </VStack>
 
               {/* Three.js Chatbot Component */}
-              <ThreeJsChatbot />
+              <Suspense fallback={null}>
+                <ThreeJsChatbot />
+              </Suspense>
             </VStack>
           </MotionBox>
         </Container>
@@ -633,7 +641,9 @@ export const HomePage: React.FC = () => {
         overflow="hidden"
       >
         {/* Pattern background */}
-        <LightPattern intensity={0.3} />
+        <Suspense fallback={null}>
+          <LightPattern intensity={0.3} />
+        </Suspense>
         
         {/* Decorative elements */}
         <Box
