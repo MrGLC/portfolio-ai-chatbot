@@ -55,7 +55,9 @@ const colors = {
     redDarker: '#74121D',
     redLight: '#F5A3A3',
     cream: '#F5E6D3',
+    creamLight: '#FAF7F2',
     creamDark: '#E8D5B7',
+    goldRich: '#9A7209',
     // Extended palette (formerly hardcoded in pages)
     redDeep: '#8B0000',
     creamSoft: '#FAF0E6',

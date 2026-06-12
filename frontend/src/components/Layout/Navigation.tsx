@@ -69,7 +69,7 @@ export const Navigation: React.FC = () => {
           to={item.path}
           variant="ghost"
           size={isMobile ? 'lg' : 'sm'}
-          color={isActive ? 'brand.accent' : 'brand.cream'}
+          color={isActive ? 'brand.secondary' : 'brand.text'}
           fontWeight={isActive ? '700' : '400'}
           fontSize={{ base: 'xs', md: 'sm' }}
           textTransform="uppercase"
@@ -77,7 +77,7 @@ export const Navigation: React.FC = () => {
           bg="transparent"
           px={3}
           _hover={{
-            color: 'brand.accent',
+            color: 'brand.secondary',
             bg: 'transparent',
           }}
           _after={{
@@ -87,7 +87,7 @@ export const Navigation: React.FC = () => {
             left: 0,
             width: isActive ? '100%' : '0',
             height: '2px',
-            bg: 'brand.accent',
+            bg: 'brand.secondary',
             transition: `width ${durations.normal}s cubic-bezier(${easings.smooth.join(',')})`,
           }}
           _active={{ transform: 'none' }}
@@ -103,7 +103,7 @@ export const Navigation: React.FC = () => {
             left="0"
             width="100%"
             height="2px"
-            bg="brand.accent"
+            bg="brand.secondary"
             initial={{ scaleX: 0 }}
             whileHover={{ scaleX: 1 }}
             style={{ originX: 0 }}
@@ -121,9 +121,11 @@ export const Navigation: React.FC = () => {
       left={0}
       right={0}
       zIndex={1000}
-      bg={scrolled ? "rgba(220, 20, 60, 0.95)" : "linear-gradient(to bottom, #DC143C, rgba(220, 20, 60, 0.95))"}
+      bg={scrolled ? "rgba(250, 247, 242, 0.96)" : "rgba(250, 247, 242, 0.9)"}
       backdropFilter="blur(10px)"
-      boxShadow={scrolled ? "0 4px 20px rgba(0, 0, 0, 0.1)" : "none"}
+      borderBottom="1px solid"
+      borderColor={scrolled ? "rgba(184, 134, 11, 0.18)" : "rgba(26, 26, 26, 0.06)"}
+      boxShadow={scrolled ? "0 4px 20px rgba(26, 26, 26, 0.06)" : "none"}
       py={scrolled ? 3 : 4}
       transition={`all ${durations.normal}s cubic-bezier(${easings.smooth.join(',')})`}
     >
@@ -138,10 +140,10 @@ export const Navigation: React.FC = () => {
               <Text
                 fontSize={{ base: "xl", md: "2xl" }}
                 fontWeight="700"
-                color="brand.cream"
+                color="brand.text"
                 fontFamily="heading"
                 letterSpacing="0.5px"
-                _hover={{ color: 'brand.accent' }}
+                _hover={{ color: 'brand.secondary' }}
                 transition={transitions.colors}
               >
                 Royal Portfolio
@@ -180,8 +182,8 @@ export const Navigation: React.FC = () => {
               variant="ghost"
               aria-label="Open menu"
               icon={<HamburgerIcon />}
-              color="brand.cream"
-              _hover={{ bg: 'rgba(255, 255, 255, 0.1)' }}
+              color="brand.text"
+              _hover={{ bg: 'rgba(26, 26, 26, 0.05)' }}
             />
           </HStack>
         </Flex>

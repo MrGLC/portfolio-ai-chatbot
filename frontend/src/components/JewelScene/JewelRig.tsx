@@ -39,9 +39,10 @@ import type { SectionRange, StoryFrame } from './storyResolver';
  *     as an alias of 'gem' so the tap toggle survives scroll round-trips.
  */
 
-/* ------------------------------------------------------------------ */
-/* Backdrop — static radial gradient, near-black red edges -> deep red */
-/* ------------------------------------------------------------------ */
+/* ------------------------------------------------------------------- */
+/* Backdrop — static radial gradient, warm-white center -> light cream */
+/* edges; blends seamlessly with the hero's cream page background.     */
+/* ------------------------------------------------------------------- */
 
 const BG_VERTEX = /* glsl */ `
   varying vec2 vUv;
@@ -74,8 +75,8 @@ const Backdrop: React.FC<{
 }> = ({ focusX, focusY, fade }) => {
   const uniforms = useMemo(
     () => ({
-      uEdgeColor: { value: new THREE.Color('#1A0508') },
-      uCenterColor: { value: new THREE.Color('#5A1020') },
+      uEdgeColor: { value: new THREE.Color('#F2E9DD') },
+      uCenterColor: { value: new THREE.Color('#FFFDF8') },
       uFocus: { value: new THREE.Vector2(focusX, focusY) },
       uFade: fade, // shared reference — JewelRig's useFrame writes it
     }),
@@ -133,12 +134,14 @@ const DUST_FRAGMENT = /* glsl */ `
     if (d > 0.5) discard;
     float twinkle = 0.65 + 0.35 * sin(uTime * 0.6 + vSeed * 31.4159);
     // uFade: dust is hero scenery like the backdrop — fades out with it.
-    float alpha = smoothstep(0.5, 0.05, d) * twinkle * 0.82 * uFade;
-    gl_FragColor = vec4(vColor * alpha, alpha);
+    // Normal blending (not additive): tinted specks must read on a LIGHT bg.
+    float alpha = smoothstep(0.5, 0.05, d) * twinkle * 0.55 * uFade;
+    gl_FragColor = vec4(vColor, alpha);
   }
 `;
 
-const DUST_PALETTE = ['#FFD700', '#F5E6C8', '#E8C547', '#FFF4D6'];
+// Gold/red specks — saturated enough to read against the cream backdrop.
+const DUST_PALETTE = ['#D4AF37', '#B8860B', '#DC143C', '#A91B30'];
 const DUST_BASE_COUNT = 300;
 
 const Dust: React.FC<{ count: number; animate: boolean; fade: THREE.IUniform<number> }> = ({
@@ -192,7 +195,7 @@ const Dust: React.FC<{ count: number; animate: boolean; fade: THREE.IUniform<num
         uniforms={uniforms}
         transparent
         depthWrite={false}
-        blending={THREE.AdditiveBlending}
+        blending={THREE.NormalBlending}
       />
     </points>
   );
@@ -276,16 +279,18 @@ export const JewelRig: React.FC<JewelRigProps> = ({ onFirstInteraction }) => {
       color: '#8B0000',
       metalness: 0,
       roughness: 0.05,
-      transmission: 0.9,
+      // Fixed moderate transmission: on the light page a high value turns the
+      // ruby into a beige glass ball (it transmits the cream background).
+      transmission: 0.5,
       thickness: 2,
       ior: 2.4,
       clearcoat: 1,
       clearcoatRoughness: 0.05,
       emissive: '#6B0F1F',
-      emissiveIntensity: 0.18,
+      emissiveIntensity: 0.25,
       specularIntensity: 1.2,
       specularColor: new THREE.Color('#FFD700'),
-      envMapIntensity: 2.8,
+      envMapIntensity: 2.2,
       flatShading: true,
     });
     m.onBeforeCompile = (shader) => {
@@ -402,14 +407,6 @@ export const JewelRig: React.FC<JewelRigProps> = ({ onFirstInteraction }) => {
       ? Math.min(1, Math.max(0, 1 - scrollRef.current / (heroBottom * 0.8)))
       : 1;
 
-    // Over the cream sections, high transmission turns the jewel into a beige
-    // glass ball (it transmits the page background). Dial transmission down and
-    // emissive up as the hero fades so the ruby identity survives the journey.
-    // Both props are uniform-backed while transmission > 0 — no recompile.
-    const heroF = fadeUniform.value;
-    material.transmission = 0.35 + 0.55 * heroF;
-    material.emissiveIntensity = 0.18 + (1 - heroF) * 0.3;
-
     // Scroll-driven morph: align the controller pair, then own progress.
     // 'gemBreath' counts as 'gem' so the tap toggle survives scrolling.
     if (frame) {
@@ -460,6 +457,9 @@ export const JewelRig: React.FC<JewelRigProps> = ({ onFirstInteraction }) => {
     // Ambient rotation — suppressed for reduced motion; drag stays user-initiated.
     if (profile.animate && !dragging) {
       group.rotation.y += delta * ROTATION_SPEED;
+      // Morph flourish: a dignified extra spin while transitioning between
+      // story beats (sin-shaped, peaks mid-blend, exactly 0 when settled).
+      if (frame) group.rotation.y += frame.flourish * delta * 2.2;
     }
 
     // Drag inertia: velocity applies when the finger is off, always decays.
@@ -602,6 +602,14 @@ export const JewelRig: React.FC<JewelRigProps> = ({ onFirstInteraction }) => {
       {/* Procedural royal environment — full tier only, zero network requests */}
       {profile.tier === 'full' && (
         <Environment resolution={256} frames={1}>
+          {/* Soft white overhead panel — bright premium facet highlights on light bg */}
+          <Lightformer
+            intensity={1.5}
+            color="#FFFFFF"
+            position={[0, 5, 0]}
+            rotation={[Math.PI / 2, 0, 0]}
+            scale={[8, 8, 1]}
+          />
           <Lightformer intensity={4} color="#FFD700" position={[-3, 2, 2]} scale={[3, 2, 1]} />
           <Lightformer intensity={2} color="#F5E6D3" position={[3, 1, -2]} scale={[2, 3, 1]} />
           <Lightformer

@@ -14,7 +14,7 @@ describe('resolveStoryFrame', () => {
     expect(STORY_SECTIONS).toEqual({
       'story-hero': 'gem',
       'story-chatbot': 'neural',
-      'story-portfolio': 'lattice',
+      'story-portfolio': 'growth',
       'story-cta': 'gem',
     });
   });
@@ -28,9 +28,9 @@ describe('resolveStoryFrame', () => {
     expect(f.from).toBe('gem'); expect(f.to).toBe('neural');
     expect(f.progress).toBeGreaterThan(0.4); expect(f.progress).toBeLessThan(0.6);
   });
-  it('deep inside portfolio: lattice settled', () => {
+  it('deep inside portfolio: growth settled', () => {
     const f = resolveStoryFrame(4600, ranges, 800, false);
-    expect(f.from).toBe('lattice'); expect(f.to).toBe('lattice'); expect(f.progress).toBe(0);
+    expect(f.from).toBe('growth'); expect(f.to).toBe('growth'); expect(f.progress).toBe(0);
   });
   it('positions: hero right lane desktop, lower-center mobile', () => {
     const d = resolveStoryFrame(0, ranges, 800, false);
@@ -45,9 +45,25 @@ describe('resolveStoryFrame', () => {
     const m = resolveStoryFrame(2800, ranges, 800, true);
     expect(Math.abs(m.position[0])).toBeLessThanOrEqual(0.8 + 1e-6);
   });
-  it('clamps beyond last section to cta frame (tucked low-right, sub-hero scale)', () => {
+  it('clamps beyond last section to cta frame (low-right, hero-beating scale, pulled toward camera)', () => {
     const f = resolveStoryFrame(99999, ranges, 800, false);
-    expect(f.to).toBe('gem'); expect(f.scale).toBeCloseTo(0.75, 1);
+    expect(f.to).toBe('gem'); expect(f.scale).toBeCloseTo(1.0, 1);
     expect(f.position[1]).toBeLessThan(-0.5);
+    expect(f.position[2]).toBeCloseTo(1.5, 1); // z lift: reads bigger than hero gem
+  });
+  it('mid-blend travel arcs above the linear path (quadratic bezier lift)', () => {
+    // hero [1.5,0,0] → chatbot [-2.2,0,0]; linear midpoint y = 0
+    const f = resolveStoryFrame(1600, ranges, 800, false);
+    const linearMidY = 0;
+    expect(f.position[1]).toBeGreaterThan(linearMidY + 0.3); // bezier: +1.2 lift * 0.5 at e=0.5
+    expect(f.position[2]).toBeGreaterThan(0.2); // depth swing from +0.8 control z
+  });
+  it('flourish is 0 when settled and peaks above 0.9 mid-blend', () => {
+    const settled = resolveStoryFrame(100, ranges, 800, false);
+    expect(settled.flourish).toBe(0);
+    const clamped = resolveStoryFrame(99999, ranges, 800, false);
+    expect(clamped.flourish).toBe(0);
+    const mid = resolveStoryFrame(1600, ranges, 800, false);
+    expect(mid.flourish).toBeGreaterThan(0.9); // sin(e·π) ≈ 1 at e≈0.5
   });
 });

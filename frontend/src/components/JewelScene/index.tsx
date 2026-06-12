@@ -18,9 +18,9 @@ class SceneErrorBoundary extends React.Component<
   }
   render() {
     if (this.state.failed) {
-      // WebGL unavailable — render nothing. The hero paints its own #140306
+      // WebGL unavailable — render nothing. The hero paints its own cream
       // background under the (now empty) canvas slot, so the page still
-      // composes; a full-viewport stand-in would darken every section below.
+      // composes; a full-viewport stand-in would tint every section below.
       return null;
     }
     return this.props.children;
@@ -31,7 +31,7 @@ class SceneErrorBoundary extends React.Component<
  * JewelScene — fixed, transparent scroll-story canvas.
  *
  * The canvas spans the viewport at zIndex 0; Home sections sit above it at
- * zIndex >= 1 (so all content receives clicks first), while the hero's dark
+ * zIndex >= 1 (so all content receives clicks first), while the hero's cream
  * background paints below it. The jewel travels and morphs with scroll
  * (JewelRig reads window.scrollY against the story-* section ranges).
  *
@@ -135,11 +135,19 @@ export const JewelScene: React.FC = () => {
       {showHint && (
         <>
           <style>{`
+            /* Centering uses left/right 0 + flex, NOT translateX(-50%):
+               framer-motion's y float writes its own inline transform on the
+               inner motion.div, and a transform here on a single-sided anchor
+               would leave the pill off-center on mobile. */
             .jewel-hint-pill {
               position: fixed;
-              bottom: 22%;
-              left: 50%;
-              transform: translateX(-50%);
+              /* 16%: sits over the gem, clear of the hero CTA buttons above
+                 and the scroll chevron below at scrollY 0 on a 390x844 view */
+              bottom: 16%;
+              left: 0;
+              right: 0;
+              display: flex;
+              justify-content: center;
               z-index: 1;
               pointer-events: none;
             }
@@ -149,12 +157,12 @@ export const JewelScene: React.FC = () => {
                 top: 52%;
                 bottom: auto;
                 left: auto;
-                transform: none;
+                display: block;
               }
             }
           `}</style>
+          <div className="jewel-hint-pill">
           <motion.div
-            className="jewel-hint-pill"
             animate={{ y: [0, -4, 0, 4, 0] }}
             transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
           >
@@ -162,15 +170,15 @@ export const JewelScene: React.FC = () => {
               px={3}
               py={1.5}
               borderRadius="full"
-              bg="whiteAlpha.100"
+              bg="rgba(255, 255, 255, 0.65)"
               backdropFilter="blur(8px)"
               border="1px solid"
-              borderColor="whiteAlpha.200"
-              boxShadow="0 2px 12px rgba(0,0,0,0.3)"
+              borderColor="rgba(184, 134, 11, 0.25)"
+              boxShadow="0 2px 12px rgba(26, 26, 26, 0.08)"
             >
               <Text
                 fontSize="xs"
-                color="whiteAlpha.700"
+                color="blackAlpha.700"
                 fontWeight="medium"
                 letterSpacing="0.03em"
                 whiteSpace="nowrap"
@@ -179,6 +187,7 @@ export const JewelScene: React.FC = () => {
               </Text>
             </Box>
           </motion.div>
+          </div>
         </>
       )}
     </>

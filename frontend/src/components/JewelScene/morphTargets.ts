@@ -5,7 +5,7 @@ export interface MorphTarget {
   normals: Float32Array;
 }
 
-export const TARGET_NAMES = ['gem', 'gemBreath', 'neural', 'lattice'] as const;
+export const TARGET_NAMES = ['gem', 'gemBreath', 'neural', 'lattice', 'growth'] as const;
 export type TargetName = (typeof TARGET_NAMES)[number];
 
 // Deterministic pseudo-noise (no Math.random — targets must be identical across loads)
@@ -55,6 +55,64 @@ function buildLattice(gemPos: Float32Array): Float32Array {
   return out;
 }
 
+// growth: 4-5 ascending columns — business-growth bars. Faces are bucketed by
+// centroid X quantile into 5 columns (equal face counts); each column has a
+// base X (spread -2..+2), a height ascending left→right, and crystalline bar
+// surfaces (faces shrink toward their snapped centroid). Centroid Y is
+// remapped per-column (own min/max) so every bar actually reaches its top.
+const GROWTH_COLUMN_X = [-2, -1, 0, 1, 2];
+const GROWTH_HEIGHTS = [0.8, 1.4, 2.0, 2.6, 3.2];
+const GROWTH_BASE_Y = -1.2;
+const GROWTH_SHRINK = 0.5; // face shrink toward snapped centroid (width ~0.55)
+const GROWTH_Z_SQUASH = 0.4;
+const GROWTH_JITTER = 0.12; // ± x jitter from centroid hash
+
+function buildGrowth(gemPos: Float32Array): Float32Array {
+  const out = new Float32Array(gemPos.length);
+  const faceCount = gemPos.length / 9;
+
+  // Face centroids + quantile bucketing by centroid X (stable sort on x, then index).
+  const centroids: { f: number; cx: number; cy: number; cz: number }[] = [];
+  for (let f = 0; f < gemPos.length; f += 9) {
+    centroids.push({
+      f,
+      cx: (gemPos[f] + gemPos[f + 3] + gemPos[f + 6]) / 3,
+      cy: (gemPos[f + 1] + gemPos[f + 4] + gemPos[f + 7]) / 3,
+      cz: (gemPos[f + 2] + gemPos[f + 5] + gemPos[f + 8]) / 3,
+    });
+  }
+  const sorted = [...centroids].sort((a, b) => a.cx - b.cx || a.f - b.f);
+  const columnOf = new Map<number, number>();
+  sorted.forEach((c, rank) => {
+    columnOf.set(c.f, Math.min(4, Math.floor((rank * 5) / faceCount)));
+  });
+
+  // Per-column centroid-y range so the remap fills [-1.2, -1.2 + height] fully.
+  const minCy = [Infinity, Infinity, Infinity, Infinity, Infinity];
+  const maxCy = [-Infinity, -Infinity, -Infinity, -Infinity, -Infinity];
+  for (const c of centroids) {
+    const col = columnOf.get(c.f)!;
+    minCy[col] = Math.min(minCy[col], c.cy);
+    maxCy[col] = Math.max(maxCy[col], c.cy);
+  }
+
+  for (const c of centroids) {
+    const col = columnOf.get(c.f)!;
+    const span = maxCy[col] - minCy[col] || 1;
+    const yNorm = (c.cy - minCy[col]) / span;
+    const jitter = (pseudoNoise(c.cx, c.cy, c.cz) - 0.5) * 2 * GROWTH_JITTER;
+    const sx = GROWTH_COLUMN_X[col] + jitter;
+    const sy = GROWTH_BASE_Y + yNorm * GROWTH_HEIGHTS[col];
+    const sz = c.cz * GROWTH_Z_SQUASH;
+    for (let v = 0; v < 9; v += 3) {
+      out[c.f + v] = sx + (gemPos[c.f + v] - c.cx) * GROWTH_SHRINK;
+      out[c.f + v + 1] = sy + (gemPos[c.f + v + 1] - c.cy) * GROWTH_SHRINK;
+      out[c.f + v + 2] = sz + (gemPos[c.f + v + 2] - c.cz) * GROWTH_SHRINK;
+    }
+  }
+  return out;
+}
+
 export function buildMorphTargets(): Record<TargetName, MorphTarget> {
   const gemGeo = baseGeometry();
   gemGeo.computeVertexNormals();
@@ -85,12 +143,19 @@ export function buildMorphTargets(): Record<TargetName, MorphTarget> {
   latticeGeo.computeVertexNormals();
   const latticeNorm = latticeGeo.getAttribute('normal').array as Float32Array;
 
+  const growthPos = buildGrowth(gemPos);
+  const growthGeo = new THREE.BufferGeometry();
+  growthGeo.setAttribute('position', new THREE.BufferAttribute(growthPos, 3));
+  growthGeo.computeVertexNormals();
+  const growthNorm = growthGeo.getAttribute('normal').array as Float32Array;
+
   const result: Record<TargetName, MorphTarget> = {
     gem: { positions: gemPos.slice(), normals: gemNorm.slice() },
     gemBreath: { positions: breathPos, normals: breathNorm },
     neural: { positions: neuralPos, normals: neuralNorm },
     lattice: { positions: latticePos, normals: latticeNorm },
+    growth: { positions: growthPos, normals: growthNorm },
   };
-  gemGeo.dispose(); breathGeo.dispose(); neuralGeo.dispose(); latticeGeo.dispose();
+  gemGeo.dispose(); breathGeo.dispose(); neuralGeo.dispose(); latticeGeo.dispose(); growthGeo.dispose();
   return result;
 }
