@@ -39,3 +39,14 @@ One canvas on Home; all motion via uniforms/lerped refs; perf profile gates; TBT
 - New pages choreography (Home only).
 - Sound, haptics.
 - Real chatbot.
+
+---
+
+## Addendum 2 (same day, post-launch feedback)
+
+Luis approved: **light premium hero** + **growth-columns beat**. Changes to the above:
+
+1. **Palette 60/30/10 = white/cream 60, red 30, gold 10 — site-wide.** Hero background flips to light cream; hero text flips to ink; nav restyles cream-glass with red reserved for the CTA button; field particles become fine red/gold on light (NormalBlending — additive is invisible on white); portfolio red wash lightens. Red concentrates in the gem and deliberate accents only.
+2. **Narrative**: story-portfolio target `lattice` (shatter) → `growth` (4-5 ascending columns = business growth). Story reads: gem (client's business, potential) → neural (AI applied) → growth (results) → larger gem (transformed business). CTA gem scale beats hero gem.
+3. **Motion**: keyframe-to-keyframe travel follows a curved path (quadratic bezier, raised control point) with eased progress and a rotation flourish peaking mid-morph — no linear slides.
+4. **Ornament cleanup**: "Scroll to explore" replaced by a minimal centered gold chevron; decorative blurred circles removed from the hero; centering audit on all hero/section elements.
