@@ -9,25 +9,16 @@ import {
   Heading,
   Button,
   SimpleGrid,
-  Card,
-  CardBody,
   Badge,
-  Stat,
-  StatNumber,
-  StatLabel,
-  StatHelpText,
-  Icon,
-  Image,
   useBreakpointValue,
 } from '@chakra-ui/react';
 import { keyframes } from '@emotion/react';
 import { Link as RouterLink } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
-import { 
-  CheckCircleIcon, 
-  StarIcon,
-  ArrowForwardIcon
+import {
+  ArrowForwardIcon,
+  ChevronDownIcon
 } from '@chakra-ui/icons';
 import { variants, durations, easings, delays, springs, createStaggerAnimation } from '../theme/animations';
 const JewelScene = lazy(() => import('../components/JewelScene'));
@@ -36,10 +27,8 @@ const ThreeJsChatbot = lazy(() =>
 );
 
 const MotionBox = motion.create(Box);
-const MotionCard = motion.div;
 const MotionHeading = motion.h1;
 const MotionText = motion.p;
-const MotionButton = motion.button;
 
 // Use standardized animations from theme
 const staggerAnimation = createStaggerAnimation(delays.staggerSlow, variants.heroFadeIn);
@@ -62,10 +51,11 @@ const scrollReveal = {
   }
 };
 
-// Floating animation for elements
-const floatAnimation = keyframes`
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-20px); }
+// Gentle bob for the scroll affordance chevron — slow and small so it reads
+// as a quiet invitation, not a bouncing ornament.
+const chevronBob = keyframes`
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(8px); }
 `;
 
 // Pulse animation for CTAs
@@ -90,7 +80,10 @@ export const HomePage: React.FC = () => {
           canvas. */}
       <MotionBox
         id="story-hero"
-        minH="100vh"
+        // 100vh minus the 92px navbar offset (Layout pads <main> by 92px) so
+        // the hero bottom — and the scroll chevron — sits exactly at the fold
+        // instead of 92px below it.
+        minH="calc(100vh - 92px)"
         bg="brand.creamLight"
         position="relative"
         overflow="visible"
@@ -111,24 +104,9 @@ export const HomePage: React.FC = () => {
           zIndex={1}
         />
 
-        {/* Decorative elements */}
-        <Box
-          position="absolute"
-          top="20%"
-          right="-10%"
-          width={{ base: '280px', md: '500px' }}
-          height={{ base: '280px', md: '500px' }}
-          borderRadius="full"
-          bg="radial-gradient(circle, rgba(255, 215, 0, 0.1), transparent)"
-          filter="blur(40px)"
-          animation={`${floatAnimation} 8s ease-in-out infinite`}
-          pointerEvents="none"
-          zIndex={1}
-        />
-        
         {/* pointerEvents none on the full-height wrapper so touches in the gem's
             area fall through to the canvas; the text/CTA stack re-enables them */}
-        <Container maxW="1400px" position="relative" zIndex={2} h="100vh" pointerEvents="none">
+        <Container maxW="1400px" position="relative" zIndex={2} h="calc(100vh - 92px)" pointerEvents="none">
           <Flex
             h="100%"
             align="flex-start"
@@ -285,42 +263,37 @@ export const HomePage: React.FC = () => {
           </Flex>
         </Container>
 
-        {/* Scroll indicator */}
-        <MotionBox
+        {/* Scroll affordance — a single thin gold chevron, slow gentle bob.
+            Centered with left/right 0 + flex: a transform="translateX(-50%)"
+            here would be clobbered by the framer-motion y animation (framer
+            writes its own inline transform), shifting the element off-center. */}
+        <Box
           position="absolute"
           bottom={10}
-          left="50%"
-          transform="translateX(-50%)"
-          variants={staggerAnimation.child}
+          left={0}
+          right={0}
+          display="flex"
+          justifyContent="center"
           zIndex={2}
+          pointerEvents="none"
         >
-          <VStack spacing={2} cursor="pointer" onClick={() => window.scrollTo({ top: window.innerHeight, behavior: 'smooth' })}>
-            <Text fontSize="sm" color="brand.text" opacity={0.55}>
-              Scroll to explore
-            </Text>
+          <MotionBox variants={staggerAnimation.child} pointerEvents="auto">
             <Box
-              w="30px"
-              h="50px"
-              borderRadius="15px"
-              border="2px solid"
-              borderColor="brand.text"
-              position="relative"
-              opacity={0.55}
+              as="button"
+              aria-label="Scroll to explore"
+              onClick={() => window.scrollTo({ top: window.innerHeight, behavior: 'smooth' })}
+              display="flex"
+              alignItems="center"
+              justifyContent="center"
+              w="44px"
+              h="44px"
+              cursor="pointer"
+              animation={`${chevronBob} 2.5s ease-in-out infinite`}
             >
-              <Box
-                position="absolute"
-                top="8px"
-                left="50%"
-                transform="translateX(-50%)"
-                w="3px"
-                h="10px"
-                bg="brand.text"
-                borderRadius="2px"
-                animation={`${floatAnimation} 2s ease-in-out infinite`}
-              />
+              <ChevronDownIcon boxSize="24px" color="brand.goldRich" opacity={0.85} />
             </Box>
-          </VStack>
-        </MotionBox>
+          </MotionBox>
+        </Box>
       </MotionBox>
 
       {/* Living Jewel scroll story — fixed transparent canvas behind every

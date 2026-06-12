@@ -135,11 +135,19 @@ export const JewelScene: React.FC = () => {
       {showHint && (
         <>
           <style>{`
+            /* Centering uses left/right 0 + flex, NOT translateX(-50%):
+               framer-motion's y float writes its own inline transform on the
+               inner motion.div, and a transform here on a single-sided anchor
+               would leave the pill off-center on mobile. */
             .jewel-hint-pill {
               position: fixed;
-              bottom: 22%;
-              left: 50%;
-              transform: translateX(-50%);
+              /* 16%: sits over the gem, clear of the hero CTA buttons above
+                 and the scroll chevron below at scrollY 0 on a 390x844 view */
+              bottom: 16%;
+              left: 0;
+              right: 0;
+              display: flex;
+              justify-content: center;
               z-index: 1;
               pointer-events: none;
             }
@@ -149,12 +157,12 @@ export const JewelScene: React.FC = () => {
                 top: 52%;
                 bottom: auto;
                 left: auto;
-                transform: none;
+                display: block;
               }
             }
           `}</style>
+          <div className="jewel-hint-pill">
           <motion.div
-            className="jewel-hint-pill"
             animate={{ y: [0, -4, 0, 4, 0] }}
             transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
           >
@@ -179,6 +187,7 @@ export const JewelScene: React.FC = () => {
               </Text>
             </Box>
           </motion.div>
+          </div>
         </>
       )}
     </>

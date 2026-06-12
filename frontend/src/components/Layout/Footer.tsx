@@ -143,11 +143,14 @@ export const Footer: React.FC = () => {
             {t('footer.copyright')}
           </Text>
           
-          <HStack spacing={6} fontSize="sm">
+          {/* shouldWrapChildren + nowrap: each link stays on one line and the
+              row wraps as a whole on narrow screens (no mid-link line breaks) */}
+          <HStack spacing={6} fontSize="sm" flexWrap="wrap" justify="center" shouldWrapChildren>
             <Link
               as={RouterLink}
               to="/privacy"
               color="brand.cream"
+              whiteSpace="nowrap"
               _hover={{ color: 'brand.accent' }}
             >
               {t('footer.links.privacyPolicy')}
@@ -156,6 +159,7 @@ export const Footer: React.FC = () => {
               as={RouterLink}
               to="/terms"
               color="brand.cream"
+              whiteSpace="nowrap"
               _hover={{ color: 'brand.accent' }}
             >
               {t('footer.links.termsOfService')}
@@ -163,6 +167,7 @@ export const Footer: React.FC = () => {
             <Link
               href="#"
               color="brand.accent"
+              whiteSpace="nowrap"
               _hover={{ color: 'brand.accentLight' }}
             >
               regal excellence
