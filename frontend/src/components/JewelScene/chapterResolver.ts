@@ -14,7 +14,7 @@ export const KEYFRAMES: Record<string, Keyframe> = {
   'story-hero':      { x: 0.72, y: 0.47, s: 1.00, shape: 'ico',    spin: 0.30, p: 0.50, mx: 0.50, my: 0.74, ms: 0.60 },
   'story-chatbot':   { x: 0.12, y: 0.42, s: 0.50, shape: 'knot',   spin: 0.55, p: 0.00, mx: 0.16, my: 0.08, ms: 0.26 },
   'story-portfolio': { x: 0.88, y: 0.40, s: 0.45, shape: 'growth', spin: 0.35, p: 0.00, mx: 0.86, my: 0.08, ms: 0.24 },
-  'story-cta':       { x: 0.70, y: 0.45, s: 0.55, shape: 'crown',  spin: 0.35, p: 0.75, mx: 0.50, my: 0.10, ms: 0.32 },
+  'story-cta':       { x: 0.84, y: 0.62, s: 0.42, shape: 'crown',  spin: 0.35, p: 0.75, mx: 0.50, my: 0.10, ms: 0.32 },
 };
 
 export interface ChapterPick { id: string; kf: { x: number; y: number; s: number; shape: ShapeName; spin: number; p: number }; }
