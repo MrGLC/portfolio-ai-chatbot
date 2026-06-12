@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;0,6..96,600;0,6..96,700;1,6..96,400;1,6..96,500;1,6..96,600&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:#f6efe2;font-family:'Hanken Grotesk',system-ui,sans-serif;-webkit-font-smoothing:antialiased;color:#181428}
+@keyframes floatY{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+@keyframes cuePulse{0%,100%{opacity:.25;transform:translateY(0)}50%{opacity:1;transform:translateY(7px)}}
+@keyframes marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+</helmet>
+<div ref="{{ rootRef }}" style="overflow-x:hidden;position:relative;background:#f6efe2">
+
+  <canvas ref="{{ canvasRef }}" style="position:fixed;top:0;left:0;width:100vw;height:100vh;pointer-events:none;z-index:55"></canvas>
+
+  <nav style="{{ navStyle }}">
+    <div style="max-width:1180px;margin:0 auto;padding:18px clamp(20px,5vw,40px);display:flex;align-items:center;justify-content:space-between;gap:24px">
+      <a href="#inicio" style="display:flex;align-items:center;gap:11px;text-decoration:none">
+        <span style="width:26px;height:26px;display:inline-block;transform:rotate(45deg);background:linear-gradient(135deg,#c10e35,#7e0a23);border:1px solid rgba(194,160,92,.7);border-radius:5px;box-shadow:0 4px 14px -6px rgba(193,14,53,.7)"></span>
+        <span style="font-family:'Bodoni Moda',serif;font-weight:600;font-size:21px;letter-spacing:.01em;color:#181428">La Realeza</span>
+      </a>
+
+      <sc-if value="{{ desktopNav }}" hint-placeholder-val="{{ true }}">
+        <div style="display:flex;align-items:center;gap:34px">
+          <a href="#inicio" style="text-decoration:none;color:#3a3550;font-size:14px;font-weight:600;letter-spacing:.04em;transition:color .2s" style-hover="color:#c10e35">Inicio</a>
+          <a href="#consultoria" style="text-decoration:none;color:#3a3550;font-size:14px;font-weight:600;letter-spacing:.04em;transition:color .2s" style-hover="color:#c10e35">Consultoría</a>
+          <a href="#proyectos" style="text-decoration:none;color:#3a3550;font-size:14px;font-weight:600;letter-spacing:.04em;transition:color .2s" style-hover="color:#c10e35">Proyectos</a>
+          <a href="#sobre-mi" style="text-decoration:none;color:#3a3550;font-size:14px;font-weight:600;letter-spacing:.04em;transition:color .2s" style-hover="color:#c10e35">Sobre mí</a>
+          <a href="#contacto" style="display:inline-flex;align-items:center;gap:8px;text-decoration:none;background:#c10e35;color:#fff;font-size:14px;font-weight:600;letter-spacing:.02em;padding:11px 22px;border-radius:5px;box-shadow:0 8px 22px -12px rgba(193,14,53,.9);transition:transform .2s,box-shadow .2s" style-hover="transform:translateY(-2px);box-shadow:0 14px 30px -12px rgba(193,14,53,.95)">Hablemos</a>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isMobile }}" hint-placeholder-val="{{ false }}">
+        <button onClick="{{ toggleNav }}" aria-label="Menú" style="display:flex;flex-direction:column;gap:5px;background:none;border:none;cursor:pointer;padding:8px">
+          <span style="width:24px;height:2px;background:#181428;display:block"></span>
+          <span style="width:24px;height:2px;background:#181428;display:block"></span>
+          <span style="width:16px;height:2px;background:#c10e35;display:block"></span>
+        </button>
+      </sc-if>
+    </div>
+
+    <sc-if value="{{ navOpen }}" hint-placeholder-val="{{ false }}">
+      <div style="background:rgba(246,239,226,.97);backdrop-filter:blur(14px);border-top:1px solid rgba(24,20,40,.08);padding:14px clamp(20px,5vw,40px) 26px;display:flex;flex-direction:column;gap:4px">
+        <a href="#inicio" onClick="{{ closeNav }}" style="text-decoration:none;color:#181428;font-size:18px;font-weight:600;padding:12px 0;border-bottom:1px solid rgba(24,20,40,.06)">Inicio</a>
+        <a href="#consultoria" onClick="{{ closeNav }}" style="text-decoration:none;color:#181428;font-size:18px;font-weight:600;padding:12px 0;border-bottom:1px solid rgba(24,20,40,.06)">Consultoría</a>
+        <a href="#proyectos" onClick="{{ closeNav }}" style="text-decoration:none;color:#181428;font-size:18px;font-weight:600;padding:12px 0;border-bottom:1px solid rgba(24,20,40,.06)">Proyectos</a>
+        <a href="#sobre-mi" onClick="{{ closeNav }}" style="text-decoration:none;color:#181428;font-size:18px;font-weight:600;padding:12px 0;border-bottom:1px solid rgba(24,20,40,.06)">Sobre mí</a>
+        <a href="#contacto" onClick="{{ closeNav }}" style="text-decoration:none;color:#fff;background:#c10e35;text-align:center;font-size:16px;font-weight:600;padding:14px 0;border-radius:6px;margin-top:12px">Hablemos</a>
+      </div>
+    </sc-if>
+  </nav>
+
+  <!-- HERO -->
+  <section id="inicio" style="position:relative;min-height:100vh;display:flex;align-items:center;padding:120px clamp(20px,5vw,40px) 60px;background:radial-gradient(120% 90% at 78% 18%, #fbf6ec 0%, #f6efe2 42%, #f1e7d6 100%);scroll-margin-top:80px;overflow:hidden">
+    <div style="position:absolute;inset:auto 0 0 0;height:340px;background:radial-gradient(60% 120% at 30% 100%, rgba(193,14,53,.14), rgba(193,14,53,0) 70%),radial-gradient(50% 120% at 70% 100%, rgba(194,160,92,.18), rgba(194,160,92,0) 72%);pointer-events:none"></div>
+    <div style="max-width:1180px;margin:0 auto;width:100%;display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:40px;align-items:center;position:relative;z-index:2">
+
+      <div style="animation:fadeUp .9s ease both">
+        <div style="display:flex;align-items:center;gap:14px;margin-bottom:26px">
+          <span style="width:42px;height:1px;background:linear-gradient(90deg,#c2a05c,rgba(194,160,92,0))"></span>
+          <span style="font:600 12px/1 'Hanken Grotesk';letter-spacing:.28em;text-transform:uppercase;color:#a8863f">Soluciones de IA de lujo · redefinidas</span>
+        </div>
+        <h1 style="font-family:'Bodoni Moda',serif;font-weight:600;font-size:clamp(40px,6vw,76px);line-height:1.02;letter-spacing:-.015em;margin:0 0 24px;color:#181428">Inteligencia artificial<br>con sello de <span style="font-style:italic;color:#c10e35">realeza</span>.</h1>
+        <p style="max-width:480px;font-size:clamp(16px,1.3vw,19px);line-height:1.7;color:#5f5970;margin:0 0 36px">Transformo negocios con IA de vanguardia. Un MVP listo para producción en solo <strong style="color:#181428;font-weight:600">2 semanas</strong> — sin atajos, con acabado de joyería.</p>
+        <div style="display:flex;flex-wrap:wrap;gap:16px;align-items:center">
+          <a href="#proyectos" style="display:inline-flex;align-items:center;gap:9px;text-decoration:none;background:#c10e35;color:#fff;font-size:15px;font-weight:600;letter-spacing:.01em;padding:16px 30px;border-radius:6px;box-shadow:0 16px 34px -16px rgba(193,14,53,.9);transition:transform .2s,box-shadow .2s" style-hover="transform:translateY(-3px);box-shadow:0 22px 44px -16px rgba(193,14,53,.95)">Ver portafolio
+            <span style="display:inline-block">→</span></a>
+          <a href="#contacto" style="display:inline-flex;align-items:center;text-decoration:none;background:transparent;color:#181428;font-size:15px;font-weight:600;padding:16px 30px;border-radius:6px;border:1px solid rgba(24,20,40,.25);transition:border-color .2s,background .2s" style-hover="border-color:#181428;background:rgba(24,20,40,.04)">Hablemos</a>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;margin-top:34px">
+          <span style="width:8px;height:8px;border-radius:50%;background:#1f9d63;box-shadow:0 0 0 4px rgba(31,157,99,.16)"></span>
+          <span style="font-size:13px;color:#6a6478;letter-spacing:.02em">Disponible para nuevos proyectos · 2026</span>
+        </div>
+      </div>
+
+      <div style="position:relative;width:100%;height:clamp(360px,44vw,560px);animation:fadeUp 1.1s ease .15s both;display:flex;align-items:center;justify-content:center">
+        <div style="width:74%;aspect-ratio:1;border-radius:50%;background:radial-gradient(circle at 40% 34%, rgba(255,236,200,.5), rgba(193,14,53,.07) 46%, rgba(193,14,53,0) 70%);filter:blur(12px)"></div>
+      </div>
+    </div>
+
+    <a href="#confianza" style="position:absolute;left:50%;bottom:26px;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:8px;text-decoration:none;color:#a8863f;z-index:2">
+      <span style="font-size:11px;letter-spacing:.22em;text-transform:uppercase">Desliza</span>
+      <svg width="16" height="10" viewBox="0 0 16 10" fill="none" style="animation:cuePulse 1.8s ease-in-out infinite"><polyline points="1,1 8,8 15,1" stroke="#c2a05c" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </a>
+  </section>
+
+  <!-- TRUST -->
+  <section id="confianza" style="padding:46px 0;border-top:1px solid rgba(24,20,40,.07);border-bottom:1px solid rgba(24,20,40,.07);background:#f9f3e9;overflow:hidden">
+    <div style="max-width:1180px;margin:0 auto;padding:0 clamp(20px,5vw,40px) 22px">
+      <span style="font:600 11px/1 'Hanken Grotesk';letter-spacing:.26em;text-transform:uppercase;color:#9c937e">Con la confianza de equipos en</span>
+    </div>
+    <div style="position:relative;display:flex;mask-image:linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent);-webkit-mask-image:linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent)">
+      <div style="display:flex;flex-shrink:0;gap:64px;padding:0 32px;animation:marquee 26s linear infinite">
+        <span style="font-family:'Bodoni Moda',serif;font-size:23px;font-weight:500;color:#b3a98f;white-space:nowrap">VANTA</span>
+        <span style="font-family:'Bodoni Moda',serif;font-size:23px;font-weight:500;color:#b3a98f;white-space:nowrap">AURUM</span>
+        <span style="font-family:'Bodoni Moda',serif;font-size:23px;font-weight:500;color:#b3a98f;white-space:nowrap">NÓVA</span>
+        <span style="font-family:'Bodoni Moda',serif;font-size:23px;font-weight:500;color:#b3a98f;white-space:nowrap">KÖNIG</span>
+        <span style="font-family:'Bodoni Moda',serif;font-size:23px;font-weight:500;color:#b3a98f;white-space:nowrap">SOLARA</span>
+        <span style="font-family:'Bodoni Moda',serif;font-size:23px;font-weight:500;color:#b3a98f;white-space:nowrap">MERIDIAN</span>
+        <span style="font-family:'Bodoni Moda',serif;font-size:23px;font-weight:500;color:#b3a98f;white-space:nowrap">VANTA</span>
+        <span style="font-family:'Bodoni Moda',serif;font-size:23px;font-weight:500;color:#b3a98f;white-space:nowrap">AURUM</span>
+        <span style="font-family:'Bodoni Moda',serif;font-size:23px;font-weight:500;color:#b3a98f;white-space:nowrap">NÓVA</span>
+        <span style="font-family:'Bodoni Moda',serif;font-size:23px;font-weight:500;color:#b3a98f;white-space:nowrap">KÖNIG</span>
+        <span style="font-family:'Bodoni Moda',serif;font-size:23px;font-weight:500;color:#b3a98f;white-space:nowrap">SOLARA</span>
+        <span style="font-family:'Bodoni Moda',serif;font-size:23px;font-weight:500;color:#b3a98f;white-space:nowrap">MERIDIAN</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROYECTOS -->
+  <section id="proyectos" style="padding:clamp(80px,12vh,140px) clamp(20px,5vw,40px);scroll-margin-top:80px">
+    <div style="max-width:1180px;margin:0 auto">
+      <div style="display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:24px;margin-bottom:54px">
+        <div>
+          <div style="display:flex;align-items:center;gap:14px;margin-bottom:20px">
+            <span style="width:42px;height:1px;background:linear-gradient(90deg,#c2a05c,rgba(194,160,92,0))"></span>
+            <span style="font:600 12px/1 'Hanken Grotesk';letter-spacing:.28em;text-transform:uppercase;color:#a8863f">Portafolio</span>
+          </div>
+          <h2 style="font-family:'Bodoni Moda',serif;font-weight:600;font-size:clamp(32px,4.6vw,56px);line-height:1.05;letter-spacing:-.01em;margin:0;color:#181428">Proyectos selectos</h2>
+        </div>
+        <p style="max-width:380px;font-size:16px;line-height:1.7;color:#6a6478;margin:0">Una muestra de sistemas de IA llevados de la idea a producción. Cada caso prioriza impacto medible sobre demos vistosas.</p>
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:28px">
+
+        <article style="background:#fbf7ef;border:1px solid rgba(24,20,40,.09);border-radius:10px;overflow:hidden;display:flex;flex-direction:column;transition:transform .35s,box-shadow .35s,border-color .35s" style-hover="transform:translateY(-7px);border-color:rgba(194,160,92,.6);box-shadow:0 34px 64px -42px rgba(24,20,40,.55)">
+          <div style="position:relative;height:208px;background:repeating-linear-gradient(45deg,#efe6d3,#efe6d3 11px,#e9ddc6 11px,#e9ddc6 22px);display:flex;align-items:flex-end;justify-content:space-between;padding:14px">
+            <span style="font:500 11px/1 ui-monospace,monospace;letter-spacing:.04em;color:#b3a98f;background:rgba(251,247,239,.85);padding:5px 9px;border-radius:4px">1600×1000 · captura</span>
+            <span style="font-family:'Bodoni Moda',serif;font-size:34px;color:rgba(193,14,53,.16);line-height:1">01</span>
+          </div>
+          <div style="padding:26px 26px 30px;display:flex;flex-direction:column;gap:14px;flex:1">
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+              <span style="font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#a8863f;border:1px solid rgba(194,160,92,.45);padding:4px 9px;border-radius:20px">FinTech</span>
+              <span style="font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#a8863f;border:1px solid rgba(194,160,92,.45);padding:4px 9px;border-radius:20px">LLM</span>
+            </div>
+            <h3 style="font-family:'Bodoni Moda',serif;font-weight:600;font-size:24px;margin:0;color:#181428">Atlas — Copiloto financiero</h3>
+            <p style="font-size:15px;line-height:1.65;color:#6a6478;margin:0;flex:1">Asistente que analiza estados de cuenta y responde en lenguaje natural. Redujo el tiempo de cierre mensual a la mitad.</p>
+            <a href="#contacto" style="display:inline-flex;align-items:center;gap:8px;text-decoration:none;color:#c10e35;font-size:14px;font-weight:600;margin-top:4px" style-hover="gap:12px">Ver caso de estudio →</a>
+          </div>
+        </article>
+
+        <article style="background:#fbf7ef;border:1px solid rgba(24,20,40,.09);border-radius:10px;overflow:hidden;display:flex;flex-direction:column;transition:transform .35s,box-shadow .35s,border-color .35s" style-hover="transform:translateY(-7px);border-color:rgba(194,160,92,.6);box-shadow:0 34px 64px -42px rgba(24,20,40,.55)">
+          <div style="position:relative;height:208px;background:repeating-linear-gradient(45deg,#efe6d3,#efe6d3 11px,#e9ddc6 11px,#e9ddc6 22px);display:flex;align-items:flex-end;justify-content:space-between;padding:14px">
+            <span style="font:500 11px/1 ui-monospace,monospace;letter-spacing:.04em;color:#b3a98f;background:rgba(251,247,239,.85);padding:5px 9px;border-radius:4px">1600×1000 · captura</span>
+            <span style="font-family:'Bodoni Moda',serif;font-size:34px;color:rgba(193,14,53,.16);line-height:1">02</span>
+          </div>
+          <div style="padding:26px 26px 30px;display:flex;flex-direction:column;gap:14px;flex:1">
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+              <span style="font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#a8863f;border:1px solid rgba(194,160,92,.45);padding:4px 9px;border-radius:20px">Búsqueda</span>
+              <span style="font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#a8863f;border:1px solid rgba(194,160,92,.45);padding:4px 9px;border-radius:20px">RAG</span>
+            </div>
+            <h3 style="font-family:'Bodoni Moda',serif;font-weight:600;font-size:24px;margin:0;color:#181428">Lumen — Búsqueda semántica</h3>
+            <p style="font-size:15px;line-height:1.65;color:#6a6478;margin:0;flex:1">Motor de búsqueda interno sobre 2M de documentos. Respuestas con citas y precisión por encima del 90%.</p>
+            <a href="#contacto" style="display:inline-flex;align-items:center;gap:8px;text-decoration:none;color:#c10e35;font-size:14px;font-weight:600;margin-top:4px" style-hover="gap:12px">Ver caso de estudio →</a>
+          </div>
+        </article>
+
+        <article style="background:#fbf7ef;border:1px solid rgba(24,20,40,.09);border-radius:10px;overflow:hidden;display:flex;flex-direction:column;transition:transform .35s,box-shadow .35s,border-color .35s" style-hover="transform:translateY(-7px);border-color:rgba(194,160,92,.6);box-shadow:0 34px 64px -42px rgba(24,20,40,.55)">
+          <div style="position:relative;height:208px;background:repeating-linear-gradient(45deg,#efe6d3,#efe6d3 11px,#e9ddc6 11px,#e9ddc6 22px);display:flex;align-items:flex-end;justify-content:space-between;padding:14px">
+            <span style="font:500 11px/1 ui-monospace,monospace;letter-spacing:.04em;color:#b3a98f;background:rgba(251,247,239,.85);padding:5px 9px;border-radius:4px">1600×1000 · captura</span>
+            <span style="font-family:'Bodoni Moda',serif;font-size:34px;color:rgba(193,14,53,.16);line-height:1">03</span>
+          </div>
+          <div style="padding:26px 26px 30px;display:flex;flex-direction:column;gap:14px;flex:1">
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+              <span style="font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#a8863f;border:1px solid rgba(194,160,92,.45);padding:4px 9px;border-radius:20px">Agentes</span>
+              <span style="font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#a8863f;border:1px solid rgba(194,160,92,.45);padding:4px 9px;border-radius:20px">Ops</span>
+            </div>
+            <h3 style="font-family:'Bodoni Moda',serif;font-weight:600;font-size:24px;margin:0;color:#181428">Corte — Agente de operaciones</h3>
+            <p style="font-size:15px;line-height:1.65;color:#6a6478;margin:0;flex:1">Agente que automatiza tareas repetitivas de soporte. Liberó ~30 horas semanales al equipo de operaciones.</p>
+            <a href="#contacto" style="display:inline-flex;align-items:center;gap:8px;text-decoration:none;color:#c10e35;font-size:14px;font-weight:600;margin-top:4px" style-hover="gap:12px">Ver caso de estudio →</a>
+          </div>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- SOBRE MI -->
+  <section id="sobre-mi" style="padding:clamp(80px,12vh,140px) clamp(20px,5vw,40px);background:#f9f3e9;scroll-margin-top:80px">
+    <div style="max-width:1180px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:56px;align-items:center">
+      <div style="position:relative">
+        <div style="aspect-ratio:4/5;border-radius:12px;background:repeating-linear-gradient(135deg,#ece2cf,#ece2cf 12px,#e5d9c1 12px,#e5d9c1 24px);border:1px solid rgba(24,20,40,.08);display:flex;align-items:center;justify-content:center">
+          <span style="font:500 12px/1 ui-monospace,monospace;letter-spacing:.06em;color:#b3a98f">retrato · 1000×1250</span>
+        </div>
+        <div style="position:absolute;right:-14px;bottom:-14px;background:#181428;color:#f3e9d8;padding:18px 22px;border-radius:10px;box-shadow:0 24px 50px -28px rgba(24,20,40,.7)">
+          <div style="font-family:'Bodoni Moda',serif;font-size:30px;line-height:1;color:#fff">8</div>
+          <div style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#c2a05c;margin-top:6px">años en IA</div>
+        </div>
+      </div>
+      <div>
+        <div style="display:flex;align-items:center;gap:14px;margin-bottom:22px">
+          <span style="width:42px;height:1px;background:linear-gradient(90deg,#c2a05c,rgba(194,160,92,0))"></span>
+          <span style="font:600 12px/1 'Hanken Grotesk';letter-spacing:.28em;text-transform:uppercase;color:#a8863f">Sobre mí</span>
+        </div>
+        <h2 style="font-family:'Bodoni Moda',serif;font-weight:600;font-size:clamp(30px,4.4vw,50px);line-height:1.06;letter-spacing:-.01em;margin:0 0 24px;color:#181428">Detrás de la corona</h2>
+        <p style="font-size:17px;line-height:1.75;color:#5f5970;margin:0 0 18px">Soy <strong style="color:#181428;font-weight:600">[Tu Nombre]</strong>, consultor y desarrollador de IA. Ayudo a empresas a convertir ideas ambiciosas en productos reales: del prototipo a la producción, con criterio de ingeniería y obsesión por el detalle.</p>
+        <p style="font-size:17px;line-height:1.75;color:#5f5970;margin:0 0 34px">Trabajo de cerca con fundadores y equipos para diseñar la estrategia correcta, construir rápido y escalar sin deuda técnica.</p>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:20px;border-top:1px solid rgba(24,20,40,.1);padding-top:28px">
+          <div>
+            <div style="font-family:'Bodoni Moda',serif;font-size:clamp(28px,3.4vw,40px);color:#c10e35;line-height:1">+40</div>
+            <div style="font-size:13px;color:#6a6478;margin-top:6px">proyectos entregados</div>
+          </div>
+          <div>
+            <div style="font-family:'Bodoni Moda',serif;font-size:clamp(28px,3.4vw,40px);color:#c10e35;line-height:1">12</div>
+            <div style="font-size:13px;color:#6a6478;margin-top:6px">países</div>
+          </div>
+          <div>
+            <div style="font-family:'Bodoni Moda',serif;font-size:clamp(28px,3.4vw,40px);color:#c10e35;line-height:1">2 sem</div>
+            <div style="font-size:13px;color:#6a6478;margin-top:6px">a un MVP</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONSULTORIA -->
+  <section id="consultoria" style="padding:clamp(80px,12vh,140px) clamp(20px,5vw,40px);scroll-margin-top:80px">
+    <div style="max-width:1180px;margin:0 auto">
+      <div style="text-align:center;margin-bottom:56px">
+        <div style="display:inline-flex;align-items:center;gap:14px;margin-bottom:20px">
+          <span style="width:30px;height:1px;background:linear-gradient(90deg,rgba(194,160,92,0),#c2a05c)"></span>
+          <span style="font:600 12px/1 'Hanken Grotesk';letter-spacing:.28em;text-transform:uppercase;color:#a8863f">Consultoría</span>
+          <span style="width:30px;height:1px;background:linear-gradient(90deg,#c2a05c,rgba(194,160,92,0))"></span>
+        </div>
+        <h2 style="font-family:'Bodoni Moda',serif;font-weight:600;font-size:clamp(32px,4.6vw,56px);line-height:1.05;letter-spacing:-.01em;margin:0;color:#181428">Cómo puedo ayudarte</h2>
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1px;background:rgba(24,20,40,.1);border:1px solid rgba(24,20,40,.1);border-radius:12px;overflow:hidden">
+        <div style="background:#f6efe2;padding:38px 32px;display:flex;flex-direction:column;gap:14px;transition:background .3s" style-hover="background:#fbf7ef">
+          <span style="font-family:'Bodoni Moda',serif;font-size:38px;color:#c2a05c;line-height:1">01</span>
+          <h3 style="font-family:'Bodoni Moda',serif;font-weight:600;font-size:23px;margin:0;color:#181428">Estrategia de IA</h3>
+          <p style="font-size:15px;line-height:1.7;color:#6a6478;margin:0">Identificamos dónde la IA genera valor real en tu negocio y trazamos una hoja de ruta priorizada por impacto y esfuerzo.</p>
+        </div>
+        <div style="background:#f6efe2;padding:38px 32px;display:flex;flex-direction:column;gap:14px;transition:background .3s" style-hover="background:#fbf7ef">
+          <span style="font-family:'Bodoni Moda',serif;font-size:38px;color:#c2a05c;line-height:1">02</span>
+          <h3 style="font-family:'Bodoni Moda',serif;font-weight:600;font-size:23px;margin:0;color:#181428">Desarrollo de MVP</h3>
+          <p style="font-size:15px;line-height:1.7;color:#6a6478;margin:0">Construyo tu producto listo para producción en 2 semanas: arquitectura sólida, código limpio y métricas desde el día uno.</p>
+        </div>
+        <div style="background:#f6efe2;padding:38px 32px;display:flex;flex-direction:column;gap:14px;transition:background .3s" style-hover="background:#fbf7ef">
+          <span style="font-family:'Bodoni Moda',serif;font-size:38px;color:#c2a05c;line-height:1">03</span>
+          <h3 style="font-family:'Bodoni Moda',serif;font-weight:600;font-size:23px;margin:0;color:#181428">Acompañamiento</h3>
+          <p style="font-size:15px;line-height:1.7;color:#6a6478;margin:0">Consultoría continua para escalar, optimizar costos de inferencia y mantener tu sistema afilado a medida que creces.</p>
+        </div>
+      </div>
+
+      <!-- PROCESO -->
+      <div style="margin-top:54px;display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:28px">
+        <div style="display:flex;gap:16px;align-items:flex-start">
+          <span style="flex:none;width:34px;height:34px;border-radius:50%;border:1px solid #c2a05c;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#a8863f">A</span>
+          <div><div style="font-weight:600;color:#181428;margin-bottom:4px">Descubrimiento</div><div style="font-size:14px;color:#6a6478;line-height:1.6">Entendemos el problema y el resultado deseado.</div></div>
+        </div>
+        <div style="display:flex;gap:16px;align-items:flex-start">
+          <span style="flex:none;width:34px;height:34px;border-radius:50%;border:1px solid #c2a05c;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#a8863f">B</span>
+          <div><div style="font-weight:600;color:#181428;margin-bottom:4px">Diseño y build</div><div style="font-size:14px;color:#6a6478;line-height:1.6">Iteramos rápido con entregas semanales visibles.</div></div>
+        </div>
+        <div style="display:flex;gap:16px;align-items:flex-start">
+          <span style="flex:none;width:34px;height:34px;border-radius:50%;border:1px solid #c2a05c;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#a8863f">C</span>
+          <div><div style="font-weight:600;color:#181428;margin-bottom:4px">Lanzamiento</div><div style="font-size:14px;color:#6a6478;line-height:1.6">Desplegamos a producción y medimos impacto.</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TESTIMONIO -->
+  <section id="testimonio" style="padding:clamp(70px,10vh,120px) clamp(20px,5vw,40px);background:#f9f3e9;border-top:1px solid rgba(24,20,40,.07)">
+    <div style="max-width:860px;margin:0 auto;text-align:center">
+      <span style="font-family:'Bodoni Moda',serif;font-size:64px;color:#c2a05c;line-height:.6;display:block;margin-bottom:8px">“</span>
+      <p style="font-family:'Bodoni Moda',serif;font-style:italic;font-weight:500;font-size:clamp(22px,3vw,34px);line-height:1.4;color:#181428;margin:0 0 30px">Entregó en dos semanas lo que otros prometían en dos meses. El nivel de pulido se siente en cada detalle.</p>
+      <div style="display:flex;align-items:center;justify-content:center;gap:14px">
+        <span style="width:44px;height:44px;border-radius:50%;background:repeating-linear-gradient(45deg,#e5d9c1,#e5d9c1 6px,#dccfb2 6px,#dccfb2 12px)"></span>
+        <div style="text-align:left">
+          <div style="font-weight:600;color:#181428">Nombre del cliente</div>
+          <div style="font-size:13px;color:#6a6478">CEO · Empresa placeholder</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACTO -->
+  <section id="contacto" style="position:relative;padding:clamp(80px,12vh,140px) clamp(20px,5vw,40px) 60px;background:linear-gradient(165deg,#1c0710 0%,#330a1c 55%,#190610 100%);scroll-margin-top:80px;overflow:hidden">
+    <div style="position:absolute;top:-120px;right:-80px;width:420px;height:420px;border-radius:50%;background:radial-gradient(circle,rgba(193,14,53,.4),rgba(193,14,53,0) 68%);pointer-events:none"></div>
+    <div style="position:absolute;bottom:-160px;left:-60px;width:380px;height:380px;border-radius:50%;background:radial-gradient(circle,rgba(194,160,92,.22),rgba(194,160,92,0) 68%);pointer-events:none"></div>
+
+    <div style="max-width:1180px;margin:0 auto;position:relative;z-index:2;display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:56px;align-items:start">
+      <div>
+        <div style="display:flex;align-items:center;gap:14px;margin-bottom:22px">
+          <span style="width:42px;height:1px;background:linear-gradient(90deg,#c2a05c,rgba(194,160,92,0))"></span>
+          <span style="font:600 12px/1 'Hanken Grotesk';letter-spacing:.28em;text-transform:uppercase;color:#c2a05c">Contacto</span>
+        </div>
+        <h2 style="font-family:'Bodoni Moda',serif;font-weight:600;font-size:clamp(32px,4.6vw,54px);line-height:1.05;letter-spacing:-.01em;margin:0 0 22px;color:#fff">¿Construimos algo<br>memorable?</h2>
+        <p style="font-size:17px;line-height:1.7;color:rgba(243,233,216,.72);margin:0 0 36px;max-width:380px">Cuéntame qué tienes en mente. Respondo en menos de 24 horas y agendamos una llamada sin compromiso.</p>
+        <a href="mailto:hola@larealeza.com" style="display:inline-flex;align-items:center;gap:10px;text-decoration:none;font-family:'Bodoni Moda',serif;font-size:clamp(20px,2.4vw,28px);color:#f3e9d8;border-bottom:1px solid rgba(194,160,92,.4);padding-bottom:6px" style-hover="color:#fff">hola@larealeza.com</a>
+        <div style="display:flex;gap:24px;margin-top:34px">
+          <a href="#" style="text-decoration:none;color:rgba(243,233,216,.6);font-size:14px;font-weight:600;letter-spacing:.04em" style-hover="color:#c2a05c">LinkedIn</a>
+          <a href="#" style="text-decoration:none;color:rgba(243,233,216,.6);font-size:14px;font-weight:600;letter-spacing:.04em" style-hover="color:#c2a05c">GitHub</a>
+          <a href="#" style="text-decoration:none;color:rgba(243,233,216,.6);font-size:14px;font-weight:600;letter-spacing:.04em" style-hover="color:#c2a05c">X / Twitter</a>
+        </div>
+      </div>
+
+      <div style="background:rgba(255,255,255,.035);border:1px solid rgba(243,233,216,.14);border-radius:14px;padding:clamp(24px,3vw,38px)">
+        <sc-if value="{{ sent }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;flex-direction:column;align-items:center;text-align:center;gap:14px;padding:30px 0">
+            <span style="width:56px;height:56px;border-radius:50%;background:rgba(31,157,99,.16);border:1px solid rgba(31,157,99,.5);display:flex;align-items:center;justify-content:center;color:#5fd29b;font-size:26px">✓</span>
+            <h3 style="font-family:'Bodoni Moda',serif;font-size:26px;color:#fff;margin:0">¡Mensaje enviado!</h3>
+            <p style="color:rgba(243,233,216,.7);font-size:15px;margin:0;max-width:300px">Gracias por escribir. Te responderé muy pronto a tu correo.</p>
+          </div>
+        </sc-if>
+        <sc-if value="{{ notSent }}" hint-placeholder-val="{{ true }}">
+          <form onSubmit="{{ onSubmit }}" style="display:flex;flex-direction:column;gap:18px">
+            <div style="display:flex;flex-direction:column;gap:8px">
+              <label style="font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:#c2a05c">Nombre</label>
+              <input value="{{ form.name }}" onInput="{{ onName }}" placeholder="Tu nombre" style="background:rgba(255,255,255,.04);border:1px solid rgba(243,233,216,.18);color:#f3e9d8;padding:14px 16px;border-radius:8px;font:inherit;font-size:15px;outline:none;transition:border-color .2s" style-focus="border-color:#c2a05c" />
+              <sc-if value="{{ errors.name }}" hint-placeholder-val="{{ false }}"><span style="font-size:12px;color:#ff8aa3">{{ errors.name }}</span></sc-if>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:8px">
+              <label style="font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:#c2a05c">Email</label>
+              <input value="{{ form.email }}" onInput="{{ onEmail }}" placeholder="tu@correo.com" style="background:rgba(255,255,255,.04);border:1px solid rgba(243,233,216,.18);color:#f3e9d8;padding:14px 16px;border-radius:8px;font:inherit;font-size:15px;outline:none;transition:border-color .2s" style-focus="border-color:#c2a05c" />
+              <sc-if value="{{ errors.email }}" hint-placeholder-val="{{ false }}"><span style="font-size:12px;color:#ff8aa3">{{ errors.email }}</span></sc-if>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:8px">
+              <label style="font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:#c2a05c">Mensaje</label>
+              <textarea value="{{ form.message }}" onInput="{{ onMsg }}" placeholder="Cuéntame sobre tu proyecto…" rows="4" style="background:rgba(255,255,255,.04);border:1px solid rgba(243,233,216,.18);color:#f3e9d8;padding:14px 16px;border-radius:8px;font:inherit;font-size:15px;outline:none;resize:vertical;transition:border-color .2s" style-focus="border-color:#c2a05c"></textarea>
+              <sc-if value="{{ errors.message }}" hint-placeholder-val="{{ false }}"><span style="font-size:12px;color:#ff8aa3">{{ errors.message }}</span></sc-if>
+            </div>
+            <button type="submit" style="margin-top:6px;background:#c10e35;color:#fff;border:none;font:inherit;font-size:15px;font-weight:600;padding:16px;border-radius:8px;cursor:pointer;box-shadow:0 16px 34px -16px rgba(193,14,53,.9);transition:transform .2s,box-shadow .2s" style-hover="transform:translateY(-2px);box-shadow:0 22px 44px -16px rgba(193,14,53,.95)">Enviar mensaje</button>
+          </form>
+        </sc-if>
+      </div>
+    </div>
+
+    <!-- FOOTER -->
+    <div style="max-width:1180px;margin:72px auto 0;position:relative;z-index:2;border-top:1px solid rgba(243,233,216,.12);padding-top:28px;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:18px">
+      <div style="display:flex;align-items:center;gap:11px">
+        <span style="width:22px;height:22px;display:inline-block;transform:rotate(45deg);background:linear-gradient(135deg,#c10e35,#7e0a23);border:1px solid rgba(194,160,92,.7);border-radius:4px"></span>
+        <span style="font-family:'Bodoni Moda',serif;font-weight:600;font-size:18px;color:#f3e9d8">La Realeza</span>
+      </div>
+      <span style="font-size:13px;color:rgba(243,233,216,.5)">© 2026 La Realeza · Hecho con criterio de joyería</span>
+      <a href="#inicio" style="text-decoration:none;font-size:13px;color:rgba(243,233,216,.6);font-weight:600;letter-spacing:.04em" style-hover="color:#c2a05c">Volver arriba ↑</a>
+    </div>
+  </section>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;gemColor&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#c10e35&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;showParticles&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;}}">
+class Component extends DCLogic {
+  static ENGINE_V = 2;
+  state = { scrolled: false, isMobile: false, navOpen: false, sent: false,
+    form: { name: '', email: '', message: '' }, errors: {} };
+
+  ensureRefs() {
+    if (!this.canvasRef) this.canvasRef = React.createRef();
+    if (!this.rootRef) this.rootRef = React.createRef();
+  }
+
+  componentDidMount() {
+    this.ensureRefs();
+    this.checkMobile();
+    this._mx = 0; this._my = 0;
+    this._rs = () => this.checkMobile();
+    window.addEventListener('resize', this._rs);
+    this._sc = () => {
+      if (this._tick) return; this._tick = true;
+      requestAnimationFrame(() => {
+        this._tick = false;
+        const s = window.scrollY > 40;
+        if (s !== this.state.scrolled) this.setState({ scrolled: s });
+      });
+    };
+    window.addEventListener('scroll', this._sc, { passive: true });
+    this._mm = (e) => { this._mx = (e.clientX / window.innerWidth - 0.5); this._my = (e.clientY / window.innerHeight - 0.5); };
+    window.addEventListener('mousemove', this._mm);
+    this.initThree();
+  }
+
+  componentWillUnmount() {
+    cancelAnimationFrame(this._raf);
+    clearTimeout(this._t);
+    window.removeEventListener('resize', this._rs);
+    window.removeEventListener('scroll', this._sc);
+    window.removeEventListener('mousemove', this._mm);
+    if (this._onResize) window.removeEventListener('resize', this._onResize);
+  }
+
+  componentDidUpdate() {
+    if (this._mats && this.props && this.props.gemColor) {
+      try { this._mats.forEach(m => m.color.set(this.props.gemColor)); } catch (e) {}
+    }
+  }
+
+  checkMobile() {
+    const m = window.innerWidth < 860;
+    if (m !== this.state.isMobile) this.setState({ isMobile: m, navOpen: false });
+  }
+
+  initThree() {
+    const THREE = window.THREE;
+    this.ensureRefs();
+    const canvas = this.canvasRef && this.canvasRef.current;
+    if (!THREE || !canvas) { this._t = setTimeout(() => this.initThree(), 120); return; }
+
+    // Mata cualquier motor anterior (los hot-reloads no reinician el bucle solos)
+    if (this._raf != null) { cancelAnimationFrame(this._raf); this._raf = null; }
+    if (this._onResize) { window.removeEventListener('resize', this._onResize); this._onResize = null; }
+    if (this._renderer) { try { this._renderer.dispose(); } catch (e) {} this._renderer = null; }
+    this._engineV = Component.ENGINE_V;
+
+    const gemColor = (this.props && this.props.gemColor) || '#c10e35';
+    const showParticles = !this.props || this.props.showParticles !== false;
+
+    let w = window.innerWidth, h = window.innerHeight;
+    const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+    this._renderer = renderer;
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    renderer.setSize(w, h, false);
+
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(42, w / h, 0.1, 100);
+    camera.position.z = 5;
+
+    // ---- The cast: one actor, five costumes ----
+    const group = new THREE.Group();
+    scene.add(group);
+
+    const mkEdges = (g, color, op) => new THREE.LineSegments(
+      new THREE.EdgesGeometry(g),
+      new THREE.LineBasicMaterial({ color, transparent: true, opacity: op })
+    );
+
+    // 1. Piedra en bruto (hero)
+    const icoGeo = new THREE.IcosahedronGeometry(1.62, 1);
+    const icoMat = new THREE.MeshStandardMaterial({ color: new THREE.Color(gemColor), flatShading: true, metalness: 0.38, roughness: 0.34 });
+    const ico = new THREE.Mesh(icoGeo, icoMat);
+    ico.add(mkEdges(icoGeo, 0x7e0a23, 0.35));
+
+    // 2. Diamante tallado (proyectos)
+    const octaGeo = new THREE.OctahedronGeometry(1.5, 0);
+    octaGeo.scale(1, 1.32, 1);
+    const octaMat = new THREE.MeshStandardMaterial({ color: new THREE.Color(gemColor), flatShading: true, metalness: 0.55, roughness: 0.22 });
+    const octa = new THREE.Mesh(octaGeo, octaMat);
+    octa.add(mkEdges(octaGeo, 0xc2a05c, 0.55));
+
+    // 3. Esfera pulida (sobre mí)
+    const sphGeo = new THREE.IcosahedronGeometry(1.42, 3);
+    const sphMat = new THREE.MeshStandardMaterial({ color: new THREE.Color(gemColor), metalness: 0.72, roughness: 0.14 });
+    const sph = new THREE.Mesh(sphGeo, sphMat);
+
+    // 4. Nudo de ingeniería (consultoría)
+    const knotGeo = new THREE.TorusKnotGeometry(0.92, 0.27, 160, 24);
+    const knotMat = new THREE.MeshStandardMaterial({ color: 0xc2a05c, metalness: 0.9, roughness: 0.26 });
+    const knot = new THREE.Mesh(knotGeo, knotMat);
+
+    // 5. Joya de la corona (contacto)
+    const crownGeo = new THREE.IcosahedronGeometry(1.62, 1);
+    const crownMat = new THREE.MeshStandardMaterial({ color: 0xe8b765, flatShading: true, metalness: 0.85, roughness: 0.3, emissive: new THREE.Color(0xc10e35), emissiveIntensity: 0.25 });
+    const crown = new THREE.Mesh(crownGeo, crownMat);
+    crown.add(mkEdges(crownGeo, 0xf2c879, 0.5));
+
+    const shapes = { ico, octa, sphere: sph, knot, crown };
+    Object.keys(shapes).forEach(k => { shapes[k].scale.setScalar(k === 'ico' ? 1 : 0.0001); shapes[k].visible = k === 'ico'; group.add(shapes[k]); });
+    this._mats = [icoMat, octaMat, sphMat];
+
+    scene.add(new THREE.AmbientLight(0xffffff, 0.55));
+    const key = new THREE.DirectionalLight(0xfff1d6, 1.5); key.position.set(-3, 4, 5); scene.add(key);
+    const gold = new THREE.PointLight(0xe8b765, 1.25, 22); gold.position.set(-2.6, 2.6, 3.2); scene.add(gold);
+    const rim = new THREE.DirectionalLight(0xff5a7a, 0.75); rim.position.set(4, -2, -3); scene.add(rim);
+
+    let points = null;
+    if (showParticles) {
+      const n = 200, pos = new Float32Array(n * 3), col = new Float32Array(n * 3);
+      const cA = new THREE.Color(0xe6b964), cB = new THREE.Color(0xd11e44);
+      for (let i = 0; i < n; i++) {
+        const r = 2.1 + Math.random() * 1.3, th = Math.random() * Math.PI * 2, ph = Math.acos(2 * Math.random() - 1);
+        pos[i * 3] = r * Math.sin(ph) * Math.cos(th);
+        pos[i * 3 + 1] = r * Math.sin(ph) * Math.sin(th) * 0.72;
+        pos[i * 3 + 2] = r * Math.cos(ph);
+        const c = Math.random() < 0.5 ? cA : cB;
+        col[i * 3] = c.r; col[i * 3 + 1] = c.g; col[i * 3 + 2] = c.b;
+      }
+      const pgeo = new THREE.BufferGeometry();
+      pgeo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+      pgeo.setAttribute('color', new THREE.BufferAttribute(col, 3));
+      points = new THREE.Points(pgeo, new THREE.PointsMaterial({ size: 0.042, vertexColors: true, transparent: true, opacity: 0.5, depthWrite: false }));
+      scene.add(points);
+    }
+
+    // ---- The script: one keyframe per chapter of the page ----
+    // x/y = viewport position (0..1), s = scale, mx/my/ms = mobile overrides
+    const KF = [
+      { id: 'inicio',      x: 0.72, y: 0.47, s: 1.00, mx: 0.50, my: 0.74, ms: 0.60, shape: 'ico',    spin: 0.30, p: 0.50 },
+      { id: 'confianza',   x: 0.84, y: 0.46, s: 0.34, mx: 0.80, my: 0.46, ms: 0.26, shape: 'ico',    spin: 0.80, p: 0.10 },
+      { id: 'proyectos',   x: 0.945, y: 0.50, s: 0.36, mx: 0.90, my: 0.08, ms: 0.24, shape: 'octa',   spin: 0.45, p: 0.00 },
+      { id: 'sobre-mi',    x: 0.50, y: 0.13, s: 0.30, mx: 0.50, my: 0.07, ms: 0.24, shape: 'sphere', spin: 0.35, p: 0.00 },
+      { id: 'consultoria', x: 0.10, y: 0.15, s: 0.36, mx: 0.12, my: 0.08, ms: 0.26, shape: 'knot',   spin: 0.55, p: 0.00 },
+      { id: 'testimonio',  x: 0.50, y: 0.07, s: 0.18, mx: 0.50, my: 0.06, ms: 0.15, shape: 'octa',   spin: 0.70, p: 0.00 },
+      { id: 'contacto',    x: 0.50, y: 0.12, s: 0.40, mx: 0.50, my: 0.08, ms: 0.32, shape: 'crown',  spin: 0.35, p: 0.75 }
+    ];
+    const smooth = (p) => p * p * (3 - 2 * p);
+    const lerp = (a, b, p) => a + (b - a) * p;
+    const cur = { x: 0.72, y: 0.47, s: 1, spin: 0.3 };
+    const cw = { ico: 1, octa: 0, sphere: 0, knot: 0, crown: 0 };
+    let lastSy = window.scrollY || 0, vel = 0, tiltZ = 0;
+
+    const clock = new THREE.Clock();
+    let elapsed = 0;
+    const animate = () => {
+      this._raf = requestAnimationFrame(animate);
+      const dt = Math.min(clock.getDelta(), 0.05);
+      elapsed += dt;
+      const vh = window.innerHeight, vw = window.innerWidth;
+      const sy = window.scrollY || 0;
+      const mobile = vw < 860;
+      vel = vel * 0.92 + (sy - lastSy) * 0.08; lastSy = sy;
+      const mx = this._mx || 0, my = this._my || 0;
+
+      // Where are we in the story?
+      const anchors = [];
+      let ok = true;
+      for (let i = 0; i < KF.length; i++) {
+        const el = document.getElementById(KF[i].id);
+        if (!el) { ok = false; break; }
+        const r = el.getBoundingClientRect();
+        anchors.push(sy + r.top + r.height * 0.5);
+      }
+      const gx = (kf) => (mobile && kf.mx != null) ? kf.mx : kf.x;
+      const gy = (kf) => (mobile && kf.my != null) ? kf.my : kf.y;
+      const gs = (kf) => (mobile && kf.ms != null) ? kf.ms : kf.s;
+      // La joya toma la iniciativa: detecta el capítulo activo (sin interpolación
+      // continua con el scroll) y corre a su puesto, ya transformada.
+      let act = 0;
+      if (ok) {
+        const pos = sy + vh * 0.5;
+        let best = Infinity;
+        for (let i = 0; i < anchors.length; i++) {
+          const d = Math.abs(anchors[i] - pos);
+          if (d < best) { best = d; act = i; }
+        }
+      }
+      const kf = KF[act];
+      const target = { x: gx(kf), y: gy(kf), s: gs(kf), spin: kf.spin, p: kf.p };
+      const tw = { ico: 0, octa: 0, sphere: 0, knot: 0, crown: 0 };
+      tw[kf.shape] = 1;
+
+      // Dash: corre rápido cuando está lejos de su puesto, se posa suave al llegar
+      const dist = Math.hypot(target.x - cur.x, target.y - cur.y);
+      const kDash = Math.min(0.22, 0.06 + dist * 0.5);
+      cur.x += (target.x - cur.x) * kDash;
+      cur.y += (target.y - cur.y) * kDash;
+      cur.s += (target.s - cur.s) * Math.max(0.08, kDash * 0.8);
+      cur.spin += (target.spin - cur.spin) * 0.08;
+      cur.p = (cur.p == null ? target.p : cur.p) + (target.p - (cur.p == null ? target.p : cur.p)) * 0.08;
+      const settled = Math.max(0, 1 - dist * 9);
+
+      // Screen position -> world position
+      const visH = 2 * Math.tan(THREE.MathUtils.degToRad(21)) * 5;
+      const visW = visH * camera.aspect;
+      group.position.x = (cur.x - 0.5) * visW + mx * 0.22;
+      group.position.y = -(cur.y - 0.5) * visH + Math.sin(elapsed * 0.7) * 0.07 * cur.s - my * 0.16;
+      // En tránsito cede el paso (se encoge); posada, respira
+      const yieldF = 1 - Math.min(0.30, dist * 1.25);
+      const breath = 1 + Math.sin(elapsed * 1.15) * 0.028 * settled;
+      group.scale.setScalar(Math.max(0.0001, cur.s * yieldF * breath));
+
+      // Giro: deriva en reposo + impulso propio cuando corre a su puesto
+      group.rotation.y += dt * cur.spin + vel * 0.0006 + dist * dt * 2.6;
+      group.rotation.x = Math.sin(elapsed * 0.3) * 0.1 + my * 0.25;
+      tiltZ += ((Math.max(-140, Math.min(140, vel)) * -0.0007) - tiltZ) * 0.08;
+      group.rotation.z = tiltZ;
+
+      // Costume crossfade (morph between chapters)
+      for (const k in shapes) {
+        cw[k] += (tw[k] - cw[k]) * 0.13;
+        const m = shapes[k];
+        m.visible = cw[k] > 0.015;
+        m.scale.setScalar(Math.max(0.0001, cw[k]));
+      }
+      octa.rotation.y += dt * 0.25;
+      knot.rotation.x += dt * 0.18;
+      crownMat.emissiveIntensity = 0.18 + cw.crown * (0.3 + Math.sin(elapsed * 2.2) * 0.16);
+
+      // Particle court trails behind its monarch
+      if (points) {
+        points.position.x += (group.position.x - points.position.x) * 0.05;
+        points.position.y += (group.position.y - points.position.y) * 0.05;
+        const ps = 0.5 + cur.s * 0.65;
+        points.scale.setScalar(ps);
+        points.rotation.y += dt * 0.04 + vel * 0.0002;
+        points.material.opacity = Math.max(0, (cur.p == null ? 0.5 : cur.p) * (0.3 + 0.7 * settled));
+        points.visible = points.material.opacity > 0.02;
+      }
+
+      renderer.render(scene, camera);
+      canvas.__gem = { v: Component.ENGINE_V, f: ((canvas.__gem && canvas.__gem.f) || 0) + 1, x: cur.x, y: cur.y, s: cur.s, act, w: { i: cw.ico, o: cw.octa, s: cw.sphere, k: cw.knot, c: cw.crown }, ok };
+    };
+    animate();
+
+    this._onResize = () => {
+      const nw = window.innerWidth, nh = window.innerHeight;
+      renderer.setSize(nw, nh, false);
+      camera.aspect = nw / nh; camera.updateProjectionMatrix();
+    };
+    window.addEventListener('resize', this._onResize);
+  }
+
+  renderVals() {
+    this.ensureRefs();
+    // Si el bucle 3D que corre es de una versión vieja del código, reinícialo
+    if (this._raf != null && this._engineV !== Component.ENGINE_V && !this._restarting) {
+      this._restarting = true;
+      setTimeout(() => { this._restarting = false; this.initThree(); }, 0);
+    }
+    const scrolled = this.state.scrolled;
+    const navStyle = {
+      position: 'fixed', top: 0, left: 0, right: 0, zIndex: 60,
+      transition: 'background .4s, box-shadow .4s, backdrop-filter .4s',
+      backgroundColor: scrolled ? 'rgba(246,239,226,0.82)' : 'rgba(246,239,226,0)',
+      boxShadow: scrolled ? '0 1px 0 rgba(24,20,40,0.07), 0 12px 30px -22px rgba(24,20,40,0.5)' : 'none',
+      backdropFilter: scrolled ? 'saturate(140%) blur(14px)' : 'none',
+      WebkitBackdropFilter: scrolled ? 'saturate(140%) blur(14px)' : 'none'
+    };
+    return {
+      rootRef: this.rootRef, canvasRef: this.canvasRef,
+      navStyle,
+      isMobile: this.state.isMobile,
+      desktopNav: !this.state.isMobile,
+      navOpen: this.state.navOpen,
+      toggleNav: () => this.setState({ navOpen: !this.state.navOpen }),
+      closeNav: () => this.setState({ navOpen: false }),
+      form: this.state.form, errors: this.state.errors,
+      sent: this.state.sent, notSent: !this.state.sent,
+      onName: (e) => this.setState({ form: { ...this.state.form, name: e.target.value } }),
+      onEmail: (e) => this.setState({ form: { ...this.state.form, email: e.target.value } }),
+      onMsg: (e) => this.setState({ form: { ...this.state.form, message: e.target.value } }),
+      onSubmit: (e) => {
+        e.preventDefault();
+        const f = this.state.form, er = {};
+        if (!f.name.trim()) er.name = 'Falta tu nombre';
+        if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(f.email)) er.email = 'Email no válido';
+        if (!f.message.trim()) er.message = 'Cuéntame algo';
+        this.setState({ errors: er });
+        if (Object.keys(er).length === 0) this.setState({ sent: true });
+      }
+    };
+  }
+}
+</script>
+</body>
+</html>
