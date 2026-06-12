@@ -460,6 +460,9 @@ export const JewelRig: React.FC<JewelRigProps> = ({ onFirstInteraction }) => {
     // Ambient rotation — suppressed for reduced motion; drag stays user-initiated.
     if (profile.animate && !dragging) {
       group.rotation.y += delta * ROTATION_SPEED;
+      // Morph flourish: a dignified extra spin while transitioning between
+      // story beats (sin-shaped, peaks mid-blend, exactly 0 when settled).
+      if (frame) group.rotation.y += frame.flourish * delta * 2.2;
     }
 
     // Drag inertia: velocity applies when the finger is off, always decays.

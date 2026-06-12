@@ -4,8 +4,8 @@ import { buildMorphTargets, TARGET_NAMES } from '../components/JewelScene/morphT
 describe('morphTargets', () => {
   const targets = buildMorphTargets();
 
-  it('registers gem, gemBreath, neural, and lattice', () => {
-    expect(TARGET_NAMES).toEqual(['gem', 'gemBreath', 'neural', 'lattice']);
+  it('registers gem, gemBreath, neural, lattice, and growth', () => {
+    expect(TARGET_NAMES).toEqual(['gem', 'gemBreath', 'neural', 'lattice', 'growth']);
     expect(Object.keys(targets)).toEqual([...TARGET_NAMES]);
   });
 
@@ -40,6 +40,34 @@ describe('morphTargets', () => {
     expect(maxR).toBeGreaterThan(1.2);
     expect(maxR).toBeLessThan(2.6);
     expect(b).not.toEqual(a);
+  });
+
+  it('growth forms ascending columns', () => {
+    const g = targets.growth.positions;
+    // columns sit at x = -2, -1, 0, 1, 2 → band k covers [k-2.5, k-1.5)
+    // max y per band must be (near) non-decreasing left→right: rising bars
+    const bands: number[] = new Array(5).fill(-Infinity);
+    for (let i = 0; i < g.length; i += 3) {
+      const band = Math.min(4, Math.max(0, Math.floor((g[i] + 2.5) / 1.0)));
+      bands[band] = Math.max(bands[band], g[i + 1]);
+    }
+    for (let k = 1; k < 5; k++) expect(bands[k]).toBeGreaterThan(bands[k - 1] - 0.15);
+    expect(bands[4]).toBeGreaterThan(1.5); // tallest bar is tall
+  });
+
+  it('growth columns are narrow and share a common floor', () => {
+    const g = targets.growth.positions;
+    const COLUMN_X = [-2, -1, 0, 1, 2];
+    let minY = Infinity;
+    for (let i = 0; i < g.length; i += 3) {
+      // every vertex hugs its column center (width ~0.55 + jitter, never bleeds into neighbor band)
+      const nearest = COLUMN_X.reduce((a, b) => (Math.abs(g[i] - b) < Math.abs(g[i] - a) ? b : a));
+      expect(Math.abs(g[i] - nearest)).toBeLessThan(0.5);
+      // z compressed — bars read flat like a chart
+      expect(Math.abs(g[i + 2])).toBeLessThan(1.1);
+      minY = Math.min(minY, g[i + 1]);
+    }
+    expect(minY).toBeGreaterThan(-1.6); // bars rise from a common base near -1.2
   });
 
   it('lattice clusters vertices toward snap points', () => {
