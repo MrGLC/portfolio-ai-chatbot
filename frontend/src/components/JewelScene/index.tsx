@@ -171,7 +171,7 @@ export const JewelScene: React.FC = () => {
             height: 0,
             borderRadius: '50%',
             pointerEvents: 'auto',
-            touchAction: 'none',
+            touchAction: 'pan-y', // vertical swipes scroll the page; taps + horizontal drags hit the jewel
             cursor: 'grab',
             zIndex: 6,
           }}

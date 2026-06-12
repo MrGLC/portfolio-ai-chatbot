@@ -63,7 +63,7 @@ interface JewelRigProps {
 const HERO_ID = 'story-hero';
 /** Generous bounding radius of the largest costume in world units (growth
  * columns reach ~2.3 in x); multiplied by the live group scale for the proxy. */
-const JEWEL_WORLD_RADIUS = 1.9;
+const JEWEL_WORLD_RADIUS = 1.3;
 
 interface DragState {
   active: boolean;
@@ -395,7 +395,10 @@ export const JewelRig: React.FC<JewelRigProps> = ({
     if (onProxyRect && frameCountRef.current % 6 === 1) {
       const frac = worldToFraction(group.position.x, group.position.y, aspect);
       const r = ((JEWEL_WORLD_RADIUS * cur.s * yieldF) / VIS_H) * height;
-      onProxyRect(frac.fx * width, frac.fy * height, Math.max(24, r));
+      // Cap the proxy so it never blankets a phone hero (a giant touchAction
+      // surface was eating vertical swipes — found by the touch battery).
+      const rCapped = Math.min(r, Math.min(width, height) * 0.28);
+      onProxyRect(frac.fx * width, frac.fy * height, Math.max(24, rCapped));
     }
   });
 
