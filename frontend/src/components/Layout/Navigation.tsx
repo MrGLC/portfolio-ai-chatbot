@@ -32,11 +32,12 @@ const navItems: NavItem[] = [
   { key: 'contact', path: '/contact' },
 ];
 
-// Handoff logo: 26px square rotated 45° (rombo), crimson gradient, gold border
-const LogoMark: React.FC = () => (
+// Handoff logo: 26px square rotated 45° (rombo), crimson gradient, gold border.
+// Exported so the Footer can reuse it at a smaller size (18px).
+export const LogoMark: React.FC<{ size?: string }> = ({ size = '26px' }) => (
   <Box
-    w="26px"
-    h="26px"
+    w={size}
+    h={size}
     flexShrink={0}
     transform="rotate(45deg)"
     borderRadius="4px"

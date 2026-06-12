@@ -30,6 +30,7 @@ import {
   StarIcon
 } from '@chakra-ui/icons';
 import { durations, easings, delays, variants, transitions } from '../theme/animations';
+import { Kicker } from '../components/Kicker';
 
 const MotionBox = motion.create(Box);
 const MotionCard = motion.create(Card);
@@ -102,16 +103,16 @@ export const AboutPage: React.FC = () => {
         position="relative"
         overflow="hidden"
       >
-        <Container maxW="6xl" py={{ base: 16, md: 24 }} position="relative" zIndex={1}>
+        <Container maxW="1180px" py={{ base: 16, md: 24 }} position="relative" zIndex={1}>
           <MotionBox
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: durations.slower, ease: easings.smooth }}
           >
             <VStack spacing={6} textAlign="center">
-              <Text textStyle="eyebrow" color="brand.accent">
+              <Kicker centered color="brand.goldBright">
                 {t('about.hero.role')}
-              </Text>
+              </Kicker>
               <Heading
                 as="h1"
                 textStyle="pageTitle"
@@ -196,34 +197,86 @@ export const AboutPage: React.FC = () => {
 
       {/* About/Bio Section - Cream Background */}
       <Box bg="brand.primary" py={{ base: 12, md: 20 }}>
-        <Container maxW="6xl">
+        <Container maxW="1180px">
           <MotionBox
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: durations.slow, ease: easings.smooth }}
           >
             <VStack spacing={16} align="stretch">
-              {/* Bio Section */}
-              <Box textAlign="center">
-                <Heading textStyle="sectionTitle" color="brand.text" mb={6}>
-                  {t('about.bio.title')}
-                </Heading>
-                <Card 
-                  bg="brand.surface" 
-                  boxShadow="0 4px 16px rgba(0, 0, 0, 0.08)"
-                  borderRadius="16px"
-                >
-                  <CardBody p={{ base: 6, md: 10 }}>
-                    <VStack spacing={6} align="stretch">
-                      {(t('about.bio.paragraphs', { returnObjects: true }) as string[]).map((paragraph, index) => (
-                        <Text key={index} color="brand.textSecondary" lineHeight="1.8" fontSize="lg">
-                          {paragraph}
+              {/* Bio Section — handoff §5: portrait + ink badge, stats over gold hairline */}
+              <SimpleGrid columns={{ base: 1, lg: 2 }} spacing={{ base: 10, lg: 14 }} alignItems="center">
+                {/* Portrait placeholder (4:5) with ink corner badge */}
+                <Box position="relative" maxW={{ base: '420px', lg: 'none' }} mx="auto" w="full">
+                  <Box
+                    w="full"
+                    sx={{ aspectRatio: '4 / 5' }}
+                    borderRadius="12px"
+                    bg="repeating-linear-gradient(45deg, #efe6d4 0 14px, #e9dfc9 14px 28px)"
+                    border="1px solid"
+                    borderColor="rgba(194,160,92,.35)"
+                  />
+                  {/* Ink badge: years figure in Bodoni + gold label (handoff "8 / AÑOS EN IA") */}
+                  <Box
+                    position="absolute"
+                    bottom={{ base: '-18px', md: '-22px' }}
+                    right={{ base: '-8px', md: '-22px' }}
+                    bg="brand.text"
+                    borderRadius="10px"
+                    px={6}
+                    py={4}
+                    boxShadow="0 22px 44px -26px rgba(24,20,40,.7)"
+                    textAlign="center"
+                  >
+                    <Text fontFamily="heading" fontWeight={600} fontSize="30px" lineHeight={1.1} color="brand.creamText">
+                      {t('about.stats.experience.value')}
+                    </Text>
+                    <Text fontSize="10px" fontWeight={600} letterSpacing="0.22em" textTransform="uppercase" color="brand.accent">
+                      {t('about.stats.experience.label')}
+                    </Text>
+                  </Box>
+                </Box>
+
+                {/* Bio copy + stats row */}
+                <VStack align={{ base: 'center', lg: 'flex-start' }} spacing={6} textAlign={{ base: 'center', lg: 'left' }}>
+                  <Kicker centered={{ base: true, lg: false }}>{t('about.subtitle')}</Kicker>
+                  <Heading textStyle="sectionTitle" color="brand.text">
+                    {t('about.bio.title')}
+                  </Heading>
+                  {(t('about.bio.paragraphs', { returnObjects: true }) as string[]).map((paragraph, index) => (
+                    <Text key={index} color="brand.textSecondary" lineHeight="1.75" fontSize={{ base: 'md', md: 'lg' }}>
+                      {paragraph}
+                    </Text>
+                  ))}
+                  {/* Stats over a gold hairline */}
+                  <SimpleGrid
+                    columns={3}
+                    spacing={{ base: 4, md: 8 }}
+                    w="full"
+                    pt={6}
+                    mt={2}
+                    borderTop="1px solid"
+                    borderColor="rgba(194,160,92,.4)"
+                  >
+                    {(['experience', 'mvp', 'cost'] as const).map((statKey) => (
+                      <Box key={statKey}>
+                        <Text
+                          fontFamily="heading"
+                          fontWeight={600}
+                          fontSize="clamp(28px, 3.4vw, 40px)"
+                          lineHeight={1.1}
+                          color="brand.secondary"
+                        >
+                          {t(`about.stats.${statKey}.value`)}
                         </Text>
-                      ))}
-                    </VStack>
-                  </CardBody>
-                </Card>
-              </Box>
+                        <Text fontSize="13px" color="brand.textMuted" mt={1}>
+                          {t(`about.stats.${statKey}.label`)}
+                        </Text>
+                      </Box>
+                    ))}
+                  </SimpleGrid>
+                </VStack>
+              </SimpleGrid>
 
               {/* Contact Information */}
               <Box>
@@ -301,7 +354,7 @@ export const AboutPage: React.FC = () => {
           transformOrigin="bottom right"
         />
         
-        <Container maxW="6xl">
+        <Container maxW="1180px">
           <VStack spacing={12} align="stretch">
             <Heading textStyle="sectionTitle" color="brand.text" textAlign="center">
               {t('about.technicalExpertise.title')}
@@ -364,7 +417,7 @@ export const AboutPage: React.FC = () => {
           transformOrigin="bottom left"
         />
         
-        <Container maxW="6xl">
+        <Container maxW="1180px">
           <VStack spacing={12} align="stretch">
             <Box textAlign="center">
               <Heading textStyle="sectionTitle" color="brand.text" mb={4}>

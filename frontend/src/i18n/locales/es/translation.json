@@ -269,6 +269,20 @@
         "title": "Optimizar",
         "description": "Mejora continua y escalamiento"
       }
+    },
+    "stats": {
+      "experience": {
+        "value": "3",
+        "label": "años en ML"
+      },
+      "mvp": {
+        "value": "2",
+        "label": "semanas a un MVP"
+      },
+      "cost": {
+        "value": "$2–3k",
+        "label": "costo de un MVP"
+      }
     }
   },
   "consulting": {
@@ -276,7 +290,8 @@
       "title": "Servicios de Consultoría en IA",
       "description": "Transforma tu negocio con soluciones de IA de vanguardia. Desde la estrategia hasta la implementación, entregamos resultados medibles rápidamente.",
       "getStartedButton": "Comienza Hoy",
-      "viewPricingButton": "Ver Precios"
+      "viewPricingButton": "Ver Precios",
+      "kicker": "Consultoría"
     },
     "servicesSection": {
       "title": "Nuestros Servicios",
@@ -425,7 +440,8 @@
   "projects": {
     "hero": {
       "title": "Portafolio de Soluciones de IA Reales",
-      "description": "Transformando negocios con soluciones de inteligencia artificial de vanguardia. Explora nuestra colección de proyectos innovadores en múltiples dominios."
+      "description": "Transformando negocios con soluciones de inteligencia artificial de vanguardia. Explora nuestra colección de proyectos innovadores en múltiples dominios.",
+      "kicker": "Portafolio"
     },
     "filters": {
       "all": "Todos",
@@ -563,7 +579,13 @@
       "consultationNote": "La tarifa de consulta se acreditará hacia el costo de tu proyecto",
       "sending": "Enviando...",
       "success": "¡Mensaje enviado con éxito!",
-      "error": "Error al enviar el mensaje. Por favor intenta de nuevo."
+      "error": "Error al enviar el mensaje. Por favor intenta de nuevo.",
+      "errors": {
+        "name": "Falta tu nombre",
+        "email": "Email no válido",
+        "message": "Cuéntame algo"
+      },
+      "successSubtext": "Te respondo en menos de 24 horas."
     },
     "services": {
       "aiConsulting": "Consultoría y Estrategia de IA",
@@ -702,7 +724,8 @@
     "quickLinks": "Enlaces Rápidos",
     "connect": "Conectar",
     "rights": "Todos los derechos reservados",
-    "tagline": "Transformando negocios con inteligencia artificial"
+    "tagline": "Transformando negocios con inteligencia artificial",
+    "backToTop": "Volver arriba ↑"
   },
   "common": {
     "learnMore": "Saber Más",
