@@ -22,7 +22,7 @@ const socialLinks = [
   { name: 'LinkedIn', url: 'https://linkedin.com/in/placeholder', color: '#0A66C2' },
   { name: 'GitHub', url: 'https://github.com/placeholder', color: '#1A1A1A' },
   { name: 'Research Gate', url: 'https://researchgate.net/profile/placeholder', color: '#00D0B6' },
-  { name: 'Email', url: 'mailto:luis@example.com', color: '#DC143C' },
+  { name: 'Email', url: 'mailto:luis@example.com', color: '#c10e35' },
 ];
 
 export const Footer: React.FC = () => {

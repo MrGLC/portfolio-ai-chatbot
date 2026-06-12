@@ -49,11 +49,11 @@ const StaticAvatar: React.FC<{ isUser: boolean }> = ({ isUser }) => (
     transform="rotate(45deg)"
     borderRadius="4px"
     bgGradient={isUser
-      ? 'linear(135deg, #FFD700, #B8860B)'
-      : 'linear(135deg, #DC143C, #8B0000)'}
+      ? 'linear(135deg, brand.goldBright, brand.goldRich)'
+      : 'linear(135deg, brand.secondary, brand.redDark)'}
     boxShadow={isUser
-      ? '0 0 8px rgba(255, 215, 0, 0.5)'
-      : '0 0 8px rgba(220, 20, 60, 0.5)'}
+      ? '0 0 8px rgba(232, 183, 101, 0.5)'
+      : '0 0 8px rgba(193, 14, 53, 0.5)'}
     aria-hidden="true"
   />
 );

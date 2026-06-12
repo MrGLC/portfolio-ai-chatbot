@@ -69,16 +69,16 @@
 }
 
 ::-webkit-scrollbar-track {
-  background: #F5E6D3;
+  background: #f6efe2;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #DC143C;
+  background: #c10e35;
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #B91C3C;
+  background: #7e0a23;
 }
 
 /* Selection colors - Royal Theme */
@@ -94,7 +94,7 @@
 
 /* Gradient text effect for luxury headings */
 .gradient-text {
-  background: linear-gradient(135deg, #DC143C, #FFD700);
+  background: linear-gradient(135deg, #c10e35, #c2a05c);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -113,7 +113,7 @@
   left: 50%;
   width: 0;
   height: 0;
-  background: rgba(255, 215, 0, 0.5);
+  background: rgba(194, 160, 92, 0.5);
   border-radius: 50%;
   transform: translate(-50%, -50%);
   transition: width 0.6s ease, height 0.6s ease;
@@ -137,7 +137,7 @@
   left: 0;
   right: 0;
   height: 4px;
-  background: linear-gradient(90deg, #DC143C, #FFD700);
+  background: linear-gradient(90deg, #c10e35, #c2a05c);
   transform: translateX(-100%);
   transition: transform 0.5s ease;
 }
@@ -156,18 +156,18 @@ body {
 
 /* Royal Portfolio specific utilities */
 .royal-gradient-bg {
-  background: linear-gradient(135deg, #DC143C 0%, #B91C3C 100%);
+  background: linear-gradient(135deg, #c10e35 0%, #7e0a23 100%);
 }
 
 .cream-gradient-bg {
-  background: linear-gradient(135deg, #FBF7F0 0%, #F5E6D3 100%);
+  background: linear-gradient(135deg, #fbf7ef 0%, #f6efe2 100%);
 }
 
 .gold-shimmer {
   background: linear-gradient(
     90deg,
     transparent,
-    rgba(255, 215, 0, 0.3),
+    rgba(194, 160, 92, 0.3),
     transparent
   );
   animation: shimmer 2s infinite;
@@ -175,15 +175,15 @@ body {
 
 /* Royal gradient patterns from design system */
 .royal-gradient {
-  background: linear-gradient(135deg, #F5E6D3 0%, #DC143C 50%, #FFD700 100%);
+  background: linear-gradient(135deg, #f6efe2 0%, #c10e35 50%, #c2a05c 100%);
 }
 
 .royal-gradient-subtle {
-  background: linear-gradient(135deg, #F5E6D3 0%, #FFFAED 100%);
+  background: linear-gradient(135deg, #f6efe2 0%, #f9f3e9 100%);
 }
 
 .royal-gradient-accent {
-  background: linear-gradient(90deg, #DC143C 0%, #FFD700 100%);
+  background: linear-gradient(90deg, #c10e35 0%, #c2a05c 100%);
 }
 
 /* Pixelated effect */
@@ -207,7 +207,7 @@ body {
 
 .hover-lift:hover {
   transform: translate3d(0, -2px, 0);
-  box-shadow: 0 8px 32px rgba(220, 20, 60, 0.15);
+  box-shadow: 0 8px 32px rgba(193, 14, 53, 0.15);
 }
 
 .hover-glow {
@@ -220,10 +220,10 @@ body {
 
 @keyframes pulse-glow {
   0%, 100% {
-    box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+    box-shadow: 0 0 20px rgba(194, 160, 92, 0.3);
   }
   50% {
-    box-shadow: 0 0 40px rgba(255, 215, 0, 0.5);
+    box-shadow: 0 0 40px rgba(194, 160, 92, 0.5);
   }
 }
 

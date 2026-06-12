@@ -509,7 +509,7 @@ export const HomePage: React.FC = () => {
                       left={0}
                       right={0}
                       bottom={0}
-                      bg={`linear-gradient(135deg, ${item % 2 === 0 ? '#DC143C' : '#FFD700'}, ${item % 2 === 0 ? '#8B0000' : '#FFA500'})`}
+                      bg={`linear-gradient(135deg, ${item % 2 === 0 ? 'var(--chakra-colors-brand-secondary)' : 'var(--chakra-colors-brand-goldBright)'}, ${item % 2 === 0 ? 'var(--chakra-colors-brand-redDark)' : 'var(--chakra-colors-brand-goldRich)'})`}
                       opacity={0.9}
                       transition="transform 0.4s ease"
                       _groupHover={{
