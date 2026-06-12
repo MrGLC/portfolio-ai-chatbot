@@ -8,93 +8,46 @@ import {
   HStack,
   Stack,
   SimpleGrid,
+  Grid,
   Card,
   CardBody,
   Button,
   Icon,
   List,
   ListItem,
-  ListIcon,
-  Badge,
-  Divider,
   Flex,
-  useColorModeValue,
 } from '@chakra-ui/react';
-import { 
-  CheckCircleIcon, 
-  StarIcon, 
-  TimeIcon,
-  PhoneIcon,
-  CalendarIcon
-} from '@chakra-ui/icons';
 import {
-  InfoIcon,
-  ViewIcon,
-  ChatIcon,
-  ArrowForwardIcon,
-  SettingsIcon,
-  ExternalLinkIcon
+  CheckCircleIcon,
+  PhoneIcon,
+  CalendarIcon,
 } from '@chakra-ui/icons';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
+import { Kicker } from '../components/Kicker';
 
-const MotionCard = motion.create(Card);
 const MotionBox = motion.div;
 
 export const ConsultingPage: React.FC = () => {
   const { t } = useTranslation();
 
+  // Hairline-cell services (handoff §6): numerals 01-08 in Bodoni gold
   const services = [
-    {
-      key: 'aiStrategy',
-      icon: InfoIcon,
-    },
-    {
-      key: 'mlDevelopment',
-      icon: SettingsIcon,
-    },
-    {
-      key: 'computerVision',
-      icon: ViewIcon,
-    },
-    {
-      key: 'nlp',
-      icon: ChatIcon,
-    },
-    {
-      key: 'dataAnalysis',
-      icon: StarIcon,
-    },
-    {
-      key: 'training',
-      icon: CalendarIcon,
-    },
-    {
-      key: 'mcp',
-      icon: ExternalLinkIcon,
-    },
-    {
-      key: 'platformDev',
-      icon: ArrowForwardIcon,
-    },
+    'aiStrategy',
+    'mlDevelopment',
+    'computerVision',
+    'nlp',
+    'dataAnalysis',
+    'training',
+    'mcp',
+    'platformDev',
   ];
 
+  // Process steps: numbered gold-border circles (current content uses "Paso 1/2/3")
   const process = [
-    {
-      step: 1,
-      key: 'discovery',
-      icon: InfoIcon,
-    },
-    {
-      step: 2,
-      key: 'mvp',
-      icon: SettingsIcon,
-    },
-    {
-      step: 3,
-      key: 'deployment',
-      icon: CheckCircleIcon,
-    },
+    { step: '1', key: 'discovery' },
+    { step: '2', key: 'mvp' },
+    { step: '3', key: 'deployment' },
   ];
   return (
     <Box>
@@ -105,13 +58,18 @@ export const ConsultingPage: React.FC = () => {
         color="white"
         overflow="hidden"
       >
-        <Container maxW="7xl" py={{ base: 16, md: 24 }} position="relative" zIndex={1}>
+        <Container maxW="1180px" py={{ base: 16, md: 24 }} position="relative" zIndex={1}>
           <VStack spacing={8} textAlign="center">
             <MotionBox
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
             >
+              <Box mb={5}>
+                <Kicker centered color="brand.goldBright">
+                  {t('consulting.hero.kicker')}
+                </Kicker>
+              </Box>
               <Heading as="h1" textStyle="pageTitle" mb={4}>
                 {t('consulting.hero.title')}
               </Heading>
@@ -158,69 +116,64 @@ export const ConsultingPage: React.FC = () => {
         />
       </Box>
 
-      {/* Services Section - Cream Background */}
+      {/* Services Section - Cream Background, hairline-cell grid (handoff §6) */}
       <Box bg="brand.creamSoft" pt={{ base: 8, md: 20 }} pb={{ base: 28, md: 32 }} position="relative">
-        <Container maxW="7xl">
+        <Container maxW="1180px">
           <VStack spacing={{ base: 6, md: 12 }}>
-            <Box textAlign="center">
-              <Heading textStyle="sectionTitle" color="brand.text" mb={{ base: 2, md: 4 }}>
+            <VStack spacing={{ base: 3, md: 4 }} textAlign="center">
+              <Kicker centered>{t('consulting.hero.kicker')}</Kicker>
+              <Heading textStyle="sectionTitle" color="brand.text">
                 {t('consulting.servicesSection.title')}
               </Heading>
               <Text textStyle="lead" color="brand.textMuted" maxW="600px" mx="auto">
                 {t('consulting.servicesSection.subtitle')}
               </Text>
-            </Box>
+            </VStack>
 
-            <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={{ base: 3, md: 6 }} width="full">
-              {services.map((service, index) => (
-                <MotionCard
-                  key={service.key}
-                  variant="royal"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: Math.min(index * 0.06, 0.3) }}
+            {/* Cells joined by hairlines: 1px gaps over a faint ink wrapper */}
+            <Grid
+              templateColumns={{ base: '1fr', md: 'repeat(2, 1fr)', lg: 'repeat(4, 1fr)' }}
+              gap="1px"
+              bg="rgba(24,20,40,.1)"
+              borderRadius="12px"
+              overflow="hidden"
+              width="full"
+            >
+              {services.map((serviceKey, index) => (
+                <Box
+                  key={serviceKey}
+                  bg="brand.cream"
+                  p={{ base: 5, md: 7 }}
+                  transition="background .3s ease"
+                  _hover={{ bg: 'brand.bgCard' }}
                 >
-                  <Flex
-                    direction={{ base: 'row', md: 'column' }}
-                    align={{ base: 'center', md: 'stretch' }}
-                    gap={{ base: 3, md: 4 }}
-                    p={{ base: 2.5, md: 6 }}
+                  <Text
+                    fontFamily="heading"
+                    fontWeight={600}
+                    fontSize="38px"
+                    lineHeight={1}
+                    color="brand.accent"
+                    mb={3}
                   >
-                    <Box
-                      w={{ base: '40px', md: '60px' }}
-                      h={{ base: '40px', md: '60px' }}
-                      flexShrink={0}
-                      bgGradient="linear(135deg, red.600, brand.secondary)"
-                      borderRadius="12px"
-                      display="flex"
-                      alignItems="center"
-                      justifyContent="center"
-                    >
-                      <Icon as={service.icon} w={{ base: 5, md: 8 }} h={{ base: 5, md: 8 }} color="white" />
-                    </Box>
-
-                    <Box flex="1" minW={0}>
-                      <Heading as="h3" textStyle="cardTitle" color="brand.text" mb={{ base: 0.5, md: 2 }}>
-                        {t(`consulting.services.${service.key}.title`)}
-                      </Heading>
-
-                      <Text color="brand.textMuted" fontSize={{ base: 'xs', md: 'sm' }} noOfLines={{ base: 1, md: 3 }}>
-                        {t(`consulting.services.${service.key}.description`)}
-                      </Text>
-
-                      <List spacing={2} mt={3} display={{ base: 'none', md: 'block' }}>
-                        {Object.keys(t(`consulting.services.${service.key}.features`, { returnObjects: true })).slice(0, 3).map((featureKey, i) => (
-                          <ListItem key={i} fontSize="xs" color="brand.textMuted">
-                            <Icon as={CheckCircleIcon} color="red.600" mr={2} />
-                            {t(`consulting.services.${service.key}.features.${featureKey}`)}
-                          </ListItem>
-                        ))}
-                      </List>
-                    </Box>
-                  </Flex>
-                </MotionCard>
+                    {String(index + 1).padStart(2, '0')}
+                  </Text>
+                  <Heading as="h3" fontFamily="heading" fontWeight={600} fontSize="19px" color="brand.text" mb={2}>
+                    {t(`consulting.services.${serviceKey}.title`)}
+                  </Heading>
+                  <Text color="brand.textMuted" fontSize="sm" lineHeight="1.65">
+                    {t(`consulting.services.${serviceKey}.description`)}
+                  </Text>
+                  <List spacing={1.5} mt={3} display={{ base: 'none', md: 'block' }}>
+                    {Object.keys(t(`consulting.services.${serviceKey}.features`, { returnObjects: true })).slice(0, 3).map((featureKey, i) => (
+                      <ListItem key={i} fontSize="xs" color="brand.textMuted">
+                        <Icon as={CheckCircleIcon} color="brand.secondary" mr={2} />
+                        {t(`consulting.services.${serviceKey}.features.${featureKey}`)}
+                      </ListItem>
+                    ))}
+                  </List>
+                </Box>
               ))}
-            </SimpleGrid>
+            </Grid>
           </VStack>
         </Container>
 
@@ -237,9 +190,9 @@ export const ConsultingPage: React.FC = () => {
         />
       </Box>
 
-      {/* Process Section - White Background */}
+      {/* Process Section - White Background, gold-circle steps (handoff §6) */}
       <Box bg="white" pt={{ base: 12, md: 20 }} pb={32} position="relative">
-        <Container maxW="7xl">
+        <Container maxW="1180px">
           <VStack spacing={12}>
             <Box textAlign="center">
               <Heading textStyle="sectionTitle" color="brand.text" mb={4}>
@@ -250,61 +203,41 @@ export const ConsultingPage: React.FC = () => {
               </Text>
             </Box>
 
-            <SimpleGrid columns={{ base: 1, md: 3 }} spacing={8} width="full">
+            <SimpleGrid columns={{ base: 1, md: 3 }} spacing={{ base: 10, md: 8 }} width="full">
               {process.map((step, index) => (
                 <MotionBox
-                  key={index}
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: index * 0.2 }}
+                  key={step.key}
+                  initial={{ opacity: 0, y: 16 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.15 }}
                 >
-                  <VStack
-                    align="center"
-                    spacing={4}
-                    p={8}
-                    position="relative"
-                  >
-                    {index < process.length - 1 && (
-                      <Box
-                        position="absolute"
-                        right={{ base: '50%', md: '-40px' }}
-                        top={{ base: 'auto', md: '50px' }}
-                        bottom={{ base: '-40px', md: 'auto' }}
-                        w={{ base: '2px', md: '80px' }}
-                        h={{ base: '80px', md: '2px' }}
-                        bg="red.600"
-                        opacity={0.3}
-                        transform={{ base: 'translateX(50%)', md: 'none' }}
-                      />
-                    )}
-                    
-                    <Box
-                      w="80px"
-                      h="80px"
-                      bgGradient="linear(135deg, red.600, brand.secondary)"
+                  <VStack align={{ base: 'center', md: 'flex-start' }} spacing={4} textAlign={{ base: 'center', md: 'left' }}>
+                    {/* 34px gold-border circle with the step number */}
+                    <Flex
+                      w="34px"
+                      h="34px"
                       borderRadius="full"
-                      display="flex"
-                      alignItems="center"
-                      justifyContent="center"
-                      boxShadow="0 8px 24px rgba(196, 30, 58, 0.3)"
+                      border="1px solid"
+                      borderColor="brand.accent"
+                      align="center"
+                      justify="center"
+                      fontFamily="heading"
+                      fontWeight={600}
+                      fontSize="15px"
+                      color="brand.goldRich"
+                      flexShrink={0}
                     >
-                      <Icon as={step.icon} w={10} h={10} color="white" />
-                    </Box>
-                    
-                    <VStack spacing={2} textAlign="center">
-                      <Badge bg="red.600" color="white" px={3} py={1} borderRadius="full">
-                        {t(`consulting.process.steps.${step.key}.step`)}
-                      </Badge>
-                      <Heading as="h3" textStyle="cardTitle" color="brand.text">
-                        {t(`consulting.process.steps.${step.key}.title`)}
-                      </Heading>
-                      <Text color="brand.textMuted" fontSize="sm">
-                        {t(`consulting.process.steps.${step.key}.description`)}
-                      </Text>
-                      <Text color="red.600" fontWeight="bold" fontSize="sm">
-                        {t(`consulting.process.steps.${step.key}.duration`)}
-                      </Text>
-                    </VStack>
+                      {step.step}
+                    </Flex>
+                    <Heading as="h3" fontSize="18px" fontFamily="body" fontWeight={600} color="brand.text">
+                      {t(`consulting.process.steps.${step.key}.title`)}
+                    </Heading>
+                    <Text color="brand.textMuted" fontSize="14px" lineHeight="1.65">
+                      {t(`consulting.process.steps.${step.key}.description`)}
+                    </Text>
+                    <Text color="brand.secondary" fontWeight="600" fontSize="sm">
+                      {t(`consulting.process.steps.${step.key}.duration`)}
+                    </Text>
                   </VStack>
                 </MotionBox>
               ))}
@@ -333,7 +266,7 @@ export const ConsultingPage: React.FC = () => {
         pb={{ base: 12, md: 20 }}
         position="relative"
       >
-        <Container maxW="7xl">
+        <Container maxW="1180px">
           <VStack spacing={12}>
             <Box textAlign="center">
               <Heading textStyle="sectionTitle" mb={4}>
@@ -421,7 +354,7 @@ export const ConsultingPage: React.FC = () => {
 
       {/* Final CTA Section - Cream Background */}
       <Box bg="brand.creamSoft" py={{ base: 12, md: 20 }}>
-        <Container maxW="7xl">
+        <Container maxW="1180px">
           <Card
             bg="white"
             borderRadius="24px"

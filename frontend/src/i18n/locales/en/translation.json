@@ -269,6 +269,20 @@
         "title": "Optimize",
         "description": "Continuous improvement and scaling"
       }
+    },
+    "stats": {
+      "experience": {
+        "value": "3",
+        "label": "years in ML"
+      },
+      "mvp": {
+        "value": "2",
+        "label": "weeks to an MVP"
+      },
+      "cost": {
+        "value": "$2–3k",
+        "label": "MVP cost"
+      }
     }
   },
   "consulting": {
@@ -276,7 +290,8 @@
       "title": "AI Consulting Services",
       "description": "Transform your business with cutting-edge AI solutions. From strategy to deployment, we deliver measurable results fast.",
       "getStartedButton": "Get Started Today",
-      "viewPricingButton": "View Pricing"
+      "viewPricingButton": "View Pricing",
+      "kicker": "Consulting"
     },
     "servicesSection": {
       "title": "Our Services",
@@ -425,7 +440,8 @@
   "projects": {
     "hero": {
       "title": "Royal AI Solutions Portfolio",
-      "description": "Transforming businesses with cutting-edge artificial intelligence solutions. Explore our collection of innovative projects across multiple domains."
+      "description": "Transforming businesses with cutting-edge artificial intelligence solutions. Explore our collection of innovative projects across multiple domains.",
+      "kicker": "Portfolio"
     },
     "filters": {
       "all": "All",
@@ -563,7 +579,13 @@
       "consultationNote": "Consultation fee will be credited towards your project cost",
       "sending": "Sending...",
       "success": "Message sent successfully!",
-      "error": "Error sending message. Please try again."
+      "error": "Error sending message. Please try again.",
+      "errors": {
+        "name": "Your name is missing",
+        "email": "Invalid email",
+        "message": "Tell me something"
+      },
+      "successSubtext": "I will get back to you within 24 hours."
     },
     "services": {
       "aiConsulting": "AI Consulting & Strategy",
@@ -702,7 +724,8 @@
     "quickLinks": "Quick Links",
     "connect": "Connect",
     "rights": "All rights reserved",
-    "tagline": "Transforming businesses with artificial intelligence"
+    "tagline": "Transforming businesses with artificial intelligence",
+    "backToTop": "Back to top ↑"
   },
   "common": {
     "learnMore": "Learn More",

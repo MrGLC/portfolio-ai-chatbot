@@ -29,14 +29,18 @@ const bounceAnimation = keyframes`
   30% { transform: translateY(-10px); }
 `;
 
-// Colors
+// Couture palette (handoff tokens) — local constants for template strings;
+// the old brown set is remapped onto cream/gold/ink so every accent in the
+// panel reads as part of the La Realeza scheme.
 const colors = {
-  cream: '#FFF8E7',
-  lightCream: '#FFFEF9',
-  brown: '#8B6F47',
-  lightBrown: '#A68B5C',
-  darkBrown: '#6B5637',
-  glass: 'rgba(255, 248, 231, 0.1)',
+  cream: '#f6efe2',      // bg-cream
+  lightCream: '#fbf7ef', // bg-card
+  brown: '#a8863f',      // gold-text — labels, meta, hairlines
+  lightBrown: '#c2a05c', // gold — borders, scrollbar
+  darkBrown: '#181428',  // ink — primary text
+  crimson: '#c10e35',
+  crimsonDeep: '#7e0a23',
+  goldHairline: 'rgba(194, 160, 92, 0.45)',
 };
 
 
@@ -49,11 +53,11 @@ const StaticAvatar: React.FC<{ isUser: boolean }> = ({ isUser }) => (
     transform="rotate(45deg)"
     borderRadius="4px"
     bgGradient={isUser
-      ? 'linear(135deg, #FFD700, #B8860B)'
-      : 'linear(135deg, #DC143C, #8B0000)'}
+      ? 'linear(135deg, brand.goldBright, brand.goldRich)'
+      : 'linear(135deg, brand.secondary, brand.redDark)'}
     boxShadow={isUser
-      ? '0 0 8px rgba(255, 215, 0, 0.5)'
-      : '0 0 8px rgba(220, 20, 60, 0.5)'}
+      ? '0 0 8px rgba(232, 183, 101, 0.5)'
+      : '0 0 8px rgba(193, 14, 53, 0.5)'}
     aria-hidden="true"
   />
 );
@@ -71,29 +75,29 @@ function MessageBubble({ message, isUser }: { message: string; isUser: boolean }
         
         <Box maxW="75%">
           <Box
-            bg={isUser 
-              ? `linear-gradient(135deg, ${colors.lightBrown}DD, ${colors.brown}DD)` 
+            bg={isUser
+              ? `linear-gradient(135deg, ${colors.crimson}, ${colors.crimsonDeep})`
               : `linear-gradient(135deg, ${colors.lightCream}EE, ${colors.cream}EE)`
             }
             color={isUser ? '#FFFFFF' : colors.darkBrown}
             px={5}
             py={3}
-            borderRadius="16px"
-            boxShadow={isUser 
-              ? "0 12px 32px rgba(139, 111, 71, 0.15), 0 4px 8px rgba(139, 111, 71, 0.1)" 
-              : "0 12px 32px rgba(0, 0, 0, 0.05), 0 4px 8px rgba(0, 0, 0, 0.03)"
+            borderRadius="14px"
+            boxShadow={isUser
+              ? "0 16px 34px -16px rgba(193, 14, 53, 0.6)"
+              : "0 12px 32px rgba(24, 20, 40, 0.05), 0 4px 8px rgba(24, 20, 40, 0.03)"
             }
             position="relative"
             backdropFilter="blur(20px)"
             border="1px solid"
-            borderColor={isUser ? `${colors.brown}20` : `${colors.brown}15`}
+            borderColor={isUser ? 'transparent' : colors.goldHairline}
             overflow="hidden"
             transition="all 0.3s ease"
             _hover={{
               transform: 'translateY(-2px)',
-              boxShadow: isUser 
-                ? "0 16px 40px rgba(139, 111, 71, 0.2), 0 6px 12px rgba(139, 111, 71, 0.15)" 
-                : "0 16px 40px rgba(0, 0, 0, 0.08), 0 6px 12px rgba(0, 0, 0, 0.05)",
+              boxShadow: isUser
+                ? "0 20px 40px -16px rgba(193, 14, 53, 0.7)"
+                : "0 16px 40px rgba(24, 20, 40, 0.08), 0 6px 12px rgba(24, 20, 40, 0.05)",
             }}
             _before={{
               content: '""',
@@ -221,17 +225,18 @@ export const ThreeJsChatbot: React.FC = () => {
       <Container maxW="1200px">
         <Flex gap={8} align="stretch" minH="600px">
           {/* Chat Interface */}
+          {/* Handoff panel re-dress: bg-card surface + gold hairline border */}
           <Box
             flex={1}
-            bg={`linear-gradient(135deg, ${colors.lightCream}, ${colors.cream})`}
-            borderRadius="24px"
+            bg="brand.bgCard"
+            borderRadius="14px"
             overflow="hidden"
             position="relative"
             display="flex"
             flexDirection="column"
-            boxShadow="0 20px 60px rgba(0, 0, 0, 0.1)"
-            border="2px solid"
-            borderColor={`${colors.brown}20`}
+            boxShadow="0 34px 64px -42px rgba(24, 20, 40, 0.55)"
+            border="1px solid"
+            borderColor={colors.goldHairline}
             _before={{
               content: '""',
               position: 'absolute',
@@ -266,7 +271,8 @@ export const ThreeJsChatbot: React.FC = () => {
                   />
                   <VStack align="flex-start" spacing={0}>
                     <HStack spacing={2}>
-                      <Heading size="sm" color={colors.darkBrown}>
+                      {/* Bodoni chat title per handoff (heading font family) */}
+                      <Heading size="sm" fontFamily="heading" fontWeight="600" color={colors.darkBrown}>
                         {t('home.chatbot.chatTitle')}
                       </Heading>
                       <Badge colorScheme="yellow" fontSize="xs" title={t('home.chatbot.demoNotice')}>
@@ -399,51 +405,35 @@ export const ThreeJsChatbot: React.FC = () => {
                         animate={{ opacity: 1, scale: 1 }}
                         transition={{ delay: 0.6 + idx * 0.1 }}
                       >
+                        {/* Gold-bordered pill chips per handoff (theme Tag "gold" look,
+                            kept as Buttons so they stay keyboard/tap actionable) */}
                         <Button
                           size="sm"
                           variant="outline"
-                          borderColor={`${colors.brown}30`}
-                          borderWidth="2px"
-                          color={colors.darkBrown}
-                          bg={`linear-gradient(135deg, ${colors.cream}88, ${colors.lightCream}88)`}
-                          backdropFilter="blur(10px)"
+                          borderColor={colors.goldHairline}
+                          borderWidth="1px"
+                          color="brand.goldRich"
+                          bg="transparent"
                           px={4}
                           py={3}
                           h="auto"
                           whiteSpace="normal"
                           textAlign="left"
                           fontSize="xs"
-                          fontWeight="450"
-                          borderRadius="12px"
-                          position="relative"
-                          overflow="hidden"
+                          fontWeight="600"
+                          letterSpacing="0.04em"
+                          borderRadius="20px"
+                          transition="all 0.25s ease"
                           _hover={{
-                            bg: `linear-gradient(135deg, ${colors.lightBrown}, ${colors.brown})`,
-                            borderColor: colors.brown,
-                            color: colors.cream,
-                            transform: 'translateY(-2px) scale(1.02)',
-                            boxShadow: '0 8px 20px rgba(139, 111, 71, 0.3)',
-                            _before: {
-                              opacity: 1,
-                            },
-                          }}
-                          _before={{
-                            content: '""',
-                            position: 'absolute',
-                            top: 0,
-                            left: 0,
-                            right: 0,
-                            bottom: 0,
-                            bg: 'linear-gradient(180deg, rgba(255,255,255,0.1), transparent)',
-                            opacity: 0,
-                            transition: 'opacity 0.3s ease',
+                            bg: 'transparent',
+                            borderColor: 'brand.secondary',
+                            color: 'brand.secondary',
+                            transform: 'translateY(-2px)',
+                            boxShadow: '0 10px 22px -14px rgba(193, 14, 53, 0.5)',
                           }}
                           onClick={() => handleSend(question)}
                         >
-                          <HStack spacing={3} align="center">
-                            <Text fontSize="lg">💬</Text>
-                            <Text flex={1}>{question}</Text>
-                          </HStack>
+                          <Text flex={1}>{question}</Text>
                         </Button>
                       </MotionBox>
                     ))}
@@ -459,8 +449,8 @@ export const ThreeJsChatbot: React.FC = () => {
               p={4}
               bg={`linear-gradient(180deg, ${colors.cream}DD, ${colors.lightCream}DD)`}
               backdropFilter="blur(20px)"
-              borderTop="2px solid"
-              borderColor={`${colors.brown}15`}
+              borderTop="1px solid"
+              borderColor={colors.goldHairline}
               position="relative"
               zIndex={2}
             >
@@ -474,9 +464,9 @@ export const ThreeJsChatbot: React.FC = () => {
                       placeholder={t('home.chatbot.placeholder')}
                       aria-label={t('home.chatbot.placeholder')}
                       bg={`linear-gradient(135deg, ${colors.lightCream}, ${colors.cream})`}
-                      border="2px solid"
-                      borderColor={`${colors.brown}30`}
-                      borderRadius="16px"
+                      border="1px solid"
+                      borderColor={colors.goldHairline}
+                      borderRadius="8px"
                       px={5}
                       py={5}
                       pr={16}
@@ -484,12 +474,11 @@ export const ThreeJsChatbot: React.FC = () => {
                       fontWeight="450"
                       transition="all 0.3s ease"
                       _focus={{
-                        borderColor: colors.brown,
-                        boxShadow: `0 0 0 3px ${colors.brown}20, 0 8px 24px rgba(139, 111, 71, 0.15)`,
-                        transform: 'scale(1.01)',
+                        borderColor: colors.crimson,
+                        boxShadow: `0 0 0 1px ${colors.crimson}`,
                       }}
                       _hover={{
-                        borderColor: `${colors.brown}50`,
+                        borderColor: colors.lightBrown,
                       }}
                       color={colors.darkBrown}
                       _placeholder={{ 
@@ -507,21 +496,10 @@ export const ThreeJsChatbot: React.FC = () => {
                       <Button
                         onClick={() => handleSend()}
                         aria-label={t('home.chatbot.send')}
-                        bg={`linear-gradient(135deg, ${colors.lightBrown}, ${colors.brown})`}
-                        color={colors.cream}
+                        variant="primary"
                         size="md"
-                        borderRadius="16px"
+                        borderRadius="8px"
                         px={5}
-                        boxShadow="0 4px 12px rgba(139, 111, 71, 0.3)"
-                        transition="all 0.2s ease"
-                        _hover={{
-                          bg: `linear-gradient(135deg, ${colors.brown}, ${colors.darkBrown})`,
-                          transform: 'translateY(-2px) scale(1.05)',
-                          boxShadow: '0 6px 20px rgba(139, 111, 71, 0.4)',
-                        }}
-                        _active={{
-                          transform: 'translateY(0) scale(0.98)',
-                        }}
                       >
                         <ArrowForwardIcon boxSize={5} />
                       </Button>

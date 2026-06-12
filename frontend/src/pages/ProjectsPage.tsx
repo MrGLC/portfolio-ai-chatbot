@@ -26,10 +26,11 @@ import {
   Wrap,
   WrapItem,
 } from '@chakra-ui/react';
-import { ExternalLinkIcon, ViewIcon, ChevronRightIcon } from '@chakra-ui/icons';
+import { ExternalLinkIcon } from '@chakra-ui/icons';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { durations, easings, delays, variants, transitions, createHoverAnimation } from '../theme/animations';
+import { Kicker } from '../components/Kicker';
 
 const MotionCard = motion.div;
 const MotionBox = motion.create(Box);
@@ -173,13 +174,18 @@ export const ProjectsPage: React.FC = () => {
           bgGradient="linear(to-br, red.700, red.900)"
           opacity={0.9}
         />
-        <Container maxW="7xl" position="relative" py={{ base: 16, md: 24 }}>
+        <Container maxW="1180px" position="relative" py={{ base: 16, md: 24 }}>
           <VStack spacing={8} textAlign="center">
             <MotionBox
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: durations.slow, ease: easings.smooth }}
             >
+              <Box mb={5}>
+                <Kicker centered color="brand.goldBright">
+                  {t('projects.hero.kicker')}
+                </Kicker>
+              </Box>
               <Heading
                 as="h1"
                 textStyle="pageTitle"
@@ -208,7 +214,7 @@ export const ProjectsPage: React.FC = () => {
 
       {/* Filter Section with Cream Background */}
       <Box bg="brand.creamWarm" py={8}>
-        <Container maxW="7xl">
+        <Container maxW="1180px">
           <Wrap spacing={4} justify="center">
             {categories.map((category) => (
               <WrapItem key={category.value}>
@@ -237,7 +243,7 @@ export const ProjectsPage: React.FC = () => {
 
       {/* Projects Grid with Alternating Background */}
       <Box bg="white" py={{ base: 12, md: 20 }}>
-        <Container maxW="7xl">
+        <Container maxW="1180px">
           <AnimatePresence mode="wait">
             <motion.div
               key={selectedCategory}
@@ -259,56 +265,45 @@ export const ProjectsPage: React.FC = () => {
                     style={{ cursor: 'pointer' }}
                   >
                     <Card
-                      bg="white"
-                      overflow="hidden"
-                      borderRadius="xl"
-                      boxShadow="lg"
+                      variant="royal"
                       onClick={() => handleProjectClick(project)}
-                      _hover={{
-                        transform: 'translateY(-8px) scale(1.02)',
-                        boxShadow: '2xl',
-                      }}
                       position="relative"
-                      transition={transitions.normal}
+                      h="full"
                     >
-                      {/* Gradient Placeholder Image */}
+                      {/* Gradient Placeholder Image with serial number (handoff §4) */}
                       <Box
                         h="200px"
                         bgGradient={project.gradient}
                         position="relative"
                       >
-                      <Box
-                        position="absolute"
-                        inset={0}
-                        bg="blackAlpha.200"
-                        opacity={0}
-                        transition={transitions.opacity}
-                        _hover={{ opacity: 1 }}
-                      />
-                      <Badge
-                        position="absolute"
-                        top={4}
-                        right={4}
-                        colorScheme="red"
-                        bg="red.600"
-                        color="white"
-                        px={3}
-                        py={1}
-                        borderRadius="full"
-                        fontSize="xs"
-                        fontWeight="bold"
-                      >
-                        {t(project.categoryKey)}
-                      </Badge>
-                    </Box>
+                        {/* Serial number: Bodoni 34px crimson at 16% */}
+                        <Text
+                          position="absolute"
+                          top={3}
+                          left={4}
+                          fontFamily="heading"
+                          fontWeight={600}
+                          fontSize="34px"
+                          lineHeight={1}
+                          color="brand.secondary"
+                          opacity={0.16}
+                          aria-hidden="true"
+                        >
+                          {String(index + 1).padStart(2, '0')}
+                        </Text>
+                      </Box>
 
                     <CardBody p={6}>
                       <VStack align="stretch" spacing={4}>
                         <Box>
-                          <Heading as="h3" textStyle="cardTitle" color="gray.800" mb={2}>
+                          {/* Category chip: gold-bordered pill */}
+                          <Tag variant="gold" mb={3}>
+                            {t(project.categoryKey)}
+                          </Tag>
+                          <Heading as="h3" textStyle="cardTitle" color="brand.text" mb={2}>
                             {t(project.titleKey)}
                           </Heading>
-                          <Text color="gray.600" fontSize="sm" lineHeight="tall">
+                          <Text color="brand.textMuted" fontSize="sm" lineHeight="tall">
                             {t(project.descriptionKey)}
                           </Text>
                         </Box>
@@ -319,8 +314,8 @@ export const ProjectsPage: React.FC = () => {
                             <WrapItem key={tech}>
                               <Tag
                                 size="sm"
-                                bg="gray.100"
-                                color="gray.700"
+                                bg="rgba(24,20,40,.05)"
+                                color="brand.textSecondary"
                                 fontWeight="500"
                                 borderRadius="full"
                                 px={3}
@@ -333,8 +328,8 @@ export const ProjectsPage: React.FC = () => {
                             <WrapItem>
                               <Tag
                                 size="sm"
-                                bg="red.50"
-                                color="red.700"
+                                bg="rgba(193,14,53,.07)"
+                                color="brand.secondary"
                                 fontWeight="500"
                                 borderRadius="full"
                                 px={3}
@@ -345,16 +340,22 @@ export const ProjectsPage: React.FC = () => {
                           )}
                         </Wrap>
 
-                        <Button
-                          variant="ghost"
-                          colorScheme="red"
-                          rightIcon={<ChevronRightIcon />}
-                          justifyContent="space-between"
-                          fontWeight="600"
-                          _hover={{ bg: 'red.50' }}
+                        {/* Case-study link: arrow gap grows 8→12px on hover (handoff §4) */}
+                        <Box
+                          as="span"
+                          display="inline-flex"
+                          alignItems="center"
+                          gap="8px"
+                          color="brand.secondary"
+                          fontWeight={600}
+                          fontSize="sm"
+                          transition="gap .25s ease"
+                          _hover={{ gap: '12px' }}
+                          py={2}
                         >
                           {t('projects.buttons.viewDetails')}
-                        </Button>
+                          <Box as="span" aria-hidden="true">→</Box>
+                        </Box>
                       </VStack>
                     </CardBody>
                     </Card>

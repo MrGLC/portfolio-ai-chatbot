@@ -22,7 +22,7 @@ const colors = {
     300: '#F5A3A3',
     400: '#EF7A7A',
     500: '#DC143C',
-    600: '#C41E3A',
+    600: '#c10e35', // handoff crimson — most-used solid red token
     700: '#A91B30',
     800: '#8F1626',
     900: '#74121D',
@@ -40,29 +40,35 @@ const colors = {
     900: '#998500',
   },
   
-  // Brand colors
+  // Brand colors — remapped to "La Realeza" handoff tokens
+  // (docs/design-reference/design_handoff_portfolio_la_realeza/README.md)
   brand: {
-    primary: '#F5E6D3',       // Cream (60%)
-    secondary: '#DC143C',     // Royal Red (30%)
-    accent: '#FFD700',        // Golden Yellow (10%)
-    text: '#1A1A1A',
-    textSecondary: '#525252',
+    primary: '#f6efe2',       // bg-cream (60%)
+    secondary: '#c10e35',     // crimson (accent principal)
+    accent: '#c2a05c',        // gold (líneas, bordes de chips)
+    text: '#181428',          // ink — titulares y texto principal
+    textSecondary: '#5f5970', // body-1 — párrafos largos
     surface: '#FFFFFF',
     border: '#E5E5E5',
     // Legacy mappings
     accentLight: '#FFF566',
-    redDark: '#A91B30',
+    redDark: '#7e0a23',       // crimson-deep — gradientes logo, aristas joya
     redDarker: '#74121D',
     redLight: '#F5A3A3',
-    cream: '#F5E6D3',
-    creamLight: '#FAF7F2',
+    cream: '#f6efe2',         // bg-cream — fondo base
+    creamLight: '#f9f3e9',    // bg-cream-alt — secciones alternas
     creamDark: '#E8D5B7',
-    goldRich: '#9A7209',
+    goldRich: '#a8863f',      // gold-text — eyebrows/kickers
     // Extended palette (formerly hardcoded in pages)
     redDeep: '#8B0000',
     creamSoft: '#FAF0E6',
     creamWarm: '#FFF8E7',
-    textMuted: '#666666',
+    textMuted: '#6a6478',     // body-2 — texto secundario
+    // Handoff additions
+    bgCard: '#fbf7ef',          // tarjetas de proyecto, hover celdas
+    goldBright: '#e8b765',      // joya corona, luz puntual dorada
+    creamText: '#f3e9d8',       // texto sobre fondo oscuro
+    placeholderTone: '#b3a98f', // logos marquee y placeholders
   },
   
   gray: {
@@ -85,15 +91,15 @@ const config: ThemeConfig = {
 };
 
 const fonts = {
-  heading: "'Playfair Display', Georgia, serif",
-  body: "'Inter', -apple-system, BlinkMacSystemFont, sans-serif",
+  heading: "'Bodoni Moda', Didot, 'Times New Roman', serif",
+  body: "'Hanken Grotesk', Inter, sans-serif",
   mono: "Menlo, Monaco, Consolas, monospace",
 };
 
 const styles = {
   global: () => ({
     body: {
-      bg: 'cream.500',
+      bg: 'brand.cream',
       color: 'brand.text',
       lineHeight: '1.5',
       fontFamily: 'body',
@@ -172,17 +178,18 @@ const components = {
       },
     },
     variants: {
+      // Crimson solid CTA per handoff ("Sombras crimson CTA")
       primary: {
-        bg: 'red.500',
+        bg: 'brand.secondary',
         color: 'white',
-        boxShadow: 'md',
+        boxShadow: '0 16px 34px -16px rgba(193,14,53,.9)',
         _hover: {
-          bg: 'red.600',
+          bg: 'brand.secondary',
           transform: 'translateY(-2px)',
-          boxShadow: 'royal',
+          boxShadow: '0 16px 34px -16px rgba(193,14,53,.9)',
         },
         _active: {
-          bg: 'red.700',
+          bg: 'brand.redDark',
           transform: 'translateY(0)',
         },
       },
@@ -289,17 +296,41 @@ const components = {
       },
     },
     variants: {
+      // Handoff project-card treatment ("Tarjetas de proyecto hover")
       royal: {
         container: {
-          bg: 'white',
-          borderRadius: '16px',
-          boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)',
+          bg: 'brand.bgCard',
+          borderRadius: '12px',
+          border: '1px solid',
+          borderColor: 'rgba(24,20,40,.09)',
+          boxShadow: 'none',
           overflow: 'hidden',
-          transition: 'box-shadow 0.3s ease, transform 0.3s ease',
+          transition: 'transform .35s, box-shadow .35s, border-color .35s',
           _hover: {
-            boxShadow: '0 12px 40px rgba(0, 0, 0, 0.15)',
-            transform: 'translateY(-4px)',
+            transform: 'translateY(-7px)',
+            borderColor: 'rgba(194,160,92,.6)',
+            boxShadow: '0 34px 64px -42px rgba(24,20,40,.55)',
           },
+        },
+      },
+    },
+  },
+  // Gold-bordered pill chips per handoff (categorías de proyecto)
+  Tag: {
+    variants: {
+      gold: {
+        container: {
+          bg: 'transparent',
+          border: '1px solid',
+          borderColor: 'rgba(194,160,92,.45)',
+          borderRadius: '20px',
+          color: 'brand.goldRich',
+          fontSize: '11px',
+          fontWeight: 600,
+          letterSpacing: '.06em',
+          textTransform: 'uppercase',
+          px: '9px',
+          py: '4px',
         },
       },
     },
@@ -421,35 +452,37 @@ const components = {
   },
 };
 
-// Unified typographic scale - use via textStyle= prop
+// Unified typographic scale per handoff ("Tipografía") - use via textStyle= prop
 const textStyles = {
   pageTitle: {
     fontFamily: 'heading',
-    fontWeight: 700,
-    fontSize: { base: '3xl', md: '5xl' },
-    lineHeight: 1.1,
+    fontWeight: 600,
+    fontSize: 'clamp(40px, 6vw, 76px)',
+    lineHeight: 1.02,
+    letterSpacing: '-0.015em',
   },
   sectionTitle: {
     fontFamily: 'heading',
     fontWeight: 600,
-    fontSize: { base: '2xl', md: '4xl' },
-    lineHeight: 1.2,
+    fontSize: 'clamp(32px, 4.6vw, 56px)',
+    lineHeight: 1.05,
   },
   cardTitle: {
     fontFamily: 'heading',
     fontWeight: 600,
-    fontSize: { base: 'lg', md: 'xl' },
+    fontSize: '24px',
     lineHeight: 1.3,
   },
   eyebrow: {
-    fontWeight: 500,
-    fontSize: 'sm',
-    letterSpacing: '2px',
+    fontWeight: 600,
+    fontSize: '12px',
+    letterSpacing: '0.28em',
     textTransform: 'uppercase',
+    color: 'brand.goldRich',
   },
   lead: {
-    fontSize: { base: 'md', md: 'xl' },
-    lineHeight: 1.6,
+    fontSize: { base: '15px', md: '19px' },
+    lineHeight: 1.7,
   },
 };
 
@@ -486,12 +519,21 @@ const radii = {
   full: '9999px',
 };
 
+// Handoff container: max-width 1180px. Pages currently use maxW="1400px"/"7xl";
+// the per-page sweep to container.xl (1180px) happens in Tasks 3-4.
+const sizes = {
+  container: {
+    xl: '1180px',
+  },
+};
+
 export const theme = extendTheme({
   config,
   colors,
   fonts,
   shadows,
   radii,
+  sizes,
   textStyles,
   styles,
   components,

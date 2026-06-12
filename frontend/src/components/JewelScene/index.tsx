@@ -4,9 +4,9 @@ import { Box, Text } from '@chakra-ui/react';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { usePerfProfile } from '../../hooks/usePerfProfile';
-import { JewelStoryProvider } from './useJewelStory';
-import FieldLayer from './FieldLayer';
+import { CAMERA_FOV, CAMERA_Z } from './chapterResolver';
 import JewelRig from './JewelRig';
+import type { JewelPointerHandlers } from './JewelRig';
 
 class SceneErrorBoundary extends React.Component<
   { children: React.ReactNode },
@@ -28,17 +28,26 @@ class SceneErrorBoundary extends React.Component<
 }
 
 /**
- * JewelScene — fixed, transparent scroll-story canvas.
+ * JewelScene — fixed transparent canvas ABOVE the content (jewel engine v2).
  *
- * The canvas spans the viewport at zIndex 0; Home sections sit above it at
- * zIndex >= 1 (so all content receives clicks first), while the hero's cream
- * background paints below it. The jewel travels and morphs with scroll
- * (JewelRig reads window.scrollY against the story-* section ranges).
+ * Stacking contract (handoff): content sections sit at zIndex 1, this canvas
+ * at zIndex 5 with pointerEvents none (content shows through — the canvas is
+ * transparent — and receives every click EXCEPT under the small hit proxy),
+ * Navigation at zIndex 1000 stays above the jewel.
+ *
+ * Hit proxy: the canvas never intercepts pointers; instead a circular <div>
+ * tracks the jewel's screen position (JewelRig projects the group center and
+ * calls onProxyRect ~every 6th frame; we mutate the div's style DIRECTLY —
+ * no setState in the frame loop). The proxy carries the pointer handlers,
+ * which the rig registers through a callback registry (registerPointerHandlers
+ * prop -> handlersRef): plain DOM PointerEvents, native setPointerCapture on
+ * the div. The proxy lives INSIDE the canvas wrapper so it shares the canvas
+ * coordinate origin in both wrapper modes (fixed / reduced-motion absolute).
  *
  * Frameloop: rAF already pauses when document.hidden, so 'always' is safe;
  * reduced-motion gets 'never' plus an absolute (non-fixed) wrapper so the
  * static first frame scrolls away with the hero instead of sticking to the
- * viewport over later sections.
+ * viewport over later sections (drag still re-renders via invalidate()).
  */
 export const JewelScene: React.FC = () => {
   const profile = usePerfProfile();
@@ -95,6 +104,26 @@ export const JewelScene: React.FC = () => {
     setHintDismissed(true);
   }, [hintDismissed]);
 
+  /* ---- Hit proxy plumbing ---- */
+  const proxyRef = useRef<HTMLDivElement>(null);
+  const handlersRef = useRef<JewelPointerHandlers | null>(null);
+
+  // Callback registry: the rig hands its pointer handlers up on mount.
+  const registerPointerHandlers = useCallback((h: JewelPointerHandlers | null) => {
+    handlersRef.current = h;
+  }, []);
+
+  // ~Every 6th frame the rig reports the jewel's screen circle (canvas CSS px).
+  // Direct DOM style mutation — the frame loop must never setState.
+  const handleProxyRect = useCallback((x: number, y: number, r: number) => {
+    const el = proxyRef.current;
+    if (!el) return;
+    const d = r * 2;
+    el.style.width = `${d}px`;
+    el.style.height = `${d}px`;
+    el.style.transform = `translate3d(${x - r}px, ${y - r}px, 0)`;
+  }, []);
+
   const showHint = heroVisible && !hintDismissed;
 
   return (
@@ -106,24 +135,52 @@ export const JewelScene: React.FC = () => {
         right={0}
         bottom={fixed ? 0 : undefined}
         height={fixed ? undefined : '100vh'}
-        zIndex={0}
+        zIndex={5}
+        pointerEvents="none"
         aria-hidden="true"
       >
         <SceneErrorBoundary>
-          <JewelStoryProvider>
-            <Canvas
-              dpr={profile.dpr}
-              frameloop={profile.animate ? 'always' : 'never'}
-              gl={{ antialias: profile.tier === 'full', alpha: true, powerPreference: 'high-performance' }}
-              camera={{ position: [0, 0, 8], fov: 40 }}
-            >
-              <Suspense fallback={null}>
-                <FieldLayer fadeWithHero />
-                <JewelRig onFirstInteraction={handleFirstInteraction} />
-              </Suspense>
-            </Canvas>
-          </JewelStoryProvider>
+          <Canvas
+            dpr={profile.dpr}
+            frameloop={profile.animate ? 'always' : 'never'}
+            gl={{ antialias: profile.tier === 'full', alpha: true, powerPreference: 'high-performance' }}
+            camera={{ position: [0, 0, CAMERA_Z], fov: CAMERA_FOV }}
+          >
+            <Suspense fallback={null}>
+              <JewelRig
+                onFirstInteraction={handleFirstInteraction}
+                onProxyRect={handleProxyRect}
+                registerPointerHandlers={registerPointerHandlers}
+              />
+            </Suspense>
+          </Canvas>
         </SceneErrorBoundary>
+
+        {/* Hit proxy — the only interactive surface of the jewel layer.
+            Starts at size 0 (no hits) until the rig reports the first rect.
+            touchAction none: pointermove drives the drag on touch too (the
+            rest of the viewport scrolls normally — the canvas ignores input). */}
+        <div
+          ref={proxyRef}
+          aria-hidden="true"
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: 0,
+            height: 0,
+            borderRadius: '50%',
+            pointerEvents: 'auto',
+            touchAction: 'pan-y', // vertical swipes scroll the page; taps + horizontal drags hit the jewel
+            cursor: 'grab',
+            zIndex: 6,
+          }}
+          onPointerDown={(e) => handlersRef.current?.down(e.nativeEvent, e.currentTarget)}
+          onPointerMove={(e) => handlersRef.current?.move(e.nativeEvent)}
+          onPointerUp={(e) => handlersRef.current?.up(e.nativeEvent, e.currentTarget)}
+          onPointerCancel={() => handlersRef.current?.cancel()}
+          onLostPointerCapture={() => handlersRef.current?.cancel()}
+        />
       </Box>
 
       {/* Drag hint pill — DOM overlay near the gem's hero position.
@@ -148,7 +205,7 @@ export const JewelScene: React.FC = () => {
               right: 0;
               display: flex;
               justify-content: center;
-              z-index: 1;
+              z-index: 7; /* above the z5 canvas + z6 hit proxy */
               pointer-events: none;
             }
             @media (min-width: 768px) {
@@ -173,8 +230,8 @@ export const JewelScene: React.FC = () => {
               bg="rgba(255, 255, 255, 0.65)"
               backdropFilter="blur(8px)"
               border="1px solid"
-              borderColor="rgba(184, 134, 11, 0.25)"
-              boxShadow="0 2px 12px rgba(26, 26, 26, 0.08)"
+              borderColor="rgba(194, 160, 92, 0.35)"
+              boxShadow="0 2px 12px rgba(24, 20, 40, 0.08)"
             >
               <Text
                 fontSize="xs"

@@ -20,14 +20,51 @@ import {
   Badge,
   Divider,
   Stack,
+  Flex,
 } from '@chakra-ui/react';
-import { EmailIcon, PhoneIcon, TimeIcon, CalendarIcon, ExternalLinkIcon, CheckIcon } from '@chakra-ui/icons';
-// Icons already imported from Chakra UI
+import { EmailIcon, PhoneIcon, CalendarIcon, ExternalLinkIcon, CheckIcon } from '@chakra-ui/icons';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
+import { Kicker } from '../components/Kicker';
 
 const MotionBox = motion.create(Box);
 const MotionCard = motion.create(Card);
+
+// Handoff dark band tokens (README "Design Tokens" + §8 Contacto)
+const DARK_GRADIENT = 'linear-gradient(165deg, #1c0710 0%, #330a1c 55%, #190610 100%)';
+const GLASS_PANEL_BG = 'rgba(255,255,255,.035)';
+const GLASS_PANEL_BORDER = 'rgba(243,233,216,.14)';
+const INPUT_BG = 'rgba(255,255,255,.04)';
+const INPUT_BORDER = 'rgba(243,233,216,.18)';
+const ERROR_COLOR = '#ff8aa3';
+const SUCCESS_GREEN = '#5fd29b';
+const EMAIL_REGEX = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
+
+// Shared styling for inputs/selects/textarea on the dark glass panel
+const darkFieldProps = {
+  variant: 'unstyled' as const,
+  bg: INPUT_BG,
+  border: '1px solid',
+  borderColor: INPUT_BORDER,
+  borderRadius: '8px',
+  color: 'brand.creamText',
+  px: 4,
+  py: 3,
+  transition: 'border-color .25s ease',
+  _hover: { borderColor: 'rgba(243,233,216,.32)' },
+  _focus: { borderColor: 'brand.accent', outline: 'none' },
+  _placeholder: { color: 'rgba(243,233,216,.45)' },
+};
+
+// 12px caps gold labels per handoff form spec
+const darkLabelProps = {
+  color: 'brand.accent',
+  fontSize: '12px',
+  fontWeight: 600,
+  letterSpacing: '0.12em',
+  textTransform: 'uppercase' as const,
+  mb: 2,
+};
 
 
 export const ContactPage: React.FC = () => {
@@ -105,37 +142,48 @@ export const ContactPage: React.FC = () => {
     timeline: '',
     message: '',
   });
+  const [errors, setErrors] = useState<{ name?: string; email?: string; message?: string }>({});
+  const [sent, setSent] = useState(false);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
+    // Clear the field's error as the user types
+    if (name === 'name' || name === 'email' || name === 'message') {
+      setErrors(prev => ({ ...prev, [name]: undefined }));
+    }
   };
 
+  // Handoff validation: name non-empty, email regex, message non-empty
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle form submission
+    const nextErrors: typeof errors = {};
+    if (!formData.name.trim()) nextErrors.name = t('contact.form.errors.name');
+    if (!EMAIL_REGEX.test(formData.email)) nextErrors.email = t('contact.form.errors.email');
+    if (!formData.message.trim()) nextErrors.message = t('contact.form.errors.message');
+    setErrors(nextErrors);
+    if (Object.keys(nextErrors).length > 0) return;
+    // Submit stays local for now — wire to backend/email service later
     console.log('Form submitted:', formData);
+    setSent(true);
   };
 
   return (
     <>
       {/* Hero Section with Red Background */}
       <Box bg="brand.secondary" py={{ base: 16, md: 24 }}>
-        <Container maxW="7xl">
+        <Container maxW="1180px">
           <VStack spacing={8} textAlign="center">
             <MotionBox
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
             >
-              <Text
-                textStyle="eyebrow"
-                color="white"
-                opacity={0.9}
-                mb={4}
-              >
-                {t('contact.hero.subtitle')}
-              </Text>
+              <Box mb={4}>
+                <Kicker centered color="brand.goldBright">
+                  {t('contact.hero.subtitle')}
+                </Kicker>
+              </Box>
               <Heading as="h1" textStyle="pageTitle" color="white" mb={4}>
                 {t('contact.hero.title')}
               </Heading>
@@ -170,166 +218,265 @@ export const ContactPage: React.FC = () => {
         </Container>
       </Box>
 
-      {/* Main Content Section */}
-      <Box bg="brand.primary">
-        <Container maxW="7xl" py={{ base: 12, md: 20 }}>
-          <VStack spacing={16} align="stretch">
-            <SimpleGrid columns={{ base: 1, lg: 2 }} spacing={12}>
-                {/* Contact Form - White/Cream Card */}
-                <MotionCard
-                  bg="white"
-                  boxShadow="xl"
-                  borderRadius="16px"
-                  overflow="hidden"
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.6 }}
+      {/* Form band — handoff §8: dark gradient, glass panel, gold labels.
+          Only this band goes dark; the rest of the page stays light. */}
+      <Box position="relative" overflow="hidden" background={DARK_GRADIENT}>
+        {/* Decorative radial glows: crimson top-right, gold bottom-left */}
+        <Box
+          position="absolute"
+          top="-140px"
+          right="-120px"
+          w="520px"
+          h="520px"
+          borderRadius="full"
+          bg="radial-gradient(circle, rgba(193,14,53,.25), transparent 65%)"
+          pointerEvents="none"
+          aria-hidden="true"
+        />
+        <Box
+          position="absolute"
+          bottom="-160px"
+          left="-140px"
+          w="560px"
+          h="560px"
+          borderRadius="full"
+          bg="radial-gradient(circle, rgba(194,160,92,.14), transparent 65%)"
+          pointerEvents="none"
+          aria-hidden="true"
+        />
+
+        <Container maxW="1180px" py="clamp(80px, 12vh, 140px)" position="relative">
+          <SimpleGrid columns={{ base: 1, lg: 2 }} spacing={{ base: 12, lg: 16 }} alignItems="center">
+            {/* Left: heading + direct email with gold underline (handoff §8) */}
+            <VStack align="flex-start" spacing={6}>
+              <Kicker color="brand.accent">{t('contact.info.title')}</Kicker>
+              <Heading as="h2" textStyle="sectionTitle" color="brand.creamText">
+                {t('contact.form.title')}
+              </Heading>
+              <Text textStyle="lead" color="rgba(243,233,216,.72)">
+                {t('contact.form.description')}
+              </Text>
+              <Link
+                href="mailto:ingbmluisgomez@gmail.com"
+                fontFamily="heading"
+                fontWeight={600}
+                fontSize="clamp(19px, 2.4vw, 28px)"
+                color="brand.creamText"
+                borderBottom="1px solid"
+                borderColor="brand.accent"
+                pb={1}
+                wordBreak="break-all"
+                _hover={{ color: 'brand.goldBright', textDecoration: 'none' }}
+              >
+                ingbmluisgomez@gmail.com
+              </Link>
+              <HStack spacing={6} pt={2}>
+                <Link
+                  href="https://linkedin.com/in/gomezgg"
+                  isExternal
+                  fontSize="sm"
+                  fontWeight={600}
+                  color="rgba(243,233,216,.8)"
+                  _hover={{ color: 'brand.goldBright', textDecoration: 'none' }}
                 >
-                  <CardBody p={8}>
-                    <VStack spacing={6} align="stretch">
-                      <Box>
-                        <Heading textStyle="cardTitle" as="h2" color="brand.text" mb={2}>
-                          {t('contact.form.title')}
-                        </Heading>
-                        <Text color="brand.textSecondary">
-                          {t('contact.form.description')}
+                  LinkedIn
+                </Link>
+                <Link
+                  href="https://github.com/MrGLC"
+                  isExternal
+                  fontSize="sm"
+                  fontWeight={600}
+                  color="rgba(243,233,216,.8)"
+                  _hover={{ color: 'brand.goldBright', textDecoration: 'none' }}
+                >
+                  GitHub
+                </Link>
+              </HStack>
+            </VStack>
+
+            {/* Right: glass form panel */}
+            <MotionBox
+              bg={GLASS_PANEL_BG}
+              border="1px solid"
+              borderColor={GLASS_PANEL_BORDER}
+              borderRadius="14px"
+              backdropFilter="blur(6px)"
+              p={{ base: 6, md: 8 }}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+            >
+              {sent ? (
+                /* Success state replaces the form (handoff Interactions) */
+                <VStack spacing={5} py={12} textAlign="center">
+                  <Flex
+                    w="64px"
+                    h="64px"
+                    borderRadius="full"
+                    border="2px solid"
+                    borderColor={SUCCESS_GREEN}
+                    align="center"
+                    justify="center"
+                  >
+                    <CheckIcon color={SUCCESS_GREEN} boxSize={6} />
+                  </Flex>
+                  <Heading fontFamily="heading" fontWeight={600} fontSize="26px" color="brand.creamText">
+                    {t('contact.form.success')}
+                  </Heading>
+                  <Text color="rgba(243,233,216,.7)" fontSize="sm">
+                    {t('contact.form.successSubtext')}
+                  </Text>
+                </VStack>
+              ) : (
+                <Box as="form" onSubmit={handleSubmit} noValidate>
+                  <VStack spacing={5}>
+                    <SimpleGrid columns={{ base: 1, md: 2 }} spacing={5} width="full">
+                      <FormControl isInvalid={!!errors.name}>
+                        <FormLabel {...darkLabelProps}>{t('contact.form.labels.name')}</FormLabel>
+                        <Input
+                          name="name"
+                          value={formData.name}
+                          onChange={handleInputChange}
+                          placeholder={t('contact.form.placeholders.fullName')}
+                          {...darkFieldProps}
+                        />
+                        {errors.name && (
+                          <Text fontSize="12px" color={ERROR_COLOR} mt={1}>{errors.name}</Text>
+                        )}
+                      </FormControl>
+
+                      <FormControl isInvalid={!!errors.email}>
+                        <FormLabel {...darkLabelProps}>{t('contact.form.labels.email')}</FormLabel>
+                        <Input
+                          name="email"
+                          type="email"
+                          value={formData.email}
+                          onChange={handleInputChange}
+                          placeholder={t('contact.form.placeholders.email')}
+                          {...darkFieldProps}
+                        />
+                        {errors.email && (
+                          <Text fontSize="12px" color={ERROR_COLOR} mt={1}>{errors.email}</Text>
+                        )}
+                      </FormControl>
+                    </SimpleGrid>
+
+                    <FormControl>
+                      <FormLabel {...darkLabelProps}>
+                        {t('contact.form.labels.company')}{' '}
+                        <Text as="span" fontSize="10px" color="rgba(243,233,216,.5)" textTransform="none">
+                          {t('contact.form.labels.companyOptional')}
                         </Text>
-                      </Box>
+                      </FormLabel>
+                      <Input
+                        name="company"
+                        value={formData.company}
+                        onChange={handleInputChange}
+                        placeholder={t('contact.form.placeholders.companyName')}
+                        {...darkFieldProps}
+                      />
+                    </FormControl>
 
-                      <Box as="form" onSubmit={handleSubmit}>
-                        <VStack spacing={4}>
-                          <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4} width="full">
-                            <FormControl isRequired>
-                              <FormLabel color="brand.text" fontSize="sm" fontWeight="600">{t('contact.form.labels.name')}</FormLabel>
-                              <Input
-                                name="name"
-                                value={formData.name}
-                                onChange={handleInputChange}
-                                variant="filled"
-                                placeholder={t('contact.form.placeholders.fullName')}
-                                size="lg"
-                              />
-                            </FormControl>
+                    <FormControl>
+                      <FormLabel {...darkLabelProps}>{t('contact.form.labels.service')}</FormLabel>
+                      <Select
+                        name="service"
+                        value={formData.service}
+                        onChange={handleInputChange}
+                        placeholder={t('contact.form.placeholders.selectService')}
+                        iconColor="rgba(243,233,216,.6)"
+                        sx={{ '> option': { color: '#181428', background: '#fff' } }}
+                        {...darkFieldProps}
+                      >
+                        {services.map((service) => (
+                          <option key={service} value={service}>
+                            {service}
+                          </option>
+                        ))}
+                      </Select>
+                    </FormControl>
 
-                            <FormControl isRequired>
-                              <FormLabel color="brand.text" fontSize="sm" fontWeight="600">{t('contact.form.labels.email')}</FormLabel>
-                              <Input
-                                name="email"
-                                type="email"
-                                value={formData.email}
-                                onChange={handleInputChange}
-                                variant="filled"
-                                placeholder={t('contact.form.placeholders.email')}
-                                size="lg"
-                              />
-                            </FormControl>
-                          </SimpleGrid>
+                    <SimpleGrid columns={{ base: 1, md: 2 }} spacing={5} width="full">
+                      <FormControl>
+                        <FormLabel {...darkLabelProps}>{t('contact.form.labels.budget')}</FormLabel>
+                        <Select
+                          name="budget"
+                          value={formData.budget}
+                          onChange={handleInputChange}
+                          placeholder={t('contact.form.placeholders.selectBudget')}
+                          iconColor="rgba(243,233,216,.6)"
+                          sx={{ '> option': { color: '#181428', background: '#fff' } }}
+                          {...darkFieldProps}
+                        >
+                          {budgetRanges.map((range) => (
+                            <option key={range.value} value={range.value}>
+                              {range.label}
+                            </option>
+                          ))}
+                        </Select>
+                      </FormControl>
 
-                          <FormControl>
-                            <FormLabel color="brand.text" fontSize="sm" fontWeight="600">
-                              {t('contact.form.labels.company')} <Text as="span" fontSize="xs" color="brand.textSecondary">{t('contact.form.labels.companyOptional')}</Text>
-                            </FormLabel>
-                            <Input
-                              name="company"
-                              value={formData.company}
-                              onChange={handleInputChange}
-                              variant="filled"
-                              placeholder={t('contact.form.placeholders.companyName')}
-                              size="lg"
-                            />
-                          </FormControl>
+                      <FormControl>
+                        <FormLabel {...darkLabelProps}>{t('contact.form.labels.timeline')}</FormLabel>
+                        <Select
+                          name="timeline"
+                          value={formData.timeline}
+                          onChange={handleInputChange}
+                          placeholder={t('contact.form.placeholders.selectTimeline')}
+                          iconColor="rgba(243,233,216,.6)"
+                          sx={{ '> option': { color: '#181428', background: '#fff' } }}
+                          {...darkFieldProps}
+                        >
+                          {timelines.map((timeline) => (
+                            <option key={timeline.value} value={timeline.value}>
+                              {timeline.label}
+                            </option>
+                          ))}
+                        </Select>
+                      </FormControl>
+                    </SimpleGrid>
 
-                          <FormControl isRequired>
-                            <FormLabel color="brand.text" fontSize="sm" fontWeight="600">{t('contact.form.labels.service')}</FormLabel>
-                            <Select
-                              name="service"
-                              value={formData.service}
-                              onChange={handleInputChange}
-                              variant="filled"
-                              placeholder={t('contact.form.placeholders.selectService')}
-                              size="lg"
-                            >
-                              {services.map((service) => (
-                                <option key={service} value={service}>
-                                  {service}
-                                </option>
-                              ))}
-                            </Select>
-                          </FormControl>
+                    <FormControl isInvalid={!!errors.message}>
+                      <FormLabel {...darkLabelProps}>{t('contact.form.labels.message')}</FormLabel>
+                      <Textarea
+                        name="message"
+                        value={formData.message}
+                        onChange={handleInputChange}
+                        placeholder={t('contact.form.placeholders.message')}
+                        rows={4}
+                        {...darkFieldProps}
+                      />
+                      {errors.message && (
+                        <Text fontSize="12px" color={ERROR_COLOR} mt={1}>{errors.message}</Text>
+                      )}
+                    </FormControl>
 
-                          <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4} width="full">
-                            <FormControl isRequired>
-                              <FormLabel color="brand.text" fontSize="sm" fontWeight="600">{t('contact.form.labels.budget')}</FormLabel>
-                              <Select
-                                name="budget"
-                                value={formData.budget}
-                                onChange={handleInputChange}
-                                variant="filled"
-                                placeholder={t('contact.form.placeholders.selectBudget')}
-                                size="lg"
-                              >
-                                {budgetRanges.map((range) => (
-                                  <option key={range.value} value={range.value}>
-                                    {range.label}
-                                  </option>
-                                ))}
-                              </Select>
-                            </FormControl>
-
-                            <FormControl isRequired>
-                              <FormLabel color="brand.text" fontSize="sm" fontWeight="600">{t('contact.form.labels.timeline')}</FormLabel>
-                              <Select
-                                name="timeline"
-                                value={formData.timeline}
-                                onChange={handleInputChange}
-                                variant="filled"
-                                placeholder={t('contact.form.placeholders.selectTimeline')}
-                                size="lg"
-                              >
-                                {timelines.map((timeline) => (
-                                  <option key={timeline.value} value={timeline.value}>
-                                    {timeline.label}
-                                  </option>
-                                ))}
-                              </Select>
-                            </FormControl>
-                          </SimpleGrid>
-
-                          <FormControl isRequired>
-                            <FormLabel color="brand.text" fontSize="sm" fontWeight="600">{t('contact.form.labels.message')}</FormLabel>
-                            <Textarea
-                              name="message"
-                              value={formData.message}
-                              onChange={handleInputChange}
-                              variant="filled"
-                              placeholder={t('contact.form.placeholders.message')}
-                              rows={5}
-                              size="lg"
-                            />
-                          </FormControl>
-
-                          <VStack spacing={3} width="full">
-                            <Button
-                              type="submit"
-                              variant="secondary"
-                              size="lg"
-                              width="full"
-                              rightIcon={<EmailIcon />}
-                            >
-                              {t('contact.form.submit')}
-                            </Button>
-                            <Text fontSize="sm" color="brand.textSecondary" textAlign="center">
-                              {t('contact.form.consultationNote')}
-                            </Text>
-                          </VStack>
-                        </VStack>
-                      </Box>
+                    <VStack spacing={3} width="full">
+                      <Button
+                        type="submit"
+                        variant="primary"
+                        size="lg"
+                        width="full"
+                        rightIcon={<EmailIcon />}
+                      >
+                        {t('contact.form.submit')}
+                      </Button>
+                      <Text fontSize="sm" color="rgba(243,233,216,.55)" textAlign="center">
+                        {t('contact.form.consultationNote')}
+                      </Text>
                     </VStack>
-                  </CardBody>
-                </MotionCard>
+                  </VStack>
+                </Box>
+              )}
+            </MotionBox>
+          </SimpleGrid>
+        </Container>
+      </Box>
 
-                {/* Contact Information */}
-                <VStack spacing={6} align="stretch">
+      {/* Contact information — stays light */}
+      <Box bg="brand.primary">
+        <Container maxW="1180px" py={{ base: 12, md: 20 }}>
+          <SimpleGrid columns={{ base: 1, lg: 2 }} spacing={12} alignItems="start">
                   {/* Quick Contact Info */}
                   <Box>
                     <Heading textStyle="cardTitle" as="h2" mb={4}>{t('contact.info.title')}</Heading>
@@ -503,15 +650,13 @@ export const ContactPage: React.FC = () => {
                       </CardBody>
                     </Card>
                   </Stack>
-                </VStack>
               </SimpleGrid>
-          </VStack>
         </Container>
       </Box>
 
       {/* Bottom CTA Section with alternating background */}
       <Box bg="brand.cream" py={{ base: 12, md: 20 }}>
-        <Container maxW="7xl">
+        <Container maxW="1180px">
           <VStack spacing={8} textAlign="center">
             <Heading textStyle="sectionTitle" color="brand.text">
               {t('contact.cta.title')}

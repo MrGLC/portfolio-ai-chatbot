@@ -21,6 +21,7 @@ import {
   ChevronDownIcon
 } from '@chakra-ui/icons';
 import { variants, durations, easings, delays, springs, createStaggerAnimation } from '../theme/animations';
+import { Kicker } from '../components/Kicker';
 const JewelScene = lazy(() => import('../components/JewelScene'));
 const ThreeJsChatbot = lazy(() =>
   import('../components/Chatbot/ThreeJsChatbot').then((m) => ({ default: m.ThreeJsChatbot }))
@@ -71,20 +72,19 @@ export const HomePage: React.FC = () => {
 
   return (
     <Box overflowX="hidden">
-      {/* Hero Section — paints its own light cream bg UNDER the fixed jewel
-          canvas (60/30/10 premium palette: white/cream canvas, red accents,
-          gold glints). Stacking contract: the hero stays position:relative
-          with z-index AUTO (no transform, no zIndex) so it does NOT create a
-          stacking context — its background paints before the later-in-DOM z0
-          canvas, while its positioned children (zIndex >= 1) paint above the
-          canvas. */}
+      {/* Hero Section — handoff hero: cream radial glow anchored top-right
+          where the jewel poses (crimson/gold accents on the cream canvas).
+          Jewel engine v2 stacking: the canvas is fixed at zIndex 5 ABOVE all
+          content (transparent — content shows through); sections keep
+          zIndex 1 and stay clickable because the canvas is pointer-events
+          none (only the small hit proxy intercepts). */}
       <MotionBox
         id="story-hero"
         // 100vh minus the 92px navbar offset (Layout pads <main> by 92px) so
         // the hero bottom — and the scroll chevron — sits exactly at the fold
         // instead of 92px below it.
         minH="calc(100vh - 92px)"
-        bg="brand.creamLight"
+        bg="radial-gradient(120% 90% at 78% 18%, #fbf6ec, #f6efe2 42%, #f1e7d6)"
         position="relative"
         overflow="visible"
         initial="initial"
@@ -106,7 +106,7 @@ export const HomePage: React.FC = () => {
 
         {/* pointerEvents none on the full-height wrapper so touches in the gem's
             area fall through to the canvas; the text/CTA stack re-enables them */}
-        <Container maxW="1400px" position="relative" zIndex={2} h="calc(100vh - 92px)" pointerEvents="none">
+        <Container maxW="1180px" px="clamp(20px, 5vw, 40px)" position="relative" zIndex={2} h="calc(100vh - 92px)" pointerEvents="none">
           <Flex
             h="100%"
             align="flex-start"
@@ -124,27 +124,12 @@ export const HomePage: React.FC = () => {
               pointerEvents="auto"
               h="fit-content"
             >
-              {/* Enhanced luxury subtitle with better styling */}
-              <Text
-                as={MotionText}
-                textStyle="eyebrow"
-                color="brand.goldRich"
-                variants={staggerAnimation.child}
-                position="relative"
-                _before={{
-                  content: '""',
-                  position: 'absolute',
-                  bottom: '-8px',
-                  left: { base: '50%', lg: '0' },
-                  transform: { base: 'translateX(-50%)', lg: 'none' },
-                  width: '60px',
-                  height: '2px',
-                  bg: 'brand.goldRich',
-                  opacity: 0.8
-                }}
-              >
-                {t('home.hero.luxurySubtitle')}
-              </Text>
+              {/* Handoff kicker: gold gradient line + eyebrow label */}
+              <MotionBox variants={staggerAnimation.child} w="full">
+                <Kicker centered={{ base: true, lg: false }}>
+                  {t('home.hero.luxurySubtitle')}
+                </Kicker>
+              </MotionBox>
 
               {/* Enhanced main title with better typography */}
               <Heading
@@ -296,10 +281,10 @@ export const HomePage: React.FC = () => {
         </Box>
       </MotionBox>
 
-      {/* Living Jewel scroll story — fixed transparent canvas behind every
-          section (z0). MUST come after the hero in DOM so the canvas paints
-          above the hero's cream background; sections below carry zIndex 1
-          so their content always sits above the traveling jewel. */}
+      {/* Jewel engine v2 — fixed transparent canvas ABOVE every section
+          (zIndex 5, pointer-events none). The jewel dashes between chapter
+          keyframes resolved from the story-* section ranges; only its small
+          hit-proxy div intercepts pointer input. */}
       <Suspense fallback={null}>
         <JewelScene />
       </Suspense>
@@ -336,7 +321,7 @@ export const HomePage: React.FC = () => {
           boxShadow="0 -16px 32px rgba(184, 134, 11, 0.06)"
         />
         
-        <Container maxW="1400px" py={{ base: 12, md: 20 }} position="relative" zIndex={3}>
+        <Container maxW="1180px" px="clamp(20px, 5vw, 40px)" py="clamp(80px, 12vh, 140px)" position="relative" zIndex={3}>
           {/* Editorial lane: content shifts RIGHT on desktop — the neural
               jewel (keyframe x −2.2) owns the left lane's negative space. */}
           <MotionBox
@@ -350,24 +335,7 @@ export const HomePage: React.FC = () => {
             <VStack spacing={16}>
               {/* Enhanced section header */}
               <VStack spacing={6} textAlign="center" maxW="800px" mx="auto">
-                <Text
-                  textStyle="eyebrow"
-                  color="brand.secondary"
-                  position="relative"
-                  _after={{
-                    content: '""',
-                    position: 'absolute',
-                    bottom: '-12px',
-                    left: '50%',
-                    transform: 'translateX(-50%)',
-                    width: '80px',
-                    height: '3px',
-                    bg: 'brand.secondary',
-                    borderRadius: 'full',
-                  }}
-                >
-                  {t('home.chatbot.title')}
-                </Text>
+                <Kicker centered>{t('home.chatbot.title')}</Kicker>
                 <Heading
                   textStyle="sectionTitle"
                   color="brand.text"
@@ -396,7 +364,7 @@ export const HomePage: React.FC = () => {
       <Box
         id="story-portfolio"
         bg="transparent"
-        py={{ base: 12, md: 20 }}
+        py="clamp(80px, 12vh, 140px)"
         position="relative"
         zIndex={1}
         overflow="hidden"
@@ -426,7 +394,7 @@ export const HomePage: React.FC = () => {
           }}
         />
         
-        <Container maxW="1400px" position="relative" zIndex={1}>
+        <Container maxW="1180px" px="clamp(20px, 5vw, 40px)" position="relative" zIndex={1}>
           <MotionBox
             initial="hidden"
             whileInView="visible"
@@ -447,24 +415,9 @@ export const HomePage: React.FC = () => {
                 mx={{ base: 'auto', lg: 0 }}
                 mr={{ base: 'auto', lg: '30%' }}
               >
-                <Text
-                  textStyle="eyebrow"
-                  color="brand.goldRich"
-                  position="relative"
-                  _after={{
-                    content: '""',
-                    position: 'absolute',
-                    bottom: '-12px',
-                    left: { base: '50%', lg: 0 },
-                    transform: { base: 'translateX(-50%)', lg: 'none' },
-                    width: '80px',
-                    height: '3px',
-                    bg: 'brand.goldRich',
-                    borderRadius: 'full',
-                  }}
-                >
+                <Kicker centered={{ base: true, lg: false }}>
                   {t('home.portfolio.subtitle')}
-                </Text>
+                </Kicker>
                 <Heading
                   textStyle="sectionTitle"
                   color="brand.text"
@@ -509,7 +462,7 @@ export const HomePage: React.FC = () => {
                       left={0}
                       right={0}
                       bottom={0}
-                      bg={`linear-gradient(135deg, ${item % 2 === 0 ? '#DC143C' : '#FFD700'}, ${item % 2 === 0 ? '#8B0000' : '#FFA500'})`}
+                      bg={`linear-gradient(135deg, ${item % 2 === 0 ? 'var(--chakra-colors-brand-secondary)' : 'var(--chakra-colors-brand-goldBright)'}, ${item % 2 === 0 ? 'var(--chakra-colors-brand-redDark)' : 'var(--chakra-colors-brand-goldRich)'})`}
                       opacity={0.9}
                       transition="transform 0.4s ease"
                       _groupHover={{
@@ -632,7 +585,7 @@ export const HomePage: React.FC = () => {
       <Box
         id="story-cta"
         bg="transparent"
-        py={{ base: 12, md: 20 }}
+        py="clamp(80px, 12vh, 140px)"
         position="relative"
         zIndex={1}
         overflow="hidden"
@@ -661,7 +614,7 @@ export const HomePage: React.FC = () => {
           pointerEvents="none"
         />
         
-        <Container maxW="5xl" textAlign="center" position="relative">
+        <Container maxW="1180px" px="clamp(20px, 5vw, 40px)" textAlign="center" position="relative">
           <MotionBox
             initial="hidden"
             whileInView="visible"

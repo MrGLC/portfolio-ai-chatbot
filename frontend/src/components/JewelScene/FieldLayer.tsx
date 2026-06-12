@@ -106,12 +106,12 @@ const particleFragment = /* glsl */ `
     float d = length(gl_PointCoord - 0.5);
     float circle = smoothstep(0.5, 0.08, d);
 
-    // Light-palette field: fine red/gold current on the cream page.
-    // Normal blending (additive is invisible on white) — ~55% soft red,
-    // ~35% deeper red, ~10% gold; alpha capped well under 0.5.
-    vec3 softRed = vec3(0.863, 0.078, 0.235); // #DC143C
-    vec3 deepRed = vec3(0.663, 0.106, 0.188); // #A91B30
-    vec3 gold    = vec3(0.831, 0.686, 0.216); // #D4AF37
+    // Light-palette field: fine crimson/gold current on the cream page
+    // (handoff tokens). Normal blending (additive is invisible on white) —
+    // ~55% crimson, ~35% deep crimson, ~10% gold; alpha capped under 0.5.
+    vec3 softRed = vec3(0.757, 0.055, 0.208); // #c10e35 crimson
+    vec3 deepRed = vec3(0.494, 0.039, 0.137); // #7e0a23 crimson-deep
+    vec3 gold    = vec3(0.761, 0.627, 0.361); // #c2a05c gold
 
     float pick = fract(vSeed * 7.31);
     vec3 col = pick < 0.55 ? softRed : (pick < 0.90 ? deepRed : gold);
@@ -241,9 +241,9 @@ interface GlowSpec {
 // Soft gold haze at very low opacity — warm depth on the light page without
 // muddying it (red glows read as pink smears on cream).
 const GLOWS: GlowSpec[] = [
-  { color: '#D4AF37', position: [-4.5, -2.8, -4], scale: 9, phase: 0.0, intensity: 0.05 },
-  { color: '#D4AF37', position: [3.5, -2.2, -5], scale: 7, phase: 2.4, intensity: 0.04 },
-  { color: '#B8860B', position: [1.0, -3.4, -3], scale: 6, phase: 4.6, intensity: 0.04 },
+  { color: '#c2a05c', position: [-4.5, -2.8, -4], scale: 9, phase: 0.0, intensity: 0.05 },
+  { color: '#c2a05c', position: [3.5, -2.2, -5], scale: 7, phase: 2.4, intensity: 0.04 },
+  { color: '#a8863f', position: [1.0, -3.4, -3], scale: 6, phase: 4.6, intensity: 0.04 },
 ];
 
 interface GlowProps {
