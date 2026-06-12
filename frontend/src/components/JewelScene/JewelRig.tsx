@@ -1,215 +1,69 @@
 import React, { useEffect, useMemo, useRef } from 'react';
-import { useFrame } from '@react-three/fiber';
-import type { ThreeEvent } from '@react-three/fiber';
-import { Environment, Lightformer } from '@react-three/drei';
+import { useFrame, useThree } from '@react-three/fiber';
 import * as THREE from 'three';
 import { usePerfProfile } from '../../hooks/usePerfProfile';
-import { buildMorphTargets } from './morphTargets';
-import type { TargetName } from './morphTargets';
-import { useJewelStory } from './useJewelStory';
-import type { JewelStoryState } from './useJewelStory';
-import { resolveStoryFrame, STORY_SECTIONS } from './storyResolver';
-import type { SectionRange, StoryFrame } from './storyResolver';
+import {
+  KEYFRAMES,
+  resolveChapter,
+  fractionToWorld,
+  worldToFraction,
+  VIS_H,
+} from './chapterResolver';
+import type { SectionRange, ShapeName } from './chapterResolver';
+import { buildShapes, SHAPE_NAMES } from './shapes';
 
 /**
- * JewelRig — production "Living Jewel" scene layer.
+ * JewelRig — "dash & wait" engine (jewel engine v2, handoff choreography).
  *
- * Evolved from prototypes/ProtoJewel: same art-directed centerpiece (ruby gem,
- * gold key/rim lights, radial backdrop, sparse gold dust) but the gem is now
- * alive — it morphs between story targets (gem <-> gemBreath) via a GPU
- * vertex-shader blend, responds to drag with inertia, and pulses on tap.
+ * One Group holds six costume meshes (shapes.ts); the active chapter's shape
+ * crossfades in by per-mesh scale (w += (target - w) * 0.13). The group does
+ * NOT interpolate continuously with scroll: each frame it resolves the active
+ * chapter (nearest section center to viewport center) and DASHES to that
+ * keyframe with adaptive easing — fast when far, settling softly, shrinking
+ * in transit so it never blocks the content it crosses, breathing once posed.
  *
- * Scene-graph-only component: the composition root owns the <Canvas>.
+ * All engine state lives in refs and is advanced inside useFrame — React
+ * renders this component only on mount/profile change. Formulas are verbatim
+ * from the handoff README "El comportamiento" / prototype animate() loop.
  *
- * Morph driver handshake (two drivers, scroll wins):
- *   TAP (settled gem sections only): story.setTarget(B) -> 'state' event
- *     (from=A, to=B, progress=0) -> subscription writes A into
- *     position/normal, B into aTarget*, sets animatingRef. useFrame advances
- *     progressRef (uMorph) until 1 -> story.setProgress(1) -> controller
- *     promotes B->A, emits state (from=to=B, progress=0) -> subscription
- *     rewrites both attribute sets to B; uMorph drops to 0 with identical
- *     A/B arrays, so there is no visual pop.
- *   SCROLL: useFrame resolves a StoryFrame from window.scrollY. Inside a
- *     blend zone the rig aligns the controller pair to (frame.from,
- *     frame.to) — via setTarget(frame.from); setTarget(frame.to) when needed
- *     — then writes frame.progress into progressRef DIRECTLY and clears
- *     animatingRef: scroll owns morph progress during transitions. On
- *     settling, the pair is promoted (setProgress(1)) or rested at 0,
- *     whichever side of the zone the scroll exited. 'gemBreath' is treated
- *     as an alias of 'gem' so the tap toggle survives scroll round-trips.
+ * Position easing happens in viewport-FRACTION space (curRef.x/y), exactly
+ * like the prototype: dist/kDash/yield are specified in fractions, and
+ * fractionToWorld converts to world units only at write time. The hit proxy
+ * goes the other way (worldToFraction) — one shared helper pair, no unit
+ * drift.
+ *
+ * Interaction arrives from OUTSIDE the canvas: the composition root mounts a
+ * screen-space hit-proxy <div> (the canvas itself is pointer-events: none)
+ * and forwards its PLAIN DOM PointerEvents through registerPointerHandlers.
+ * No r3f raycasting is involved anymore.
  */
 
-/* ------------------------------------------------------------------- */
-/* Backdrop — static radial gradient, warm-white center -> light cream */
-/* edges; blends seamlessly with the hero's cream page background.     */
-/* ------------------------------------------------------------------- */
-
-const BG_VERTEX = /* glsl */ `
-  varying vec2 vUv;
-  void main() {
-    vUv = uv;
-    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-  }
-`;
-
-const BG_FRAGMENT = /* glsl */ `
-  varying vec2 vUv;
-  uniform vec3 uEdgeColor;
-  uniform vec3 uCenterColor;
-  uniform vec2 uFocus;
-  uniform float uFade;
-  void main() {
-    // Radial falloff from the glow focus (sits behind the gem).
-    float d = distance(vUv, uFocus);
-    float t = smoothstep(0.05, 0.62, d);
-    vec3 color = mix(uCenterColor, uEdgeColor, t);
-    // uFade: hero scenery — fully opaque in the hero, gone below it.
-    gl_FragColor = vec4(color, uFade);
-  }
-`;
-
-const Backdrop: React.FC<{
-  focusX: number;
-  focusY: number;
-  fade: THREE.IUniform<number>;
-}> = ({ focusX, focusY, fade }) => {
-  const uniforms = useMemo(
-    () => ({
-      uEdgeColor: { value: new THREE.Color('#F2E9DD') },
-      uCenterColor: { value: new THREE.Color('#FFFDF8') },
-      uFocus: { value: new THREE.Vector2(focusX, focusY) },
-      uFade: fade, // shared reference — JewelRig's useFrame writes it
-    }),
-    // Rebuild only if composition changes (full <-> lite).
-    [focusX, focusY, fade]
-  );
-
-  return (
-    <mesh position={[0, 0, -18]} frustumCulled={false}>
-      <planeGeometry args={[90, 50]} />
-      <shaderMaterial
-        key={`${focusX}-${focusY}`}
-        vertexShader={BG_VERTEX}
-        fragmentShader={BG_FRAGMENT}
-        uniforms={uniforms}
-        transparent
-        depthWrite={false}
-      />
-    </mesh>
-  );
-};
-
-/* --------------------------------------------------------------- */
-/* Dust — sparse gold/cream particles, drift fully in vertex shader */
-/* --------------------------------------------------------------- */
-
-const DUST_VERTEX = /* glsl */ `
-  attribute float aSeed;
-  attribute float aSize;
-  attribute vec3 aColor;
-  uniform float uTime;
-  varying vec3 vColor;
-  varying float vSeed;
-  void main() {
-    vColor = aColor;
-    vSeed = aSeed;
-    vec3 p = position;
-    // Slow bounded drift — all motion lives here, zero per-frame JS loops.
-    p.x += sin(uTime * 0.05 + aSeed * 6.2832) * 0.7;
-    p.y += sin(uTime * 0.035 + aSeed * 12.566) * 0.9;
-    p.z += cos(uTime * 0.04 + aSeed * 9.4248) * 0.5;
-    vec4 mvPosition = modelViewMatrix * vec4(p, 1.0);
-    gl_Position = projectionMatrix * mvPosition;
-    gl_PointSize = aSize * (220.0 / -mvPosition.z);
-  }
-`;
-
-const DUST_FRAGMENT = /* glsl */ `
-  uniform float uTime;
-  uniform float uFade;
-  varying vec3 vColor;
-  varying float vSeed;
-  void main() {
-    float d = length(gl_PointCoord - vec2(0.5));
-    if (d > 0.5) discard;
-    float twinkle = 0.65 + 0.35 * sin(uTime * 0.6 + vSeed * 31.4159);
-    // uFade: dust is hero scenery like the backdrop — fades out with it.
-    // Normal blending (not additive): tinted specks must read on a LIGHT bg.
-    float alpha = smoothstep(0.5, 0.05, d) * twinkle * 0.55 * uFade;
-    gl_FragColor = vec4(vColor, alpha);
-  }
-`;
-
-// Gold/red specks — saturated enough to read against the cream backdrop.
-const DUST_PALETTE = ['#D4AF37', '#B8860B', '#DC143C', '#A91B30'];
-const DUST_BASE_COUNT = 300;
-
-const Dust: React.FC<{ count: number; animate: boolean; fade: THREE.IUniform<number> }> = ({
-  count,
-  animate,
-  fade,
-}) => {
-  const materialRef = useRef<THREE.ShaderMaterial>(null);
-
-  const { positions, seeds, sizes, colors } = useMemo(() => {
-    const pos = new Float32Array(count * 3);
-    const seed = new Float32Array(count);
-    const size = new Float32Array(count);
-    const col = new Float32Array(count * 3);
-    const c = new THREE.Color();
-    for (let i = 0; i < count; i++) {
-      pos[i * 3] = (Math.random() - 0.5) * 14;
-      pos[i * 3 + 1] = (Math.random() - 0.5) * 9;
-      pos[i * 3 + 2] = (Math.random() - 0.5) * 8 - 2;
-      seed[i] = Math.random();
-      size[i] = 0.025 + Math.random() * 0.07;
-      c.set(DUST_PALETTE[Math.floor(Math.random() * DUST_PALETTE.length)]);
-      col[i * 3] = c.r;
-      col[i * 3 + 1] = c.g;
-      col[i * 3 + 2] = c.b;
-    }
-    return { positions: pos, seeds: seed, sizes: size, colors: col };
-  }, [count]);
-
-  const uniforms = useMemo(() => ({ uTime: { value: 0 }, uFade: fade }), [fade]);
-
-  useFrame(({ clock }) => {
-    if (!animate || !materialRef.current) return;
-    materialRef.current.uniforms.uTime.value = clock.getElapsedTime();
-  });
-
-  if (count <= 0) return null;
-
-  return (
-    <points key={count} frustumCulled={false}>
-      <bufferGeometry>
-        <bufferAttribute attach="attributes-position" args={[positions, 3]} />
-        <bufferAttribute attach="attributes-aSeed" args={[seeds, 1]} />
-        <bufferAttribute attach="attributes-aSize" args={[sizes, 1]} />
-        <bufferAttribute attach="attributes-aColor" args={[colors, 3]} />
-      </bufferGeometry>
-      <shaderMaterial
-        ref={materialRef}
-        vertexShader={DUST_VERTEX}
-        fragmentShader={DUST_FRAGMENT}
-        uniforms={uniforms}
-        transparent
-        depthWrite={false}
-        blending={THREE.NormalBlending}
-      />
-    </points>
-  );
-};
-
-/* ------------------------------------------------------------ */
-/* JewelRig                                                       */
-/* ------------------------------------------------------------ */
-
-const ROTATION_SPEED = (Math.PI * 2) / 60; // one revolution ~60s
-
-interface MorphShader {
-  uniforms: { uMorph: { value: number } };
+export interface JewelPointerHandlers {
+  /** el = the proxy div; pointer capture is set on it (native DOM API). */
+  down(e: PointerEvent, el: HTMLElement): void;
+  move(e: PointerEvent): void;
+  up(e: PointerEvent, el: HTMLElement): void;
+  /** lostpointercapture / pointercancel — abort the drag, never stick. */
+  cancel(): void;
 }
+
+interface JewelRigProps {
+  /** Called once on the first pointerdown (dismisses the hint pill). */
+  onFirstInteraction?: () => void;
+  /**
+   * Screen-space jewel circle for the hit proxy, in canvas CSS px:
+   * center (x, y) + radius r. Called ~every 6th frame; the receiver mutates
+   * the proxy div's style directly (no setState in the frame loop).
+   */
+  onProxyRect?: (x: number, y: number, r: number) => void;
+  /** Callback-registry handle: rig hands its pointer handlers up on mount. */
+  registerPointerHandlers?: (handlers: JewelPointerHandlers | null) => void;
+}
+
+const HERO_ID = 'story-hero';
+/** Generous bounding radius of the largest costume in world units (growth
+ * columns reach ~2.3 in x); multiplied by the live group scale for the proxy. */
+const JEWEL_WORLD_RADIUS = 1.9;
 
 interface DragState {
   active: boolean;
@@ -218,148 +72,112 @@ interface DragState {
   moved: number;
 }
 
-interface JewelRigProps {
-  /** Called once on the first gem pointerdown (used to dismiss the hint pill). */
-  onFirstInteraction?: () => void;
-}
-
-export const JewelRig: React.FC<JewelRigProps> = ({ onFirstInteraction }) => {
+export const JewelRig: React.FC<JewelRigProps> = ({
+  onFirstInteraction,
+  onProxyRect,
+  registerPointerHandlers,
+}) => {
   const profile = usePerfProfile();
-  const story = useJewelStory();
+  const invalidate = useThree((state) => state.invalidate);
+  const size = useThree((state) => state.size);
+  const sizeRef = useRef(size);
+  sizeRef.current = size;
 
   const lite = profile.tier === 'lite';
-  // Lite (mobile): gem sits in the hero's lower third, below the CTA buttons,
-  // among the field particles — visible and clearly tappable instead of hiding
-  // behind the centered copy. Full (desktop): offset right of the text column.
-  const gemX = lite ? 0 : 1.5;
-  const gemY = lite ? -2.05 : 0;
-  const baseScale = lite ? 0.8 : 1;
-  const floatAmplitude = lite ? 0.08 : 0.15;
-  // Glow focus tracks the gem so its silhouette reads against the backdrop.
-  const focusX = lite ? 0.5 : 0.62;
-  const focusY = lite ? 0.3 : 0.5;
-  const dustCount = Math.round(DUST_BASE_COUNT * profile.particleScale);
+  const reduced = !profile.animate;
 
-  const gemGroupRef = useRef<THREE.Group>(null);
-  // Inner group for magnetic lean — wraps the mesh so lean rotation doesn't
-  // fight the outer group's drag/inertia/scroll rotation.
-  const leanRef = useRef<THREE.Group>(null);
-  const leanXRef = useRef(0); // current smoothed lean x
-  const leanYRef = useRef(0); // current smoothed lean y
-  // Ensure onFirstInteraction fires at most once per mount.
-  const firstInteractionFiredRef = useRef(false);
-  const progressRef = useRef(0); // 0..1 morph blend (uMorph)
-  const animatingRef = useRef(false);
-  const pulseRef = useRef(0); // 1 on tap, decays in useFrame
-  const angularVelRef = useRef({ x: 0, y: 0 }); // drag inertia
-  const dragRef = useRef<DragState>({ active: false, lastX: 0, lastY: 0, moved: 0 });
-  const lastPairRef = useRef<{ from: TargetName; to: TargetName }>({ from: 'gem', to: 'gem' });
+  const groupRef = useRef<THREE.Group>(null);
 
-  // Scroll story plumbing — all refs/uniforms, zero React re-renders.
-  const scrollRef = useRef(0);
-  const rangesRef = useRef<SectionRange[]>([]);
-  const frameRef = useRef<StoryFrame | null>(null); // last resolved frame (tap gating)
-  const scaleRef = useRef(baseScale); // smoothed story scale (pulse multiplies on top)
-  const fadeUniform = useMemo<THREE.IUniform<number>>(() => ({ value: 1 }), []);
-
-  /* ---- Geometry + morph attributes (built once) ---- */
-  const { geometry, targets } = useMemo(() => {
-    const built = buildMorphTargets();
+  /* ---- The cast: six meshes + dust, built once ---- */
+  const shapes = useMemo(() => buildShapes(), []);
+  const dust = useMemo(() => {
+    // Gold-dust court: 200 points on a flattened spherical shell (y * 0.72),
+    // 50/50 gold #e6b964 / crimson #d11e44, size 0.042 (handoff spec).
+    const n = 200;
+    const pos = new Float32Array(n * 3);
+    const col = new Float32Array(n * 3);
+    const cA = new THREE.Color(0xe6b964);
+    const cB = new THREE.Color(0xd11e44);
+    for (let i = 0; i < n; i++) {
+      const r = 2.1 + Math.random() * 1.3;
+      const th = Math.random() * Math.PI * 2;
+      const ph = Math.acos(2 * Math.random() - 1);
+      pos[i * 3] = r * Math.sin(ph) * Math.cos(th);
+      pos[i * 3 + 1] = r * Math.sin(ph) * Math.sin(th) * 0.72;
+      pos[i * 3 + 2] = r * Math.cos(ph);
+      const c = Math.random() < 0.5 ? cA : cB;
+      col[i * 3] = c.r;
+      col[i * 3 + 1] = c.g;
+      col[i * 3 + 2] = c.b;
+    }
     const geo = new THREE.BufferGeometry();
-    geo.setAttribute('position', new THREE.BufferAttribute(built.gem.positions.slice(), 3));
-    geo.setAttribute('normal', new THREE.BufferAttribute(built.gem.normals.slice(), 3));
-    geo.setAttribute('aTargetPosition', new THREE.BufferAttribute(built.gem.positions.slice(), 3));
-    geo.setAttribute('aTargetNormal', new THREE.BufferAttribute(built.gem.normals.slice(), 3));
-    return { geometry: geo, targets: built };
+    geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+    geo.setAttribute('color', new THREE.BufferAttribute(col, 3));
+    const mat = new THREE.PointsMaterial({
+      size: 0.042,
+      vertexColors: true,
+      transparent: true,
+      opacity: 0.5,
+      depthWrite: false,
+    });
+    const points = new THREE.Points(geo, mat);
+    points.frustumCulled = false;
+    return points;
   }, []);
 
-  /* ---- Material — ProtoJewel's screenshot-validated ruby + morph injection ---- */
-  const material = useMemo(() => {
-    const m = new THREE.MeshPhysicalMaterial({
-      color: '#8B0000',
-      metalness: 0,
-      roughness: 0.05,
-      // Fixed moderate transmission: on the light page a high value turns the
-      // ruby into a beige glass ball (it transmits the cream background).
-      transmission: 0.5,
-      thickness: 2,
-      ior: 2.4,
-      clearcoat: 1,
-      clearcoatRoughness: 0.05,
-      emissive: '#6B0F1F',
-      emissiveIntensity: 0.25,
-      specularIntensity: 1.2,
-      specularColor: new THREE.Color('#FFD700'),
-      envMapIntensity: 2.2,
-      flatShading: true,
-    });
-    m.onBeforeCompile = (shader) => {
-      shader.uniforms.uMorph = { value: 0 };
-      shader.vertexShader =
-        'uniform float uMorph;\nattribute vec3 aTargetPosition;\nattribute vec3 aTargetNormal;\n' +
-        shader.vertexShader;
-      shader.vertexShader = shader.vertexShader.replace(
-        '#include <beginnormal_vertex>',
-        'vec3 objectNormal = normalize(mix(normal, aTargetNormal, uMorph));'
-      );
-      shader.vertexShader = shader.vertexShader.replace(
-        '#include <begin_vertex>',
-        'vec3 transformed = mix(position, aTargetPosition, uMorph);'
-      );
-      m.userData.shader = shader;
-    };
-    m.customProgramCacheKey = () => 'jewel-morph';
-    return m;
-  }, []);
-
-  /* ---- Story subscription: attribute rewrites only on target change ---- */
-  useEffect(() => {
-    const applyState = (state: JewelStoryState) => {
-      const last = lastPairRef.current;
-      if (state.from !== last.from || state.to !== last.to) {
-        const from = targets[state.from];
-        const to = targets[state.to];
-        const pos = geometry.getAttribute('position') as THREE.BufferAttribute;
-        const norm = geometry.getAttribute('normal') as THREE.BufferAttribute;
-        const tPos = geometry.getAttribute('aTargetPosition') as THREE.BufferAttribute;
-        const tNorm = geometry.getAttribute('aTargetNormal') as THREE.BufferAttribute;
-        (pos.array as Float32Array).set(from.positions);
-        (norm.array as Float32Array).set(from.normals);
-        (tPos.array as Float32Array).set(to.positions);
-        (tNorm.array as Float32Array).set(to.normals);
-        pos.needsUpdate = true;
-        norm.needsUpdate = true;
-        tPos.needsUpdate = true;
-        tNorm.needsUpdate = true;
-        lastPairRef.current = { from: state.from, to: state.to };
-      }
-      progressRef.current = state.progress;
-      if (state.from !== state.to) animatingRef.current = true;
-    };
-
-    applyState(story.state); // sync in case a target was set before mount
-    const unsubscribe = story.subscribe((kind, state) => {
-      if (kind === 'pulse') {
-        pulseRef.current = 1;
-        return;
-      }
-      applyState(state);
-    });
-    return unsubscribe;
-  }, [story, targets, geometry]);
-
-  /* ---- Restore cursor on unmount ---- */
   useEffect(() => {
     return () => {
-      document.body.style.cursor = '';
+      // Dispose GPU resources on unmount (route change away from Home).
+      for (const name of SHAPE_NAMES) {
+        const { mesh, material } = shapes[name];
+        mesh.geometry.dispose();
+        material.dispose();
+        for (const child of mesh.children) {
+          const line = child as THREE.LineSegments;
+          line.geometry?.dispose();
+          (line.material as THREE.Material)?.dispose();
+        }
+      }
+      dust.geometry.dispose();
+      (dust.material as THREE.Material).dispose();
     };
-  }, []);
+  }, [shapes, dust]);
 
-  /* ---- Scroll story: passive scroll listener + section range measurement ---- */
+  /* ---- Engine state: refs only, no React state in the loop ---- */
+  // Eased pose in viewport-fraction space (prototype's `cur`).
+  // Starts posed at the hero keyframe (prototype parity — no grow-in).
+  const curRef = useRef({ x: KEYFRAMES[HERO_ID].x, y: KEYFRAMES[HERO_ID].y, s: KEYFRAMES[HERO_ID].s, spin: KEYFRAMES[HERO_ID].spin, p: KEYFRAMES[HERO_ID].p });
+  // Crossfade weights per costume.
+  const weightsRef = useRef<Record<ShapeName, number>>({
+    ico: 1, octa: 0, sphere: 0, knot: 0, crown: 0, growth: 0,
+  });
+  const elapsedRef = useRef(0);
+  const tiltZRef = useRef(0);
+
+  // Scroll: passive listener + moving-average velocity.
+  const scrollRef = useRef(typeof window !== 'undefined' ? window.scrollY : 0);
+  const lastSyRef = useRef(scrollRef.current);
+  const velRef = useRef(0);
+
+  // Mouse, centered (-0.5..0.5) — parallax + tilt.
+  const mouseRef = useRef({ x: 0, y: 0 });
+
+  // Section ranges in document coordinates.
+  const rangesRef = useRef<SectionRange[]>([]);
+
+  // Drag/tap.
+  const dragRef = useRef<DragState>({ active: false, lastX: 0, lastY: 0, moved: 0 });
+  const dragTiltXRef = useRef(0); // user-applied x tilt, decays back to choreography
+  const angularVelRef = useRef({ x: 0, y: 0 }); // drag inertia
+  const pulseRef = useRef(0); // 1 on tap, decays in the loop
+  const firstInteractionFiredRef = useRef(false);
+  const frameCountRef = useRef(0);
+
+  /* ---- Listeners: scroll, mouse, section measurement ---- */
   useEffect(() => {
     const measure = () => {
       const ranges: SectionRange[] = [];
-      for (const id of Object.keys(STORY_SECTIONS)) {
+      for (const id of Object.keys(KEYFRAMES)) {
         const el = document.getElementById(id);
         if (!el) continue;
         // Document coordinates via rect + scrollY: offsetTop would be relative
@@ -373,6 +191,10 @@ export const JewelRig: React.FC<JewelRigProps> = ({ onFirstInteraction }) => {
     const onScroll = () => {
       scrollRef.current = window.scrollY;
     };
+    const onPointerMove = (e: PointerEvent) => {
+      mouseRef.current.x = e.clientX / window.innerWidth - 0.5;
+      mouseRef.current.y = e.clientY / window.innerHeight - 0.5;
+    };
     onScroll();
     measure();
     // Lazy-loaded content (chatbot canvas chunk) shifts section offsets after
@@ -380,267 +202,219 @@ export const JewelRig: React.FC<JewelRigProps> = ({ onFirstInteraction }) => {
     const remeasure = window.setTimeout(measure, 1500);
     window.addEventListener('resize', measure);
     window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('pointermove', onPointerMove, { passive: true });
     return () => {
       window.clearTimeout(remeasure);
       window.removeEventListener('resize', measure);
       window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('pointermove', onPointerMove);
     };
   }, []);
 
-  /* ---- Single per-frame driver ---- */
-  useFrame(({ clock, pointer: statePointer }, delta) => {
-    const group = gemGroupRef.current;
+  /* ---- Pointer handlers — plain DOM events forwarded by the hit proxy ---- */
+  useEffect(() => {
+    if (!registerPointerHandlers) return;
+    const handlers: JewelPointerHandlers = {
+      down: (e, el) => {
+        // The proxy is a real <div>: native setPointerCapture works directly
+        // (unlike r3f's Object3D polyfill in the retired raycast handlers).
+        try {
+          el.setPointerCapture(e.pointerId);
+        } catch {
+          // Capture can fail if the pointer is already gone — drag still works.
+        }
+        dragRef.current = { active: true, lastX: e.clientX, lastY: e.clientY, moved: 0 };
+        document.body.style.cursor = 'grabbing';
+        el.style.cursor = 'grabbing';
+        if (!firstInteractionFiredRef.current) {
+          firstInteractionFiredRef.current = true;
+          onFirstInteraction?.();
+        }
+      },
+      move: (e) => {
+        const drag = dragRef.current;
+        if (!drag.active) return;
+        const dx = e.clientX - drag.lastX;
+        const dy = e.clientY - drag.lastY;
+        drag.moved += Math.abs(dx) + Math.abs(dy);
+        const group = groupRef.current;
+        if (group) group.rotation.y += dx * 0.005;
+        dragTiltXRef.current += dy * 0.005;
+        angularVelRef.current = { x: dy * 0.002, y: dx * 0.002 };
+        drag.lastX = e.clientX;
+        drag.lastY = e.clientY;
+        invalidate(); // reduced motion runs frameloop 'never' — render the drag
+      },
+      up: (e, el) => {
+        const drag = dragRef.current;
+        if (!drag.active) return;
+        try {
+          el.releasePointerCapture(e.pointerId);
+        } catch {
+          // Capture may already be released.
+        }
+        if (drag.moved < 6) {
+          pulseRef.current = 1; // tap: scale flash (morph toggle is retired)
+          invalidate();
+        }
+        drag.active = false;
+        document.body.style.cursor = '';
+        el.style.cursor = 'grab';
+      },
+      cancel: () => {
+        dragRef.current.active = false;
+        document.body.style.cursor = '';
+      },
+    };
+    registerPointerHandlers(handlers);
+    return () => {
+      registerPointerHandlers(null);
+      document.body.style.cursor = '';
+    };
+  }, [registerPointerHandlers, onFirstInteraction, invalidate]);
+
+  /* ---- The loop ---- */
+  // document.hidden needs no special handling: rAF (and therefore useFrame)
+  // auto-pauses in hidden tabs.
+  useFrame((_, rawDelta) => {
+    const group = groupRef.current;
     if (!group) return;
+    const dt = Math.min(rawDelta, 0.05);
+    elapsedRef.current += dt;
+    const t = elapsedRef.current;
+    const cur = curRef.current;
+    const { width, height } = sizeRef.current;
+    const aspect = width / Math.max(1, height);
 
-    // Resolve the story frame for the current scroll position. Until the
-    // sections are measured (first effect tick) fall back to the hero pose.
+    // Scroll velocity: moving average of the per-frame delta.
+    const sy = scrollRef.current;
+    velRef.current = velRef.current * 0.92 + (sy - lastSyRef.current) * 0.08;
+    lastSyRef.current = sy;
+    const vel = velRef.current;
+    const m = mouseRef.current;
+
+    // 1. Active chapter — nearest section center to viewport center.
+    //    Reduced motion: park statically at the hero keyframe (no dash).
     const ranges = rangesRef.current;
-    const frame =
-      ranges.length > 0
-        ? resolveStoryFrame(scrollRef.current, ranges, window.innerHeight, lite)
-        : null;
-    frameRef.current = frame;
+    const pick =
+      !reduced && ranges.length > 0
+        ? resolveChapter(sy, ranges, window.innerHeight, lite)
+        : {
+            id: HERO_ID,
+            kf: lite
+              ? { x: KEYFRAMES[HERO_ID].mx, y: KEYFRAMES[HERO_ID].my, s: KEYFRAMES[HERO_ID].ms, shape: 'ico' as ShapeName, spin: KEYFRAMES[HERO_ID].spin, p: KEYFRAMES[HERO_ID].p }
+              : { x: KEYFRAMES[HERO_ID].x, y: KEYFRAMES[HERO_ID].y, s: KEYFRAMES[HERO_ID].s, shape: 'ico' as ShapeName, spin: KEYFRAMES[HERO_ID].spin, p: KEYFRAMES[HERO_ID].p },
+          };
+    const kf = pick.kf;
 
-    // Hero scenery fade: backdrop + dust are gone once the hero scrolls out.
-    const heroBottom = ranges.length > 0 ? ranges[0].bottom : Number.POSITIVE_INFINITY;
-    fadeUniform.value = Number.isFinite(heroBottom)
-      ? Math.min(1, Math.max(0, 1 - scrollRef.current / (heroBottom * 0.8)))
-      : 1;
+    // 2. Dash: adaptive easing in FRACTION space — far = fast, near = soft.
+    const dist = Math.hypot(kf.x - cur.x, kf.y - cur.y);
+    const kDash = Math.min(0.22, 0.06 + dist * 0.5);
+    if (reduced) {
+      cur.x = kf.x;
+      cur.y = kf.y;
+      cur.s = kf.s;
+      cur.spin = 0;
+      cur.p = kf.p;
+    } else {
+      cur.x += (kf.x - cur.x) * kDash;
+      cur.y += (kf.y - cur.y) * kDash;
+      cur.s += (kf.s - cur.s) * Math.max(0.08, kDash * 0.8);
+      cur.spin += (kf.spin - cur.spin) * 0.08;
+      cur.p += (kf.p - cur.p) * 0.08;
+    }
+    const settled = Math.max(0, 1 - dist * 9);
 
-    // Scroll-driven morph: align the controller pair, then own progress.
-    // 'gemBreath' counts as 'gem' so the tap toggle survives scrolling.
-    if (frame) {
-      const st = story.state;
-      if (frame.from !== frame.to) {
-        // Inside a blend zone.
-        const fromMatches =
-          st.from === frame.from || (frame.from === 'gem' && st.from === 'gemBreath');
-        if (!(fromMatches && st.to === frame.to)) {
-          const fromCompatible =
-            st.to === frame.from || (frame.from === 'gem' && st.to === 'gemBreath');
-          if (!fromCompatible) story.setTarget(frame.from); // realign A first
-          story.setTarget(frame.to);
-        }
-        animatingRef.current = false; // tap driver yields to scroll
-        progressRef.current = frame.progress;
-      } else if (!animatingRef.current) {
-        // Settled in a section (and no tap morph in flight).
-        const t = frame.to;
-        const breathAlias = t === 'gem' && (st.to === 'gemBreath' || st.from === 'gemBreath');
-        if (!breathAlias && (st.from !== t || st.to !== t)) {
-          if (st.to === t) {
-            story.setProgress(1); // exited a blend zone forward -> promote
-          } else if (st.from === t) {
-            progressRef.current = 0; // exited backward -> rest on the from shape
-          } else {
-            story.setTarget(t); // teleport (resize / anchor jump): snap to target
-            story.setProgress(1);
-          }
-        }
-      }
+    // 3. Fraction -> world position (+ mouse parallax, + settled y-bob).
+    const world = fractionToWorld(cur.x, cur.y, aspect);
+    const bob = reduced ? 0 : Math.sin(t * 0.7) * 0.07 * cur.s;
+    group.position.x = world.x + m.x * 0.22;
+    group.position.y = world.y + bob - m.y * 0.16;
+
+    // 4. Yields in transit (shrinks), breathes when settled; tap pulse on top.
+    const yieldF = 1 - Math.min(0.3, dist * 1.25);
+    const breath = reduced ? 1 : 1 + Math.sin(t * 1.15) * 0.028 * settled;
+    group.scale.setScalar(Math.max(0.0001, cur.s * yieldF * breath * (1 + pulseRef.current * 0.12)));
+    pulseRef.current *= Math.pow(0.85, dt * 60);
+
+    // 5. Spin: rest drift + scroll impulse + extra while dashing; mouse tilt;
+    //    scroll-velocity z lean. Drag adds rotation.y directly in the handler;
+    //    its x tilt rides on top and decays back to the choreography.
+    const av = angularVelRef.current;
+    if (!dragRef.current.active) {
+      group.rotation.y += av.y;
+      dragTiltXRef.current += av.x;
+    }
+    const inertiaDecay = Math.pow(0.95, dt * 60);
+    av.x *= inertiaDecay;
+    av.y *= inertiaDecay;
+    if (!dragRef.current.active) {
+      dragTiltXRef.current *= Math.pow(0.985, dt * 60); // hand the tilt back
+    }
+    if (!reduced) {
+      group.rotation.y += dt * cur.spin + vel * 0.0006 + dist * dt * 2.6;
+      group.rotation.x = Math.sin(t * 0.3) * 0.1 + m.y * 0.25 + dragTiltXRef.current;
+      tiltZRef.current +=
+        (Math.max(-140, Math.min(140, vel)) * -0.0007 - tiltZRef.current) * 0.08;
+      group.rotation.z = tiltZRef.current;
+    } else {
+      group.rotation.x = dragTiltXRef.current;
     }
 
-    // Tap morph driver: advance until 1, then hand back to the controller —
-    // setProgress(1) promotes B->A and the subscription rewrites attributes.
-    if (animatingRef.current) {
-      progressRef.current = Math.min(1, progressRef.current + delta * 1.5);
-      if (progressRef.current >= 1) {
-        animatingRef.current = false;
-        story.setProgress(1);
-      }
+    // 6. Costume crossfade — arrives already transformed (runs DURING the dash).
+    const w = weightsRef.current;
+    for (const name of SHAPE_NAMES) {
+      const target = name === kf.shape ? 1 : 0;
+      w[name] += (target - w[name]) * 0.13;
+      const mesh = shapes[name].mesh;
+      mesh.visible = w[name] > 0.015;
+      mesh.scale.setScalar(Math.max(0.0001, w[name]));
     }
-    const shader = material.userData.shader as MorphShader | undefined;
-    if (shader) shader.uniforms.uMorph.value = progressRef.current;
-
-    const dragging = dragRef.current.active;
-
-    // Ambient rotation — suppressed for reduced motion; drag stays user-initiated.
-    if (profile.animate && !dragging) {
-      group.rotation.y += delta * ROTATION_SPEED;
-      // Morph flourish: a dignified extra spin while transitioning between
-      // story beats (sin-shaped, peaks mid-blend, exactly 0 when settled).
-      if (frame) group.rotation.y += frame.flourish * delta * 2.2;
+    // Secondary idle motion (prototype): octa precesses, knot rolls.
+    if (!reduced) {
+      shapes.octa.mesh.rotation.y += dt * 0.25;
+      shapes.knot.mesh.rotation.x += dt * 0.18;
     }
+    // Crown: pulsing crimson emissive, scaled by its crossfade weight.
+    shapes.crown.material.emissiveIntensity =
+      0.18 + w.crown * (0.3 + Math.sin(t * 2.2) * 0.16);
 
-    // Drag inertia: velocity applies when the finger is off, always decays.
-    const vel = angularVelRef.current;
-    if (!dragging) {
-      group.rotation.y += vel.y;
-      group.rotation.x += vel.x;
+    // 7. Dust trails behind its monarch; visible only where it adds (kf.p),
+    //    dimmed further while in transit.
+    dust.position.x += (group.position.x - dust.position.x) * 0.05;
+    dust.position.y += (group.position.y - dust.position.y) * 0.05;
+    dust.scale.setScalar(0.5 + cur.s * 0.65);
+    if (!reduced) dust.rotation.y += dt * 0.04 + vel * 0.0002;
+    const dustOpacity = Math.max(0, cur.p * (0.3 + 0.7 * settled));
+    (dust.material as THREE.PointsMaterial).opacity = dustOpacity;
+    dust.visible = dustOpacity > 0.02;
+
+    // 8. Hit proxy: project the group center to canvas CSS px every 6th frame
+    //    (direct DOM style mutation happens in the receiver — no setState).
+    frameCountRef.current += 1;
+    if (onProxyRect && frameCountRef.current % 6 === 1) {
+      const frac = worldToFraction(group.position.x, group.position.y, aspect);
+      const r = ((JEWEL_WORLD_RADIUS * cur.s * yieldF) / VIS_H) * height;
+      onProxyRect(frac.fx * width, frac.fy * height, Math.max(24, r));
     }
-    const inertiaDecay = Math.pow(0.95, delta * 60);
-    vel.x *= inertiaDecay;
-    vel.y *= inertiaDecay;
-
-    // Magnetic lean: gem mesh leans gently toward the pointer on full tier
-    // when not being dragged. An inner group (leanRef) isolates this rotation
-    // from the outer group's drag/inertia rotation so they don't fight.
-    const lean = leanRef.current;
-    if (lean) {
-      const leanK = 1 - Math.exp(-4 * delta);
-      if (!lite && !dragging) {
-        // state.pointer is in NDC [-1,1]; scale to ±0.14 rad.
-        const targetLeanX = statePointer.y * 0.14;
-        const targetLeanY = statePointer.x * 0.14;
-        leanXRef.current += (targetLeanX - leanXRef.current) * leanK;
-        leanYRef.current += (targetLeanY - leanYRef.current) * leanK;
-      } else {
-        // Lite tier or dragging: lerp lean back to zero.
-        leanXRef.current += (0 - leanXRef.current) * leanK;
-        leanYRef.current += (0 - leanYRef.current) * leanK;
-      }
-      lean.rotation.x = leanXRef.current;
-      lean.rotation.y = leanYRef.current;
-    }
-
-    // Position: exponential approach toward the story frame (float bob rides
-    // on top of the frame's y as before).
-    const k = 1 - Math.exp(-5 * delta);
-    const floatY = profile.animate
-      ? Math.sin(clock.getElapsedTime() * 0.5) * floatAmplitude
-      : 0;
-    const tx = frame ? frame.position[0] : gemX;
-    const ty = (frame ? frame.position[1] : gemY) + floatY;
-    const tz = frame ? frame.position[2] : 0;
-    group.position.x += (tx - group.position.x) * k;
-    group.position.y += (ty - group.position.y) * k;
-    group.position.z += (tz - group.position.z) * k;
-
-    // Scale: smoothed story scale; tap pulse swells multiplicatively on top.
-    const targetScale = frame ? frame.scale : baseScale;
-    scaleRef.current += (targetScale - scaleRef.current) * k;
-    group.scale.setScalar(scaleRef.current * (1 + pulseRef.current * 0.12));
-    pulseRef.current *= Math.pow(0.85, delta * 60);
   });
 
-  /* ---- Pointer handlers (gem mesh only) ---- */
-  const handlePointerOver = () => {
-    if (!dragRef.current.active) document.body.style.cursor = 'grab';
-  };
-
-  const handlePointerOut = () => {
-    if (!dragRef.current.active) document.body.style.cursor = '';
-  };
-
-  const handlePointerDown = (e: ThreeEvent<PointerEvent>) => {
-    e.stopPropagation();
-    // In r3f, e.target is the Object3D with setPointerCapture POLYFILLED onto
-    // it — it is NOT a DOM element. addEventListener must go on the real
-    // canvas (nativeEvent.target), or this handler throws and the drag never
-    // starts (bug found in production verification).
-    (e.target as unknown as { setPointerCapture(id: number): void }).setPointerCapture(e.pointerId);
-    const dom = e.nativeEvent.target as HTMLElement | null;
-    if (dom && typeof dom.addEventListener === 'function') {
-      // r3f's MeshProps has no onLostPointerCapture — listen on the DOM canvas
-      // so an OS-interrupted drag can never get stuck active.
-      dom.addEventListener(
-        'lostpointercapture',
-        () => {
-          dragRef.current.active = false;
-        },
-        { once: true }
-      );
-    }
-    dragRef.current = { active: true, lastX: e.clientX, lastY: e.clientY, moved: 0 };
-    document.body.style.cursor = 'grabbing';
-    // Notify parent that the user has interacted for the first time (hint dismiss).
-    if (!firstInteractionFiredRef.current) {
-      firstInteractionFiredRef.current = true;
-      onFirstInteraction?.();
-    }
-  };
-
-  const handlePointerMove = (e: ThreeEvent<PointerEvent>) => {
-    const drag = dragRef.current;
-    if (!drag.active) return;
-    const dx = e.clientX - drag.lastX;
-    const dy = e.clientY - drag.lastY;
-    drag.moved += Math.abs(dx) + Math.abs(dy);
-    const group = gemGroupRef.current;
-    if (group) {
-      group.rotation.y += dx * 0.005;
-      group.rotation.x += dy * 0.005;
-    }
-    angularVelRef.current = { x: dy * 0.002, y: dx * 0.002 };
-    drag.lastX = e.clientX;
-    drag.lastY = e.clientY;
-  };
-
-  const handlePointerUp = (e: ThreeEvent<PointerEvent>) => {
-    const drag = dragRef.current;
-    if (!drag.active) return;
-    try {
-      (e.target as Element & { releasePointerCapture(id: number): void }).releasePointerCapture(
-        e.pointerId
-      );
-    } catch {
-      // Capture may already be released (e.g. lost capture fired first).
-    }
-    if (drag.moved < 6) {
-      // Tap (not a drag): always pulse; toggle the breath morph ONLY when the
-      // story is settled on the gem (hero/CTA) — elsewhere scroll owns the
-      // shape and a toggle would fight the story.
-      story.pulse();
-      const frame = frameRef.current;
-      const settledOnGem = !frame || (frame.from === frame.to && frame.to === 'gem');
-      if (settledOnGem) {
-        story.setTarget(story.state.to === 'gem' ? 'gemBreath' : 'gem');
-      }
-    }
-    drag.active = false;
-    document.body.style.cursor = 'grab';
-  };
-
+  /* ---- Scene ---- */
   return (
     <>
-      {/* Lighting: gold key (upper-left), gold rimlight (behind-right), cool fill, deep red ambient */}
-      <directionalLight color="#FFD700" intensity={3.8} position={[-5, 6, 4]} />
-      <directionalLight color="#FFD060" intensity={2.0} position={[5, 2, -4]} />
-      <directionalLight color="#7E9BC4" intensity={0.45} position={[4, -3, 2]} />
-      <ambientLight color="#3A0A0E" intensity={0.6} />
+      {/* Lighting — handoff values: warm key, gold point, pink rim. */}
+      <ambientLight color="#ffffff" intensity={0.55} />
+      <directionalLight color="#fff1d6" intensity={1.5} position={[-3, 4, 5]} />
+      <pointLight color="#e8b765" intensity={1.25} distance={22} position={[-2.6, 2.6, 3.2]} />
+      <directionalLight color="#ff5a7a" intensity={0.75} position={[4, -2, -3]} />
 
-      {/* Procedural royal environment — full tier only, zero network requests */}
-      {profile.tier === 'full' && (
-        <Environment resolution={256} frames={1}>
-          {/* Soft white overhead panel — bright premium facet highlights on light bg */}
-          <Lightformer
-            intensity={1.5}
-            color="#FFFFFF"
-            position={[0, 5, 0]}
-            rotation={[Math.PI / 2, 0, 0]}
-            scale={[8, 8, 1]}
-          />
-          <Lightformer intensity={4} color="#FFD700" position={[-3, 2, 2]} scale={[3, 2, 1]} />
-          <Lightformer intensity={2} color="#F5E6D3" position={[3, 1, -2]} scale={[2, 3, 1]} />
-          <Lightformer
-            intensity={1.5}
-            color="#DC143C"
-            position={[0, -3, 0]}
-            rotation={[Math.PI / 2, 0, 0]}
-            scale={[4, 4, 1]}
-          />
-        </Environment>
-      )}
-
-      <Backdrop focusX={focusX} focusY={focusY} fade={fadeUniform} />
-
-      <group ref={gemGroupRef} position={[gemX, gemY, 0]} rotation={[0.35, 0, -0.15]}>
-        {/* Inner group for magnetic lean — isolated so lean doesn't fight
-            the outer group's drag/inertia/ambient-rotation. */}
-        <group ref={leanRef}>
-          <mesh
-            geometry={geometry}
-            material={material}
-            onPointerOver={handlePointerOver}
-            onPointerOut={handlePointerOut}
-            onPointerDown={handlePointerDown}
-            onPointerMove={handlePointerMove}
-            onPointerUp={handlePointerUp}
-          />
-        </group>
+      <group ref={groupRef}>
+        {SHAPE_NAMES.map((name) => (
+          <primitive key={name} object={shapes[name].mesh} />
+        ))}
       </group>
 
-      <Dust count={dustCount} animate={profile.animate} fade={fadeUniform} />
+      <primitive object={dust} />
     </>
   );
 };

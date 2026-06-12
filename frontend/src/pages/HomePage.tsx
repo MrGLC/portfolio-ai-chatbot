@@ -71,20 +71,19 @@ export const HomePage: React.FC = () => {
 
   return (
     <Box overflowX="hidden">
-      {/* Hero Section — paints its own light cream bg UNDER the fixed jewel
-          canvas (60/30/10 premium palette: white/cream canvas, red accents,
-          gold glints). Stacking contract: the hero stays position:relative
-          with z-index AUTO (no transform, no zIndex) so it does NOT create a
-          stacking context — its background paints before the later-in-DOM z0
-          canvas, while its positioned children (zIndex >= 1) paint above the
-          canvas. */}
+      {/* Hero Section — handoff hero: cream radial glow anchored top-right
+          where the jewel poses (crimson/gold accents on the cream canvas).
+          Jewel engine v2 stacking: the canvas is fixed at zIndex 5 ABOVE all
+          content (transparent — content shows through); sections keep
+          zIndex 1 and stay clickable because the canvas is pointer-events
+          none (only the small hit proxy intercepts). */}
       <MotionBox
         id="story-hero"
         // 100vh minus the 92px navbar offset (Layout pads <main> by 92px) so
         // the hero bottom — and the scroll chevron — sits exactly at the fold
         // instead of 92px below it.
         minH="calc(100vh - 92px)"
-        bg="brand.creamLight"
+        bg="radial-gradient(120% 90% at 78% 18%, #fbf6ec, #f6efe2 42%, #f1e7d6)"
         position="relative"
         overflow="visible"
         initial="initial"
@@ -296,10 +295,10 @@ export const HomePage: React.FC = () => {
         </Box>
       </MotionBox>
 
-      {/* Living Jewel scroll story — fixed transparent canvas behind every
-          section (z0). MUST come after the hero in DOM so the canvas paints
-          above the hero's cream background; sections below carry zIndex 1
-          so their content always sits above the traveling jewel. */}
+      {/* Jewel engine v2 — fixed transparent canvas ABOVE every section
+          (zIndex 5, pointer-events none). The jewel dashes between chapter
+          keyframes resolved from the story-* section ranges; only its small
+          hit-proxy div intercepts pointer input. */}
       <Suspense fallback={null}>
         <JewelScene />
       </Suspense>
