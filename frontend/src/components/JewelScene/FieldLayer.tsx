@@ -106,18 +106,19 @@ const particleFragment = /* glsl */ `
     float d = length(gl_PointCoord - 0.5);
     float circle = smoothstep(0.5, 0.08, d);
 
-    vec3 cream = vec3(0.961, 0.902, 0.827); // #F5E6D3
-    vec3 red   = vec3(0.863, 0.078, 0.235); // #DC143C
-    vec3 gold  = vec3(1.0,   0.843, 0.0);   // #FFD700
+    // Light-palette field: fine red/gold current on the cream page.
+    // Normal blending (additive is invisible on white) — ~55% soft red,
+    // ~35% deeper red, ~10% gold; alpha capped well under 0.5.
+    vec3 softRed = vec3(0.863, 0.078, 0.235); // #DC143C
+    vec3 deepRed = vec3(0.663, 0.106, 0.188); // #A91B30
+    vec3 gold    = vec3(0.831, 0.686, 0.216); // #D4AF37
 
-    // Mostly cream<->red by seed + depth; sparse gold (~10%) overrides.
-    float mixT = clamp(fract(vSeed * 7.31) * 0.8 + vDepth * 0.4, 0.0, 1.0);
-    vec3 col = mix(cream, red, mixT);
-    col = mix(col, gold, step(0.9, fract(vSeed * 13.7)));
+    float pick = fract(vSeed * 7.31);
+    vec3 col = pick < 0.55 ? softRed : (pick < 0.90 ? deepRed : gold);
 
-    float alpha = circle * vFade * (0.35 - 0.18 * vDepth) * uFade;
+    float alpha = circle * vFade * (0.42 - 0.2 * vDepth) * uFade;
     if (alpha < 0.01) discard;
-    gl_FragColor = vec4(col * 0.55, alpha);
+    gl_FragColor = vec4(col, alpha);
   }
 `;
 
@@ -222,7 +223,7 @@ const FieldParticles: React.FC<ParticlesProps> = ({ count, shared }) => {
       fragmentShader: particleFragment,
       transparent: true,
       depthWrite: false,
-      blending: THREE.AdditiveBlending,
+      blending: THREE.NormalBlending,
     });
   }, [shared, pixelRatio]);
 
@@ -237,10 +238,12 @@ interface GlowSpec {
   intensity: number;
 }
 
+// Soft gold haze at very low opacity — warm depth on the light page without
+// muddying it (red glows read as pink smears on cream).
 const GLOWS: GlowSpec[] = [
-  { color: '#DC143C', position: [-4.5, -2.8, -4], scale: 9, phase: 0.0, intensity: 0.08 },
-  { color: '#FFD700', position: [3.5, -2.2, -5], scale: 7, phase: 2.4, intensity: 0.04 },
-  { color: '#DC143C', position: [1.0, -3.4, -3], scale: 6, phase: 4.6, intensity: 0.06 },
+  { color: '#D4AF37', position: [-4.5, -2.8, -4], scale: 9, phase: 0.0, intensity: 0.05 },
+  { color: '#D4AF37', position: [3.5, -2.2, -5], scale: 7, phase: 2.4, intensity: 0.04 },
+  { color: '#B8860B', position: [1.0, -3.4, -3], scale: 6, phase: 4.6, intensity: 0.04 },
 ];
 
 interface GlowProps {
@@ -270,7 +273,7 @@ const GlowSprite: React.FC<GlowProps> = ({ spec, timeUniform, fadeUniform }) => 
       fragmentShader: glowFragment,
       transparent: true,
       depthWrite: false,
-      blending: THREE.AdditiveBlending,
+      blending: THREE.NormalBlending,
     });
   }, [spec, timeUniform, fadeUniform]);
 

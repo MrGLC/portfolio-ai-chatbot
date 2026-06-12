@@ -81,15 +81,17 @@ export const HomePage: React.FC = () => {
 
   return (
     <Box overflowX="hidden">
-      {/* Hero Section — paints its own dark bg UNDER the fixed jewel canvas.
-          Stacking contract: the hero stays position:relative with z-index AUTO
-          (no transform, no zIndex) so it does NOT create a stacking context —
-          its background paints before the later-in-DOM z0 canvas, while its
-          positioned children (zIndex >= 1) paint above the canvas. */}
+      {/* Hero Section — paints its own light cream bg UNDER the fixed jewel
+          canvas (60/30/10 premium palette: white/cream canvas, red accents,
+          gold glints). Stacking contract: the hero stays position:relative
+          with z-index AUTO (no transform, no zIndex) so it does NOT create a
+          stacking context — its background paints before the later-in-DOM z0
+          canvas, while its positioned children (zIndex >= 1) paint above the
+          canvas. */}
       <MotionBox
         id="story-hero"
         minH="100vh"
-        bg="#140306"
+        bg="brand.creamLight"
         position="relative"
         overflow="visible"
         initial="initial"
@@ -148,10 +150,9 @@ export const HomePage: React.FC = () => {
               <Text
                 as={MotionText}
                 textStyle="eyebrow"
-                color="brand.accent"
+                color="brand.goldRich"
                 variants={staggerAnimation.child}
                 position="relative"
-                textShadow="0 2px 10px rgba(0,0,0,0.5)"
                 _before={{
                   content: '""',
                   position: 'absolute',
@@ -160,7 +161,7 @@ export const HomePage: React.FC = () => {
                   transform: { base: 'translateX(-50%)', lg: 'none' },
                   width: '60px',
                   height: '2px',
-                  bg: 'brand.accent',
+                  bg: 'brand.goldRich',
                   opacity: 0.8
                 }}
               >
@@ -171,9 +172,9 @@ export const HomePage: React.FC = () => {
               <Heading
                 as={MotionHeading}
                 textStyle="pageTitle"
-                color="white"
+                color="brand.text"
                 variants={staggerAnimation.child}
-                textShadow="0 4px 20px rgba(0,0,0,0.8), 0 0 40px rgba(220,20,60,0.5)"
+                textShadow="0 2px 14px rgba(184, 134, 11, 0.12)"
               >
                 {t('home.hero.modernTitle')}
               </Heading>
@@ -182,11 +183,10 @@ export const HomePage: React.FC = () => {
               <Text
                 as={MotionText}
                 textStyle="lead"
-                color="white"
+                color="brand.textSecondary"
                 maxW="46ch"
                 variants={staggerAnimation.child}
                 textAlign={{ base: "center", lg: "left" }}
-                textShadow="0 2px 10px rgba(0,0,0,0.6)"
               >
                 {t('home.hero.description')}
               </Text>
@@ -240,9 +240,9 @@ export const HomePage: React.FC = () => {
                     px={10}
                     py={7}
                     fontSize="lg"
-                    borderColor="brand.cream"
+                    borderColor="brand.text"
                     borderWidth={2}
-                    color="brand.cream"
+                    color="brand.text"
                     position="relative"
                     overflow="hidden"
                     _before={{
@@ -252,14 +252,14 @@ export const HomePage: React.FC = () => {
                       left: 0,
                       width: '0%',
                       height: '100%',
-                      bg: 'brand.cream',
+                      bg: 'brand.text',
                       transition: 'width 0.3s ease',
                       zIndex: -1,
                     }}
                     _hover={{
-                      color: 'brand.secondary',
+                      color: 'brand.creamLight',
                       transform: 'translateY(-3px)',
-                      boxShadow: '0 20px 40px rgba(255,255,255,0.2)',
+                      boxShadow: '0 20px 40px rgba(26,26,26,0.15)',
                       _before: {
                         width: '100%',
                       }
@@ -295,7 +295,7 @@ export const HomePage: React.FC = () => {
           zIndex={2}
         >
           <VStack spacing={2} cursor="pointer" onClick={() => window.scrollTo({ top: window.innerHeight, behavior: 'smooth' })}>
-            <Text fontSize="sm" color="brand.cream" opacity={0.7}>
+            <Text fontSize="sm" color="brand.text" opacity={0.55}>
               Scroll to explore
             </Text>
             <Box
@@ -303,9 +303,9 @@ export const HomePage: React.FC = () => {
               h="50px"
               borderRadius="15px"
               border="2px solid"
-              borderColor="brand.cream"
+              borderColor="brand.text"
               position="relative"
-              opacity={0.7}
+              opacity={0.55}
             >
               <Box
                 position="absolute"
@@ -314,7 +314,7 @@ export const HomePage: React.FC = () => {
                 transform="translateX(-50%)"
                 w="3px"
                 h="10px"
-                bg="brand.cream"
+                bg="brand.text"
                 borderRadius="2px"
                 animation={`${floatAnimation} 2s ease-in-out infinite`}
               />
@@ -325,7 +325,7 @@ export const HomePage: React.FC = () => {
 
       {/* Living Jewel scroll story — fixed transparent canvas behind every
           section (z0). MUST come after the hero in DOM so the canvas paints
-          above the hero's #140306 background; sections below carry zIndex 1
+          above the hero's cream background; sections below carry zIndex 1
           so their content always sits above the traveling jewel. */}
       <Suspense fallback={null}>
         <JewelScene />
@@ -339,19 +339,19 @@ export const HomePage: React.FC = () => {
         zIndex={1}
         overflow="hidden"
       >
-        {/* Red transition overlay at top */}
+        {/* Soft gold transition tint at top — light palette, red stays an accent */}
         <Box
           position="absolute"
           top="-100px"
           left={0}
           right={0}
           height="300px"
-          bgGradient="linear(to-b, rgba(139, 0, 0, 0.3), transparent)"
+          bgGradient="linear(to-b, rgba(184, 134, 11, 0.07), transparent)"
           pointerEvents="none"
           zIndex={2}
         />
-        
-        {/* Smooth transition shape */}
+
+        {/* Smooth transition shape — cream-on-cream with a whisper of shadow */}
         <Box
           position="absolute"
           top="-100px"
@@ -360,7 +360,7 @@ export const HomePage: React.FC = () => {
           height="200px"
           bg="brand.primary"
           transform="skewY(-3deg)"
-          boxShadow="0 -20px 40px rgba(0,0,0,0.1)"
+          boxShadow="0 -16px 32px rgba(184, 134, 11, 0.06)"
         />
         
         <Container maxW="1400px" py={{ base: 12, md: 20 }} position="relative" zIndex={3}>
@@ -427,17 +427,19 @@ export const HomePage: React.FC = () => {
         position="relative"
         zIndex={1}
         overflow="hidden"
+        borderTop="1px solid"
+        borderColor="rgba(184, 134, 11, 0.25)"
       >
-        {/* Red overlay — masked OUT of the right lane on desktop so the
-            lattice jewel (keyframe x +2.2) reads through clear canvas instead
-            of a muting red wash; mobile keeps the full-bleed gradient. */}
+        {/* Light wash — cream-to-transparent with a soft gold tint keeps the
+            section distinct on the light canvas; the jewel lane on the right
+            stays clear (mask) so the story jewel reads through. */}
         <Box
           position="absolute"
           top={0}
           left={0}
           right={0}
           bottom={0}
-          bgGradient="linear(to-b, rgba(139, 0, 0, 0.55), rgba(220, 20, 60, 0.35), rgba(139, 0, 0, 0.45))"
+          bgGradient="linear(to-b, rgba(245, 230, 211, 0.85), rgba(250, 247, 242, 0.4), rgba(245, 230, 211, 0.7))"
           pointerEvents="none"
           sx={{
             maskImage: {
@@ -474,7 +476,7 @@ export const HomePage: React.FC = () => {
               >
                 <Text
                   textStyle="eyebrow"
-                  color="brand.accent"
+                  color="brand.goldRich"
                   position="relative"
                   _after={{
                     content: '""',
@@ -484,7 +486,7 @@ export const HomePage: React.FC = () => {
                     transform: { base: 'translateX(-50%)', lg: 'none' },
                     width: '80px',
                     height: '3px',
-                    bg: 'brand.accent',
+                    bg: 'brand.goldRich',
                     borderRadius: 'full',
                   }}
                 >
@@ -492,13 +494,13 @@ export const HomePage: React.FC = () => {
                 </Text>
                 <Heading
                   textStyle="sectionTitle"
-                  color="brand.primary"
+                  color="brand.text"
                 >
                   {t('home.portfolio.title')}
                 </Heading>
                 <Text
                   textStyle="lead"
-                  color="brand.cream"
+                  color="brand.textSecondary"
                   maxW="600px"
                   opacity={0.9}
                 >
@@ -714,7 +716,7 @@ export const HomePage: React.FC = () => {
                 <Button
                   as={RouterLink}
                   to="/contact"
-                  variant="secondary"
+                  variant="primary"
                   size="lg"
                   px={12}
                   py={8}

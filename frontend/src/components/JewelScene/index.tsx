@@ -18,9 +18,9 @@ class SceneErrorBoundary extends React.Component<
   }
   render() {
     if (this.state.failed) {
-      // WebGL unavailable — render nothing. The hero paints its own #140306
+      // WebGL unavailable — render nothing. The hero paints its own cream
       // background under the (now empty) canvas slot, so the page still
-      // composes; a full-viewport stand-in would darken every section below.
+      // composes; a full-viewport stand-in would tint every section below.
       return null;
     }
     return this.props.children;
@@ -31,7 +31,7 @@ class SceneErrorBoundary extends React.Component<
  * JewelScene — fixed, transparent scroll-story canvas.
  *
  * The canvas spans the viewport at zIndex 0; Home sections sit above it at
- * zIndex >= 1 (so all content receives clicks first), while the hero's dark
+ * zIndex >= 1 (so all content receives clicks first), while the hero's cream
  * background paints below it. The jewel travels and morphs with scroll
  * (JewelRig reads window.scrollY against the story-* section ranges).
  *
@@ -162,15 +162,15 @@ export const JewelScene: React.FC = () => {
               px={3}
               py={1.5}
               borderRadius="full"
-              bg="whiteAlpha.100"
+              bg="rgba(255, 255, 255, 0.65)"
               backdropFilter="blur(8px)"
               border="1px solid"
-              borderColor="whiteAlpha.200"
-              boxShadow="0 2px 12px rgba(0,0,0,0.3)"
+              borderColor="rgba(184, 134, 11, 0.25)"
+              boxShadow="0 2px 12px rgba(26, 26, 26, 0.08)"
             >
               <Text
                 fontSize="xs"
-                color="whiteAlpha.700"
+                color="blackAlpha.700"
                 fontWeight="medium"
                 letterSpacing="0.03em"
                 whiteSpace="nowrap"
