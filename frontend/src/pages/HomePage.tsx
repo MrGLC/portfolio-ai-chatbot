@@ -21,6 +21,7 @@ import {
   ChevronDownIcon
 } from '@chakra-ui/icons';
 import { variants, durations, easings, delays, springs, createStaggerAnimation } from '../theme/animations';
+import { Kicker } from '../components/Kicker';
 const JewelScene = lazy(() => import('../components/JewelScene'));
 const ThreeJsChatbot = lazy(() =>
   import('../components/Chatbot/ThreeJsChatbot').then((m) => ({ default: m.ThreeJsChatbot }))
@@ -105,7 +106,7 @@ export const HomePage: React.FC = () => {
 
         {/* pointerEvents none on the full-height wrapper so touches in the gem's
             area fall through to the canvas; the text/CTA stack re-enables them */}
-        <Container maxW="1400px" position="relative" zIndex={2} h="calc(100vh - 92px)" pointerEvents="none">
+        <Container maxW="1180px" px="clamp(20px, 5vw, 40px)" position="relative" zIndex={2} h="calc(100vh - 92px)" pointerEvents="none">
           <Flex
             h="100%"
             align="flex-start"
@@ -123,27 +124,12 @@ export const HomePage: React.FC = () => {
               pointerEvents="auto"
               h="fit-content"
             >
-              {/* Enhanced luxury subtitle with better styling */}
-              <Text
-                as={MotionText}
-                textStyle="eyebrow"
-                color="brand.goldRich"
-                variants={staggerAnimation.child}
-                position="relative"
-                _before={{
-                  content: '""',
-                  position: 'absolute',
-                  bottom: '-8px',
-                  left: { base: '50%', lg: '0' },
-                  transform: { base: 'translateX(-50%)', lg: 'none' },
-                  width: '60px',
-                  height: '2px',
-                  bg: 'brand.goldRich',
-                  opacity: 0.8
-                }}
-              >
-                {t('home.hero.luxurySubtitle')}
-              </Text>
+              {/* Handoff kicker: gold gradient line + eyebrow label */}
+              <MotionBox variants={staggerAnimation.child} w="full">
+                <Kicker centered={{ base: true, lg: false }}>
+                  {t('home.hero.luxurySubtitle')}
+                </Kicker>
+              </MotionBox>
 
               {/* Enhanced main title with better typography */}
               <Heading
@@ -335,7 +321,7 @@ export const HomePage: React.FC = () => {
           boxShadow="0 -16px 32px rgba(184, 134, 11, 0.06)"
         />
         
-        <Container maxW="1400px" py={{ base: 12, md: 20 }} position="relative" zIndex={3}>
+        <Container maxW="1180px" px="clamp(20px, 5vw, 40px)" py="clamp(80px, 12vh, 140px)" position="relative" zIndex={3}>
           {/* Editorial lane: content shifts RIGHT on desktop — the neural
               jewel (keyframe x −2.2) owns the left lane's negative space. */}
           <MotionBox
@@ -349,24 +335,7 @@ export const HomePage: React.FC = () => {
             <VStack spacing={16}>
               {/* Enhanced section header */}
               <VStack spacing={6} textAlign="center" maxW="800px" mx="auto">
-                <Text
-                  textStyle="eyebrow"
-                  color="brand.secondary"
-                  position="relative"
-                  _after={{
-                    content: '""',
-                    position: 'absolute',
-                    bottom: '-12px',
-                    left: '50%',
-                    transform: 'translateX(-50%)',
-                    width: '80px',
-                    height: '3px',
-                    bg: 'brand.secondary',
-                    borderRadius: 'full',
-                  }}
-                >
-                  {t('home.chatbot.title')}
-                </Text>
+                <Kicker centered>{t('home.chatbot.title')}</Kicker>
                 <Heading
                   textStyle="sectionTitle"
                   color="brand.text"
@@ -395,7 +364,7 @@ export const HomePage: React.FC = () => {
       <Box
         id="story-portfolio"
         bg="transparent"
-        py={{ base: 12, md: 20 }}
+        py="clamp(80px, 12vh, 140px)"
         position="relative"
         zIndex={1}
         overflow="hidden"
@@ -425,7 +394,7 @@ export const HomePage: React.FC = () => {
           }}
         />
         
-        <Container maxW="1400px" position="relative" zIndex={1}>
+        <Container maxW="1180px" px="clamp(20px, 5vw, 40px)" position="relative" zIndex={1}>
           <MotionBox
             initial="hidden"
             whileInView="visible"
@@ -446,24 +415,9 @@ export const HomePage: React.FC = () => {
                 mx={{ base: 'auto', lg: 0 }}
                 mr={{ base: 'auto', lg: '30%' }}
               >
-                <Text
-                  textStyle="eyebrow"
-                  color="brand.goldRich"
-                  position="relative"
-                  _after={{
-                    content: '""',
-                    position: 'absolute',
-                    bottom: '-12px',
-                    left: { base: '50%', lg: 0 },
-                    transform: { base: 'translateX(-50%)', lg: 'none' },
-                    width: '80px',
-                    height: '3px',
-                    bg: 'brand.goldRich',
-                    borderRadius: 'full',
-                  }}
-                >
+                <Kicker centered={{ base: true, lg: false }}>
                   {t('home.portfolio.subtitle')}
-                </Text>
+                </Kicker>
                 <Heading
                   textStyle="sectionTitle"
                   color="brand.text"
@@ -631,7 +585,7 @@ export const HomePage: React.FC = () => {
       <Box
         id="story-cta"
         bg="transparent"
-        py={{ base: 12, md: 20 }}
+        py="clamp(80px, 12vh, 140px)"
         position="relative"
         zIndex={1}
         overflow="hidden"
@@ -660,7 +614,7 @@ export const HomePage: React.FC = () => {
           pointerEvents="none"
         />
         
-        <Container maxW="5xl" textAlign="center" position="relative">
+        <Container maxW="1180px" px="clamp(20px, 5vw, 40px)" textAlign="center" position="relative">
           <MotionBox
             initial="hidden"
             whileInView="visible"
