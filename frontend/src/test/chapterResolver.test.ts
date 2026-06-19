@@ -38,3 +38,17 @@ describe('resolveChapter', () => {
     expect(m.kf.x).toBe(KEYFRAMES['story-hero'].mx);
   });
 });
+
+describe('anchor-right choreography', () => {
+  it('anchors every desktop chapter to the right band (x >= 0.7)', () => {
+    for (const id of ['story-hero', 'story-chatbot', 'story-portfolio', 'story-cta']) {
+      expect(KEYFRAMES[id].x).toBeGreaterThanOrEqual(0.7);
+    }
+  });
+  it('hero is the largest costume; crown is the payoff (> middles)', () => {
+    const s = (id: string) => KEYFRAMES[id].s;
+    expect(s('story-hero')).toBeGreaterThan(s('story-chatbot'));
+    expect(s('story-hero')).toBeGreaterThan(s('story-portfolio'));
+    expect(s('story-cta')).toBeGreaterThan(s('story-chatbot'));
+  });
+});
