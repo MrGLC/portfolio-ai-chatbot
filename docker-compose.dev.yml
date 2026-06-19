@@ -1,0 +1,32 @@
+# Staging overlay for the la-realeza VPS: publishes the frontend at
+# dev.la-realeza.com via the existing Coolify Traefik proxy, with router/service
+# names distinct from prod so the two stacks coexist. DNS is a wildcard
+# (*.la-realeza.com -> VPS), so no record is needed; Traefik issues the cert on
+# first request.
+#
+# Deploy as a SEPARATE compose project so it never collides with prod ('app'):
+#   docker compose -f docker-compose.prod.yml -f docker-compose.dev.yml -p app-dev up -d --build
+services:
+  frontend:
+    networks:
+      - default
+      - proxy
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=coolify
+      - traefik.http.routers.larealeza-dev-https.rule=Host(`dev.la-realeza.com`)
+      - traefik.http.routers.larealeza-dev-https.entryPoints=https
+      - traefik.http.routers.larealeza-dev-https.tls=true
+      - traefik.http.routers.larealeza-dev-https.tls.certresolver=letsencrypt
+      - traefik.http.routers.larealeza-dev-https.service=larealeza-dev
+      - traefik.http.services.larealeza-dev.loadbalancer.server.port=80
+      - traefik.http.routers.larealeza-dev-http.rule=Host(`dev.la-realeza.com`)
+      - traefik.http.routers.larealeza-dev-http.entryPoints=http
+      - traefik.http.routers.larealeza-dev-http.middlewares=larealeza-dev-redirect
+      - traefik.http.routers.larealeza-dev-http.service=larealeza-dev
+      - traefik.http.middlewares.larealeza-dev-redirect.redirectscheme.scheme=https
+
+networks:
+  proxy:
+    name: coolify
+    external: true
