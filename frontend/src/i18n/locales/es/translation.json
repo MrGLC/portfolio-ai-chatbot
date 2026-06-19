@@ -83,7 +83,13 @@
       "button": "Comienza tu Proyecto"
     },
     "jewel": {
-      "hint": "Arrástrame · toca para transformar"
+      "hint": "Arrástrame · toca para transformar",
+      "labels": {
+        "rawStone": "Piedra en bruto",
+        "theModel": "El modelo",
+        "theResults": "Los resultados",
+        "transformed": "Transformado"
+      }
     },
     "chatbot": {
       "title": "ASISTENTE IA",

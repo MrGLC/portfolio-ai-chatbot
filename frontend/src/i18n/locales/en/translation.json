@@ -83,7 +83,13 @@
       "button": "Start Your Project"
     },
     "jewel": {
-      "hint": "Drag me · tap to transform"
+      "hint": "Drag me · tap to transform",
+      "labels": {
+        "rawStone": "Raw stone",
+        "theModel": "The model",
+        "theResults": "The results",
+        "transformed": "Transformed"
+      }
     },
     "chatbot": {
       "title": "AI ASSISTANT",
