@@ -64,6 +64,10 @@ export const JewelScene: React.FC = () => {
     }
   });
 
+  // Fade the canvas in once WebGL has composed its first frame, so the jewel
+  // appears intentionally instead of hard-popping into the hero.
+  const [ready, setReady] = useState(false);
+
   // Observe #story-hero visibility with an IntersectionObserver. We can't use
   // the shared useInViewport hook because that hook returns a ref to attach to
   // a new element — here we need to observe an existing DOM element by id.
@@ -138,6 +142,8 @@ export const JewelScene: React.FC = () => {
         zIndex={5}
         pointerEvents="none"
         aria-hidden="true"
+        opacity={ready ? 1 : 0}
+        transition="opacity 0.6s ease"
       >
         <SceneErrorBoundary>
           <Canvas
@@ -145,6 +151,7 @@ export const JewelScene: React.FC = () => {
             frameloop={profile.animate ? 'always' : 'never'}
             gl={{ antialias: profile.tier === 'full', alpha: true, powerPreference: 'high-performance' }}
             camera={{ position: [0, 0, CAMERA_Z], fov: CAMERA_FOV }}
+            onCreated={() => setReady(true)}
           >
             <Suspense fallback={null}>
               <JewelRig
