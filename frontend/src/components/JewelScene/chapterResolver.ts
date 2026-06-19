@@ -54,6 +54,13 @@ export const CAMERA_Z = 5;
 /** Visible world height at z=0: 2 * tan(fov/2) * cameraZ. */
 export const VIS_H = 2 * Math.tan((CAMERA_FOV / 2) * (Math.PI / 180)) * CAMERA_Z;
 
+/** True when the active chapter id differs from the last emitted one.
+ *  Lets the frame loop fire onChapterChange on transitions only (≈4×/scroll),
+ *  never per frame. */
+export function chapterChanged(prev: string | null, next: string): boolean {
+  return prev !== next;
+}
+
 /** Viewport fraction (x: 0=left..1=right, y: 0=top..1=bottom) -> world units at z=0. */
 export function fractionToWorld(fx: number, fy: number, aspect: number): { x: number; y: number } {
   return { x: (fx - 0.5) * VIS_H * aspect, y: -(fy - 0.5) * VIS_H };

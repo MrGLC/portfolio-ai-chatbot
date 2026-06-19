@@ -5,6 +5,7 @@ import { usePerfProfile } from '../../hooks/usePerfProfile';
 import {
   KEYFRAMES,
   resolveChapter,
+  chapterChanged,
   fractionToWorld,
   worldToFraction,
   VIS_H,
@@ -58,6 +59,9 @@ interface JewelRigProps {
   onProxyRect?: (x: number, y: number, r: number) => void;
   /** Callback-registry handle: rig hands its pointer handlers up on mount. */
   registerPointerHandlers?: (handlers: JewelPointerHandlers | null) => void;
+  /** Fired with the active chapter id ONLY when it changes (≈4×/scroll).
+   *  Never per frame — drives the DOM ChapterLabel. */
+  onChapterChange?: (id: string) => void;
 }
 
 const HERO_ID = 'story-hero';
@@ -76,6 +80,7 @@ export const JewelRig: React.FC<JewelRigProps> = ({
   onFirstInteraction,
   onProxyRect,
   registerPointerHandlers,
+  onChapterChange,
 }) => {
   const profile = usePerfProfile();
   const invalidate = useThree((state) => state.invalidate);
@@ -172,6 +177,7 @@ export const JewelRig: React.FC<JewelRigProps> = ({
   const pulseRef = useRef(0); // 1 on tap, decays in the loop
   const firstInteractionFiredRef = useRef(false);
   const frameCountRef = useRef(0);
+  const lastChapterRef = useRef<string | null>(null);
 
   /* ---- Listeners: scroll, mouse, section measurement ---- */
   useEffect(() => {
@@ -306,6 +312,12 @@ export const JewelRig: React.FC<JewelRigProps> = ({
               : { x: KEYFRAMES[HERO_ID].x, y: KEYFRAMES[HERO_ID].y, s: KEYFRAMES[HERO_ID].s, shape: 'ico' as ShapeName, spin: KEYFRAMES[HERO_ID].spin, p: KEYFRAMES[HERO_ID].p },
           };
     const kf = pick.kf;
+
+    // Emit the active chapter to React only on change — drives the DOM label.
+    if (onChapterChange && chapterChanged(lastChapterRef.current, pick.id)) {
+      lastChapterRef.current = pick.id;
+      onChapterChange(pick.id);
+    }
 
     // 2. Dash: adaptive easing in FRACTION space — far = fast, near = soft.
     const dist = Math.hypot(kf.x - cur.x, kf.y - cur.y);

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { resolveChapter, KEYFRAMES, type SectionRange } from '../components/JewelScene/chapterResolver';
+import { resolveChapter, chapterChanged, KEYFRAMES, type SectionRange } from '../components/JewelScene/chapterResolver';
 
 const ranges: SectionRange[] = [
   { id: 'story-hero', top: 0, bottom: 2000 },
@@ -36,6 +36,14 @@ describe('resolveChapter', () => {
     const m = resolveChapter(100, ranges, 800, true);
     expect(d.kf.x).not.toBe(m.kf.x); // hero: x .72 desktop vs .50 mobile
     expect(m.kf.x).toBe(KEYFRAMES['story-hero'].mx);
+  });
+});
+
+describe('chapterChanged', () => {
+  it('emits only when the id changes', () => {
+    expect(chapterChanged(null, 'story-hero')).toBe(true);
+    expect(chapterChanged('story-hero', 'story-hero')).toBe(false);
+    expect(chapterChanged('story-hero', 'story-chatbot')).toBe(true);
   });
 });
 
