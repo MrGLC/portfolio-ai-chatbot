@@ -102,7 +102,22 @@ Keep existing field validation. No backend, no third-party service this session.
 - Spacing / container-width token unification (kill `1180/900/800/700/600px` drift).
 - Removing legacy `royal` button variant, `royal-gradient`, `golden` shadow, `yellow.*`
   rainbow leftovers — the "lacks seriousness" visual cleanup.
-- Full `useMotion()` adoption on every page (if not finished this session).
+- **`useMotion()` adoption across pages** (HomePage hero/scroll-reveals, ContactPage). The
+  policy module ships this session but is NOT yet wired into any component — adoption moved
+  to session 2 (decision 2026-06-19).
+- **General motion de-chonk** — lightening the base springs/durations in `theme/animations.ts`
+  so motion feels smoother for *all* users (the policy module only neutralizes for
+  reduced-motion; it does not change the default feel).
+
+## Session 1 closeout (2026-06-19)
+
+Delivered: ErrorBoundary + ErrorState (white-screen → explained failure), RouteFallback
+(no blank nav flash), honest mailto contact form (no fake "sent"), jewel fade-in mount, and
+the `theme/motion.ts` policy module. Full suite 24/24, tsc clean.
+
+Not delivered (deferred): motion adoption and general de-chonk above. The reduced-motion
+goal is therefore only partially met — the policy exists but reduced-motion users still see
+the un-gated page entrance/scroll animations until session 2 wires `useMotion()` in.
 
 ## Testing (Vitest, already configured)
 
