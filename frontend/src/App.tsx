@@ -8,13 +8,14 @@ import './i18n/config';
 import theme from './theme';
 import { Layout } from './components/Layout';
 import { ScrollRestoration } from './components/Layout/ScrollRestoration';
+import { ErrorBoundary } from './components/feedback/ErrorBoundary';
+import { RouteFallback } from './components/feedback/RouteFallback';
 
 const HomePage = lazy(() => import('./pages/HomePage').then((m) => ({ default: m.HomePage })));
 const AboutPage = lazy(() => import('./pages/AboutPage').then((m) => ({ default: m.AboutPage })));
 const ProjectsPage = lazy(() => import('./pages/ProjectsPage').then((m) => ({ default: m.ProjectsPage })));
 const ConsultingPage = lazy(() => import('./pages/ConsultingPage').then((m) => ({ default: m.ConsultingPage })));
 const ContactPage = lazy(() => import('./pages/ContactPage').then((m) => ({ default: m.ContactPage })));
-// Debug system removed for production
 
 // Create a client for React Query
 const queryClient = new QueryClient({
@@ -26,26 +27,34 @@ const queryClient = new QueryClient({
   },
 });
 
+// Wrap a lazy page in a per-route boundary so a crash on one page renders the
+// explained ErrorState in place instead of blanking the whole shell.
+const route = (element: React.ReactNode) => (
+  <ErrorBoundary homeHref="/">{element}</ErrorBoundary>
+);
+
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <ChakraProvider theme={theme}>
-        <Router>
-          <ScrollRestoration />
-          <Layout>
-            <Suspense fallback={null}>
-              <AnimatePresence mode="wait">
-                <Routes>
-                  <Route path="/" element={<HomePage />} />
-                  <Route path="/about" element={<AboutPage />} />
-                  <Route path="/projects" element={<ProjectsPage />} />
-                  <Route path="/consulting" element={<ConsultingPage />} />
-                  <Route path="/contact" element={<ContactPage />} />
-                </Routes>
-              </AnimatePresence>
-            </Suspense>
-          </Layout>
-        </Router>
+        <ErrorBoundary homeHref="/">
+          <Router>
+            <ScrollRestoration />
+            <Layout>
+              <Suspense fallback={<RouteFallback />}>
+                <AnimatePresence mode="wait">
+                  <Routes>
+                    <Route path="/" element={route(<HomePage />)} />
+                    <Route path="/about" element={route(<AboutPage />)} />
+                    <Route path="/projects" element={route(<ProjectsPage />)} />
+                    <Route path="/consulting" element={route(<ConsultingPage />)} />
+                    <Route path="/contact" element={route(<ContactPage />)} />
+                  </Routes>
+                </AnimatePresence>
+              </Suspense>
+            </Layout>
+          </Router>
+        </ErrorBoundary>
       </ChakraProvider>
     </QueryClientProvider>
   );
