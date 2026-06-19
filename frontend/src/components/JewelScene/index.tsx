@@ -7,6 +7,7 @@ import { usePerfProfile } from '../../hooks/usePerfProfile';
 import { CAMERA_FOV, CAMERA_Z } from './chapterResolver';
 import JewelRig from './JewelRig';
 import type { JewelPointerHandlers } from './JewelRig';
+import { ChapterLabel } from './ChapterLabel';
 
 class SceneErrorBoundary extends React.Component<
   { children: React.ReactNode },
@@ -67,6 +68,9 @@ export const JewelScene: React.FC = () => {
   // Fade the canvas in once WebGL has composed its first frame, so the jewel
   // appears intentionally instead of hard-popping into the hero.
   const [ready, setReady] = useState(false);
+
+  // Active narrative chapter — set on change by the rig, drives the label.
+  const [activeChapter, setActiveChapter] = useState<string | null>(null);
 
   // Observe #story-hero visibility with an IntersectionObserver. We can't use
   // the shared useInViewport hook because that hook returns a ref to attach to
@@ -158,6 +162,7 @@ export const JewelScene: React.FC = () => {
                 onFirstInteraction={handleFirstInteraction}
                 onProxyRect={handleProxyRect}
                 registerPointerHandlers={registerPointerHandlers}
+                onChapterChange={setActiveChapter}
               />
             </Suspense>
           </Canvas>
@@ -189,6 +194,8 @@ export const JewelScene: React.FC = () => {
           onLostPointerCapture={() => handlersRef.current?.cancel()}
         />
       </Box>
+
+      <ChapterLabel chapterId={activeChapter} />
 
       {/* Drag hint pill — DOM overlay near the gem's hero position.
           pointerEvents none: it's a pure signpost, never captures input.
