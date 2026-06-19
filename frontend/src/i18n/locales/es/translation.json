@@ -585,7 +585,10 @@
         "email": "Email no válido",
         "message": "Cuéntame algo"
       },
-      "successSubtext": "Te respondo en menos de 24 horas."
+      "successSubtext": "Te respondo en menos de 24 horas.",
+      "opening": "Abriendo tu app de correo…",
+      "openingSubtext": "Tu mensaje está listo para enviarse en tu cliente de correo. Si no se abrió nada, escríbeme directamente:",
+      "directEmail": "ingbmluisgomez@gmail.com"
     },
     "services": {
       "aiConsulting": "Consultoría y Estrategia de IA",

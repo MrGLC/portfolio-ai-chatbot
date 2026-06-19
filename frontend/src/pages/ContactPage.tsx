@@ -26,6 +26,7 @@ import { EmailIcon, PhoneIcon, CalendarIcon, ExternalLinkIcon, CheckIcon } from 
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { Kicker } from '../components/Kicker';
+import { buildMailto } from '../lib/buildMailto';
 
 const MotionBox = motion.create(Box);
 const MotionCard = motion.create(Card);
@@ -163,8 +164,9 @@ export const ContactPage: React.FC = () => {
     if (!formData.message.trim()) nextErrors.message = t('contact.form.errors.message');
     setErrors(nextErrors);
     if (Object.keys(nextErrors).length > 0) return;
-    // Submit stays local for now — wire to backend/email service later
-    console.log('Form submitted:', formData);
+    // Hand off to the visitor's mail client. We cannot confirm delivery, so the
+    // post-submit state says "opening your email app", never "sent".
+    window.location.href = buildMailto(formData);
     setSent(true);
   };
 
@@ -321,11 +323,19 @@ export const ContactPage: React.FC = () => {
                     <CheckIcon color={SUCCESS_GREEN} boxSize={6} />
                   </Flex>
                   <Heading fontFamily="heading" fontWeight={600} fontSize="26px" color="brand.creamText">
-                    {t('contact.form.success')}
+                    {t('contact.form.opening')}
                   </Heading>
                   <Text color="rgba(243,233,216,.7)" fontSize="sm">
-                    {t('contact.form.successSubtext')}
+                    {t('contact.form.openingSubtext')}
                   </Text>
+                  <Link
+                    href={`mailto:${t('contact.form.directEmail')}`}
+                    color="brand.accent"
+                    fontSize="sm"
+                    fontWeight={600}
+                  >
+                    {t('contact.form.directEmail')}
+                  </Link>
                 </VStack>
               ) : (
                 <Box as="form" onSubmit={handleSubmit} noValidate>

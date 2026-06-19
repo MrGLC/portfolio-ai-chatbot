@@ -585,7 +585,10 @@
         "email": "Invalid email",
         "message": "Tell me something"
       },
-      "successSubtext": "I will get back to you within 24 hours."
+      "successSubtext": "I will get back to you within 24 hours.",
+      "opening": "Opening your email app…",
+      "openingSubtext": "Your message is ready to send in your mail client. If nothing opened, email me directly:",
+      "directEmail": "ingbmluisgomez@gmail.com"
     },
     "services": {
       "aiConsulting": "AI Consulting & Strategy",
