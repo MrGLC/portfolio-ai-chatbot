@@ -37,7 +37,7 @@ vi.mock('../components/Chatbot/ThreeJsChatbot', () => ({
 // that render without any backend data (no react-query required).
 const routes: Array<[path: string, marker: RegExp]> = [
   // HomePage: hero title rendered from home.hero.modernTitle
-  ['/', /Modern AI Excellence/i],
+  ['/', /earns its place/i],
   // AboutPage: hero role text from about.hero.role
   ['/about', /MACHINE LEARNING ENGINEER/i],
   // ProjectsPage: hero title from projects.hero.title

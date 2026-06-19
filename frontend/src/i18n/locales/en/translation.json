@@ -22,8 +22,8 @@
   "home": {
     "hero": {
       "luxurySubtitle": "Luxury AI Solutions Redefined",
-      "modernTitle": "Modern AI Excellence",
-      "description": "Transform your business with cutting-edge artificial intelligence solutions. Get a production-ready MVP in just 2 weeks.",
+      "modernTitle": "AI that earns its place in your business",
+      "description": "We start with raw potential and cut it into an edge — models built for your data, your rules, your outcomes.",
       "viewPortfolio": "View Portfolio",
       "getInTouch": "Get in Touch"
     },
@@ -69,8 +69,8 @@
       }
     },
     "portfolio": {
-      "subtitle": "Recent Work",
-      "title": "Royal Portfolio",
+      "subtitle": "Shipped systems and measured lift — work that compounds after we leave.",
+      "title": "Outcomes you can put a number on",
       "branding": "Branding",
       "webDesign": "Web Design",
       "marketing": "Marketing",
@@ -78,8 +78,8 @@
       "viewAll": "View All Projects"
     },
     "cta": {
-      "title": "Ready to Transform Your Business?",
-      "description": "Let's create something extraordinary together. Available for immediate start with 2-week MVP delivery.",
+      "title": "Let's build your edge",
+      "description": "The raw stone, cut and set — your business, transformed. Tell me what you're building.",
       "button": "Start Your Project"
     },
     "jewel": {
@@ -93,8 +93,8 @@
     },
     "chatbot": {
       "title": "AI ASSISTANT",
-      "heading": "Ask Me Anything",
-      "description": "Get instant answers about my work, experience, and how I can help your project",
+      "heading": "A model that thinks like your business",
+      "description": "Trained on your data, your rules, your edge cases — not a generic API bolted on.",
       "chatTitle": "Chat with Luis AI",
       "poweredBy": "Powered by Royal AI",
       "responseTime": "Average response time: 2s",

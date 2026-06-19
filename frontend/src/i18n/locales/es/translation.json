@@ -22,8 +22,8 @@
   "home": {
     "hero": {
       "luxurySubtitle": "Soluciones de IA de Lujo Redefinidas",
-      "modernTitle": "Excelencia Moderna en IA",
-      "description": "Transforma tu negocio con soluciones de inteligencia artificial de vanguardia. Obtén un MVP listo para producción en solo 2 semanas.",
+      "modernTitle": "IA que se gana su lugar en tu negocio",
+      "description": "Partimos del potencial en bruto y lo tallamos en una ventaja — modelos hechos para tus datos, tus reglas, tus resultados.",
       "viewPortfolio": "Ver Portafolio",
       "getInTouch": "Contáctanos"
     },
@@ -69,8 +69,8 @@
       }
     },
     "portfolio": {
-      "subtitle": "Trabajo Reciente",
-      "title": "Portafolio Real",
+      "subtitle": "Sistemas en producción y mejoras medibles — trabajo que sigue rindiendo.",
+      "title": "Resultados que puedes medir",
       "branding": "Branding",
       "webDesign": "Diseño Web",
       "marketing": "Marketing",
@@ -78,8 +78,8 @@
       "viewAll": "Ver Todos los Proyectos"
     },
     "cta": {
-      "title": "¿Listo para Transformar tu Negocio?",
-      "description": "Creemos algo extraordinario juntos. Disponible para comenzar de inmediato con entrega de MVP en 2 semanas.",
+      "title": "Construyamos tu ventaja",
+      "description": "La piedra en bruto, tallada y engastada — tu negocio, transformado. Cuéntame qué estás construyendo.",
       "button": "Comienza tu Proyecto"
     },
     "jewel": {
@@ -93,8 +93,8 @@
     },
     "chatbot": {
       "title": "ASISTENTE IA",
-      "heading": "Pregúntame lo que quieras",
-      "description": "Obtén respuestas instantáneas sobre mi trabajo, experiencia y cómo puedo ayudarte con tu proyecto",
+      "heading": "Un modelo que piensa como tu negocio",
+      "description": "Entrenado con tus datos, tus reglas, tus casos límite — no una API genérica.",
       "chatTitle": "Chatea con Luis IA",
       "poweredBy": "Impulsado por La Realeza AI",
       "responseTime": "Tiempo de respuesta promedio: 2s",
