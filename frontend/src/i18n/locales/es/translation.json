@@ -71,11 +71,32 @@
     "portfolio": {
       "subtitle": "Sistemas en producción y mejoras medibles — trabajo que sigue rindiendo.",
       "title": "Resultados que puedes medir",
-      "branding": "Branding",
-      "webDesign": "Diseño Web",
-      "marketing": "Marketing",
-      "project": "Proyecto",
       "viewAll": "Ver Todos los Proyectos"
+    },
+    "proof": {
+      "heroStats": [
+        { "figure": "3+", "caption": "años de IA en producción" },
+        { "figure": "5", "caption": "roles de IA — fintech, salud, datos" },
+        { "figure": "100+", "caption": "usuarios concurrentes en producción" },
+        { "figure": "250K+", "caption": "contribuidores/mes atendidos" },
+        { "figure": "9.01", "caption": "promedio — Ingeniería Biomédica" }
+      ],
+      "modelLines": [
+        "Primero Trader — fine-tuning de transformers en SageMaker, reentrenamiento por drift, ecosistema MCP en vivo.",
+        "Appen — entrevistador de voz de dos agentes (AWS Strands + Bedrock), scorecards con RAG."
+      ],
+      "projects": [
+        { "name": "Primero Trader", "line": "\"TradingView de MCPs\" — inteligencia de mercado en tiempo real",
+          "stats": ["Monolito → microservicios event-driven", "Redis → Valkey, sin downtime", "~60% cache hit · 300+ campos/ticker"] },
+        { "name": "Appen", "line": "IA que entrevista a la fuerza laboral global",
+          "stats": ["250K+ contribuidores/mes", "Voz de dos agentes (Strands + Bedrock)", "P99 < 500ms (designed for)"] },
+        { "name": "Clinical CV", "line": "Detección de hemorragias en imagen médica",
+          "stats": ["87% precisión / 83% recall", "10,000+ imágenes médicas", "Publicación Springer"] },
+        { "name": "Interaction AI", "line": "Intención multimodal en el edge",
+          "stats": ["78% accuracy", "YOLOv5 + speech-to-text", "Desplegado en Raspberry Pi"] }
+      ],
+      "synthesis": "Del cuerpo humano a los mercados financieros — el mismo cerebro de sistemas.",
+      "domains": ["Finanzas", "Salud", "Evaluación de fuerza laboral", "Voice AI", "Computer Vision", "Edge"]
     },
     "cta": {
       "title": "Construyamos tu ventaja",

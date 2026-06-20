@@ -71,11 +71,32 @@
     "portfolio": {
       "subtitle": "Shipped systems and measured lift — work that compounds after we leave.",
       "title": "Outcomes you can put a number on",
-      "branding": "Branding",
-      "webDesign": "Web Design",
-      "marketing": "Marketing",
-      "project": "Project",
       "viewAll": "View All Projects"
+    },
+    "proof": {
+      "heroStats": [
+        { "figure": "3+", "caption": "years of AI in production" },
+        { "figure": "5", "caption": "AI roles — fintech, health, data" },
+        { "figure": "100+", "caption": "concurrent users in production" },
+        { "figure": "250K+", "caption": "contributors/month served" },
+        { "figure": "9.01", "caption": "GPA — Biomedical Engineering" }
+      ],
+      "modelLines": [
+        "Primero Trader — transformer fine-tuning on SageMaker, drift retraining, a live MCP ecosystem.",
+        "Appen — a two-agent voice interviewer (AWS Strands + Bedrock), RAG-grounded scorecards."
+      ],
+      "projects": [
+        { "name": "Primero Trader", "line": "\"TradingView of MCPs\" — real-time market intelligence",
+          "stats": ["Monolith → event-driven microservices", "Redis → Valkey, zero-downtime", "~60% cache hit · 300+ fields/ticker"] },
+        { "name": "Appen", "line": "AI that interviews the global workforce",
+          "stats": ["250K+ contributors/month", "Two-agent voice (Strands + Bedrock)", "P99 < 500ms (designed for)"] },
+        { "name": "Clinical CV", "line": "Hemorrhage detection from medical imaging",
+          "stats": ["87% precision / 83% recall", "10,000+ medical images", "Springer publication"] },
+        { "name": "Interaction AI", "line": "Multimodal intent on the edge",
+          "stats": ["78% accuracy", "YOLOv5 + speech-to-text", "Deployed on Raspberry Pi"] }
+      ],
+      "synthesis": "From the human body to financial markets — the same systems brain.",
+      "domains": ["Finance", "Health", "Workforce eval", "Voice AI", "Computer Vision", "Edge"]
     },
     "cta": {
       "title": "Let's build your edge",
