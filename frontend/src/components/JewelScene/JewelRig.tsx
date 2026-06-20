@@ -144,7 +144,8 @@ export const JewelRig: React.FC<JewelRigProps> = ({
   /* ---- Engine state: refs only, no React state in the loop ---- */
   // Eased pose in viewport-fraction space (prototype's `cur`).
   // Starts at the beat-0 (hero) pose from storyTimeline STOPS[0] — no grow-in.
-  const curRef = useRef({ x: 0.78, y: 0.46, s: 1.10, spin: 0.30, p: 0.50 });
+  const cur0 = resolvePose(0, false);
+  const curRef = useRef({ x: cur0.x, y: cur0.y, s: cur0.s, spin: cur0.spin, p: cur0.p });
   // Crossfade weights per costume.
   const weightsRef = useRef<Record<ShapeName, number>>({
     ico: 1, octa: 0, sphere: 0, knot: 0, crown: 0, growth: 0, neural: 0,
