@@ -355,6 +355,13 @@ export const HomePage: React.FC = () => {
                 >
                   {t('home.chatbot.description')}
                 </Text>
+                <VStack align={{ base: 'center', md: 'start' }} spacing={2} pt={2}>
+                  {(t('home.proof.modelLines', { returnObjects: true }) as string[]).map((line) => (
+                    <Text key={line} fontSize="sm" color="brand.textSecondary" textAlign={{ base: 'center', md: 'left' }}>
+                      {line}
+                    </Text>
+                  ))}
+                </VStack>
               </VStack>
 
               {/* Three.js Chatbot Component */}
