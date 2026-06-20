@@ -9,13 +9,14 @@ interface Stop {
 }
 
 // The approved choreography: anchored right for beats 0-1, migrating to centre
-// and growing for beats 2-3 (crown climax). Sizes well above the old ~0.5 so the
-// forms read. Final values tuned on dev screenshots.
+// and growing for beats 2-3 (crown climax). Sizes kept modest so the hero gem
+// never overflows a 1080p viewport (the rig also applies a responsive vpScale);
+// crown stays the largest as the payoff. Final values tuned on dev.
 const STOPS: Stop[] = [
-  { x: 0.78, y: 0.46, s: 1.10, shape: 'ico',    spin: 0.30, p: 0.50, mx: 0.50, my: 0.30, ms: 0.80 },
-  { x: 0.78, y: 0.46, s: 0.95, shape: 'neural', spin: 0.45, p: 0.00, mx: 0.50, my: 0.30, ms: 0.72 },
-  { x: 0.58, y: 0.52, s: 1.15, shape: 'growth', spin: 0.35, p: 0.10, mx: 0.50, my: 0.34, ms: 0.86 },
-  { x: 0.50, y: 0.50, s: 1.40, shape: 'crown',  spin: 0.30, p: 0.80, mx: 0.50, my: 0.32, ms: 0.95 },
+  { x: 0.78, y: 0.46, s: 0.62, shape: 'ico',    spin: 0.30, p: 0.50, mx: 0.50, my: 0.30, ms: 0.52 },
+  { x: 0.78, y: 0.46, s: 0.58, shape: 'neural', spin: 0.45, p: 0.00, mx: 0.50, my: 0.30, ms: 0.50 },
+  { x: 0.58, y: 0.52, s: 0.66, shape: 'growth', spin: 0.35, p: 0.10, mx: 0.50, my: 0.34, ms: 0.56 },
+  { x: 0.50, y: 0.50, s: 0.82, shape: 'crown',  spin: 0.30, p: 0.80, mx: 0.50, my: 0.32, ms: 0.66 },
 ];
 
 export interface Pose {

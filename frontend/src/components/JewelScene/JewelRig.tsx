@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useRef } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
 import * as THREE from 'three';
+import { easing } from 'maath';
 import { usePerfProfile } from '../../hooks/usePerfProfile';
 import {
   chapterChanged,
@@ -311,13 +312,18 @@ export const JewelRig: React.FC<JewelRigProps> = ({
       onChapterChange(beatId);
     }
 
-    // 2. Ease the live pose toward the scrubbed target. Reduced motion snaps.
-    const kEase = reduced ? 1 : 0.18;
-    cur.x += (pose.x - cur.x) * kEase;
-    cur.y += (pose.y - cur.y) * kEase;
-    cur.s += (pose.s - cur.s) * kEase;
-    cur.spin += (pose.spin - cur.spin) * (reduced ? 1 : 0.1);
-    cur.p += (pose.p - cur.p) * (reduced ? 1 : 0.1);
+    // 2. Cinematic damp toward the scrubbed pose: maath's frame-rate-independent
+    //    exponential easing (smooth attack, long gentle settle, interruptible) —
+    //    replaces the old linear lerp that felt mechanical. Reduced motion snaps.
+    if (reduced) {
+      cur.x = pose.x; cur.y = pose.y; cur.s = pose.s; cur.spin = pose.spin; cur.p = pose.p;
+    } else {
+      easing.damp(cur, 'x', pose.x, 0.34, dt);
+      easing.damp(cur, 'y', pose.y, 0.34, dt);
+      easing.damp(cur, 's', pose.s, 0.5, dt);
+      easing.damp(cur, 'spin', pose.spin, 0.5, dt);
+      easing.damp(cur, 'p', pose.p, 0.5, dt);
+    }
     const dist = Math.hypot(pose.x - cur.x, pose.y - cur.y);
     const settled = Math.max(0, 1 - dist * 9);
 
@@ -328,9 +334,12 @@ export const JewelRig: React.FC<JewelRigProps> = ({
     group.position.y = world.y + bob - m.y * 0.16;
 
     // 4. Yields in transit (shrinks), breathes when settled; tap pulse on top.
+    //    vpScale keeps the gem from overflowing small/short viewports (it was
+    //    near full-height at 1080p) — shrinks below ~900px min dimension.
+    const vpScale = Math.min(1, Math.max(0.55, Math.min(width, height) / 900));
     const yieldF = 1 - Math.min(0.3, dist * 1.25);
     const breath = reduced ? 1 : 1 + Math.sin(t * 1.15) * 0.028 * settled;
-    group.scale.setScalar(Math.max(0.0001, cur.s * yieldF * breath * (1 + pulseRef.current * 0.12)));
+    group.scale.setScalar(Math.max(0.0001, cur.s * vpScale * yieldF * breath * (1 + pulseRef.current * 0.12)));
     pulseRef.current *= Math.pow(0.85, dt * 60);
 
     // 5. Spin: rest drift + scroll impulse + extra while dashing; mouse tilt;
