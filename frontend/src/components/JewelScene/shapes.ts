@@ -195,6 +195,35 @@ function buildCrown(): { group: THREE.Group; material: THREE.MeshStandardMateria
 /* The cast                                                            */
 /* ------------------------------------------------------------------ */
 
+// Metrics: a clean ascending bar chart — 5 crimson columns of growing height on
+// a common baseline, each gold-capped. Reads instantly as "results / metrics",
+// unlike the old face-bucketed blob.
+function buildMetricsBars(): { group: THREE.Group; material: THREE.MeshStandardMaterial } {
+  const heights = [0.8, 1.25, 1.75, 2.3, 2.9];
+  const W = 0.42, GAP = 0.16, D = 0.42;
+  const n = heights.length;
+  const totalW = n * W + (n - 1) * GAP;
+  const baseY = -1.3;
+  const bar = new THREE.MeshStandardMaterial({
+    color: 0xc10e35, flatShading: true, metalness: 0.4, roughness: 0.32,
+  });
+  const cap = new THREE.MeshStandardMaterial({
+    color: 0xe8b765, flatShading: true, metalness: 0.7, roughness: 0.3,
+  });
+  const group = new THREE.Group();
+  heights.forEach((h, i) => {
+    const x = -totalW / 2 + W / 2 + i * (W + GAP);
+    const col = new THREE.Mesh(new THREE.BoxGeometry(W, h, D), bar);
+    col.position.set(x, baseY + h / 2, 0);
+    group.add(col);
+    const capH = 0.08;
+    const top = new THREE.Mesh(new THREE.BoxGeometry(W * 1.04, capH, D * 1.04), cap);
+    top.position.set(x, baseY + h + capH / 2, 0);
+    group.add(top);
+  });
+  return { group, material: bar };
+}
+
 export function buildShapes(): Record<ShapeName, BuiltShape> {
   // 1. ico — piedra en bruto (hero): roughened crystal
   const icoGeo = buildStoneGeometry();
@@ -231,13 +260,8 @@ export function buildShapes(): Record<ShapeName, BuiltShape> {
   // (0.18 + w * (0.3 + sin(t*2.2) * 0.16)) is driven in the rig's loop.
   const crownBuilt = buildCrown();
 
-  // 6. growth — our chapter shape: crimson flatShading like ico, gold edges.
-  const growthGeo = buildGrowthGeometry();
-  const growthMat = new THREE.MeshStandardMaterial({
-    color: 0xc10e35, flatShading: true, metalness: 0.38, roughness: 0.34,
-  });
-  const growth = new THREE.Mesh(growthGeo, growthMat);
-  growth.add(mkEdges(growthGeo, 0xc2a05c, 0.45));
+  // 6. growth — ascending metrics bar chart (clean gold-capped columns).
+  const growthBuilt = buildMetricsBars();
 
   // 7. neural — gold instanced node-spheres + crimson edge lines (see buildNeural).
   const neural = buildNeural();
@@ -248,7 +272,7 @@ export function buildShapes(): Record<ShapeName, BuiltShape> {
     sphere: { mesh: sphere, material: sphMat },
     knot: { mesh: knot, material: knotMat },
     crown: { mesh: crownBuilt.group, material: crownBuilt.material },
-    growth: { mesh: growth, material: growthMat },
+    growth: { mesh: growthBuilt.group, material: growthBuilt.material },
     neural: { mesh: neural.group, material: neural.material },
   };
 }

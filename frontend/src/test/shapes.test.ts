@@ -4,6 +4,16 @@ import { InstancedMesh, LineSegments, Group, MeshStandardMaterial } from 'three'
 import { buildShapes, SHAPE_NAMES } from '../components/JewelScene/shapes';
 
 describe('shapes', () => {
+  it('growth is an ascending bar chart: 5 columns + 5 caps, increasing height', () => {
+    const g = buildShapes().growth.mesh as Group;
+    expect(g).toBeInstanceOf(Group);
+    expect(g.children.length).toBe(10); // 5 bars + 5 gold caps
+    // bar heights ascend left→right (every other child is a column box)
+    const cols = g.children.filter((_, i) => i % 2 === 0) as THREE.Mesh[];
+    const h = cols.map((c) => (c.geometry as THREE.BoxGeometry).parameters.height);
+    for (let i = 1; i < h.length; i++) expect(h[i]).toBeGreaterThan(h[i - 1]);
+  });
+
   it('stone (ico) is roughened and deterministic across builds', () => {
     const a = buildShapes().ico.mesh as THREE.Mesh;
     const b = buildShapes().ico.mesh as THREE.Mesh;
