@@ -1,6 +1,8 @@
 import React, { Suspense, lazy } from 'react';
 import {
   Box,
+  Card,
+  CardBody,
   Container,
   Flex,
   VStack,
@@ -430,123 +432,29 @@ export const HomePage: React.FC = () => {
                 >
                   {t('home.portfolio.title')}
                 </Heading>
-                <Text
-                  textStyle="lead"
-                  color="brand.textSecondary"
-                  maxW="600px"
-                  opacity={0.9}
-                >
-                  Discover our latest projects and creative solutions
-                </Text>
               </VStack>
 
-              {/* Enhanced portfolio grid with better hover effects */}
-              <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={8} w="full">
-                {[1, 2, 3, 4, 5, 6].map((item) => (
-                  <MotionBox
-                    key={item}
-                    bg="brand.surface"
-                    borderRadius="20px"
-                    overflow="hidden"
-                    cursor="pointer"
-                    position="relative"
-                    h={{ base: "300px", md: item % 2 === 0 ? "350px" : "300px" }}
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    whileInView={{ opacity: 1, scale: 1 }}
-                    whileHover={{ scale: 1.05 }}
-                    transition={{ 
-                      duration: 0.4,
-                      ease: [0.25, 0.1, 0.25, 1]
-                    }}
-                    viewport={{ once: true, margin: "-50px" }}
-                    role="group"
-                  >
-                    {/* Project image/gradient background */}
-                    <Box
-                      position="absolute"
-                      top={0}
-                      left={0}
-                      right={0}
-                      bottom={0}
-                      bg={`linear-gradient(135deg, ${item % 2 === 0 ? 'var(--chakra-colors-brand-secondary)' : 'var(--chakra-colors-brand-goldBright)'}, ${item % 2 === 0 ? 'var(--chakra-colors-brand-redDark)' : 'var(--chakra-colors-brand-goldRich)'})`}
-                      opacity={0.9}
-                      transition="transform 0.4s ease"
-                      _groupHover={{
-                        transform: 'scale(1.1)',
-                      }}
-                    />
-                    
-                    {/* Content overlay */}
-                    <Box
-                      position="absolute"
-                      bottom={0}
-                      left={0}
-                      right={0}
-                      p={8}
-                      bg="linear-gradient(to top, rgba(26, 26, 26, 0.95), rgba(26, 26, 26, 0.7), transparent)"
-                      transform="translateY(20px)"
-                      transition="transform 0.4s ease"
-                      _groupHover={{
-                        transform: 'translateY(0)',
-                      }}
-                    >
-                      <Badge
-                        colorScheme={item % 2 === 0 ? 'red' : 'yellow'}
-                        fontSize="xs"
-                        px={3}
-                        py={1}
-                        borderRadius="full"
-                        textTransform="uppercase"
-                        letterSpacing="1px"
-                        mb={3}
-                      >
-                        {item % 3 === 0 ? t('home.portfolio.branding') : item % 3 === 1 ? t('home.portfolio.webDesign') : t('home.portfolio.marketing')}
-                      </Badge>
-                      <Heading
-                        as="h3"
-                        textStyle="cardTitle"
-                        color="brand.primary"
-                        mb={2}
-                      >
-                        {t('home.portfolio.project')} {item}
+              {/* Real project cards from i18n */}
+              <SimpleGrid columns={{ base: 1, md: 2 }} spacing={6} w="full">
+                {(t('home.proof.projects', { returnObjects: true }) as Array<{ name: string; line: string; stats: string[] }>).map((proj) => (
+                  <Card key={proj.name} variant="royal">
+                    <CardBody>
+                      <Heading as="h3" textStyle="cardTitle" color="brand.text" mb={1}>
+                        {proj.name}
                       </Heading>
-                      <Text
-                        color="brand.cream"
-                        fontSize="sm"
-                        opacity={0}
-                        transform="translateY(10px)"
-                        transition="all 0.4s ease 0.1s"
-                        _groupHover={{
-                          opacity: 0.8,
-                          transform: 'translateY(0)',
-                        }}
-                      >
-                        Click to explore this project in detail
+                      <Text color="brand.textSecondary" fontSize="sm" mb={4}>
+                        {proj.line}
                       </Text>
-                    </Box>
-
-                    {/* Hover indicator */}
-                    <Flex
-                      position="absolute"
-                      top={4}
-                      right={4}
-                      w={10}
-                      h={10}
-                      bg="brand.primary"
-                      borderRadius="full"
-                      align="center"
-                      justify="center"
-                      opacity={0}
-                      transform="scale(0.5)"
-                      transition="all 0.3s ease"
-                      _groupHover={{
-                        opacity: 1,
-                        transform: 'scale(1)',
-                      }}
-                    >
-                      <ArrowForwardIcon color="brand.text" />
-                    </Flex>
-                  </MotionBox>
+                      <VStack align="stretch" spacing={2}>
+                        {proj.stats.map((s) => (
+                          <HStack key={s} spacing={2} align="start">
+                            <Box mt="7px" w="5px" h="5px" borderRadius="full" bg="brand.accent" flexShrink={0} />
+                            <Text fontSize="sm" color="brand.text">{s}</Text>
+                          </HStack>
+                        ))}
+                      </VStack>
+                    </CardBody>
+                  </Card>
                 ))}
               </SimpleGrid>
 
