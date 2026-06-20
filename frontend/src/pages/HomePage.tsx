@@ -24,6 +24,7 @@ import {
 } from '@chakra-ui/icons';
 import { variants, durations, easings, delays, springs, createStaggerAnimation } from '../theme/animations';
 import { Kicker } from '../components/Kicker';
+import { StatStrip } from './home/StatStrip';
 const JewelScene = lazy(() => import('../components/JewelScene'));
 const ThreeJsChatbot = lazy(() =>
   import('../components/Chatbot/ThreeJsChatbot').then((m) => ({ default: m.ThreeJsChatbot }))
@@ -233,6 +234,9 @@ export const HomePage: React.FC = () => {
                     {t('home.hero.getInTouch')}
                   </Button>
                 </HStack>
+              </MotionBox>
+              <MotionBox variants={staggerAnimation.child}>
+                <StatStrip />
               </MotionBox>
             </VStack>
 
