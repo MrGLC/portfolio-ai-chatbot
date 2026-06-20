@@ -25,6 +25,7 @@ import {
 import { variants, durations, easings, delays, springs, createStaggerAnimation } from '../theme/animations';
 import { Kicker } from '../components/Kicker';
 import { StatStrip } from './home/StatStrip';
+import { BadgeCloud } from './home/BadgeCloud';
 const JewelScene = lazy(() => import('../components/JewelScene'));
 const ThreeJsChatbot = lazy(() =>
   import('../components/Chatbot/ThreeJsChatbot').then((m) => ({ default: m.ThreeJsChatbot }))
@@ -562,7 +563,9 @@ export const HomePage: React.FC = () => {
                   {t('home.cta.description')}
                 </Text>
               </VStack>
-              
+
+              <BadgeCloud />
+
               <HStack spacing={6} wrap="wrap" justify="center">
                 <Button
                   as={RouterLink}
