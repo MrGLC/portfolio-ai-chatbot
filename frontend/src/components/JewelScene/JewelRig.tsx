@@ -3,40 +3,34 @@ import { useFrame, useThree } from '@react-three/fiber';
 import * as THREE from 'three';
 import { usePerfProfile } from '../../hooks/usePerfProfile';
 import {
-  KEYFRAMES,
-  resolveChapter,
   chapterChanged,
   fractionToWorld,
   worldToFraction,
   VIS_H,
 } from './chapterResolver';
 import type { SectionRange, ShapeName } from './chapterResolver';
+import { resolvePose, BEAT_IDS } from './storyTimeline';
 import { buildShapes, SHAPE_NAMES } from './shapes';
 
 /**
- * JewelRig — "dash & wait" engine (jewel engine v2, handoff choreography).
+ * JewelRig — sticky-scrub engine (jewel engine v3, storyTimeline choreography).
  *
- * One Group holds six costume meshes (shapes.ts); the active chapter's shape
- * crossfades in by per-mesh scale (w += (target - w) * 0.13). The group does
- * NOT interpolate continuously with scroll: each frame it resolves the active
- * chapter (nearest section center to viewport center) and DASHES to that
- * keyframe with adaptive easing — fast when far, settling softly, shrinking
- * in transit so it never blocks the content it crosses, breathing once posed.
+ * One Group holds seven costume meshes (shapes.ts); morph weights scrub
+ * continuously with scroll progress via storyTimeline.resolvePose(). The group
+ * eases toward the scrubbed pose (kEase 0.18) so motion feels smooth but always
+ * tracks scroll position — no dash-to-nearest-chapter jump.
  *
  * All engine state lives in refs and is advanced inside useFrame — React
- * renders this component only on mount/profile change. Formulas are verbatim
- * from the handoff README "El comportamiento" / prototype animate() loop.
+ * renders this component only on mount/profile change.
  *
- * Position easing happens in viewport-FRACTION space (curRef.x/y), exactly
- * like the prototype: dist/kDash/yield are specified in fractions, and
+ * Position easing happens in viewport-FRACTION space (curRef.x/y):
  * fractionToWorld converts to world units only at write time. The hit proxy
- * goes the other way (worldToFraction) — one shared helper pair, no unit
- * drift.
+ * goes the other way (worldToFraction) — one shared helper pair, no unit drift.
  *
  * Interaction arrives from OUTSIDE the canvas: the composition root mounts a
  * screen-space hit-proxy <div> (the canvas itself is pointer-events: none)
  * and forwards its PLAIN DOM PointerEvents through registerPointerHandlers.
- * No r3f raycasting is involved anymore.
+ * No r3f raycasting is involved.
  */
 
 export interface JewelPointerHandlers {
@@ -64,7 +58,6 @@ interface JewelRigProps {
   onChapterChange?: (id: string) => void;
 }
 
-const HERO_ID = 'story-hero';
 /** Generous bounding radius of the largest costume in world units (growth
  * columns reach ~2.3 in x); multiplied by the live group scale for the proxy. */
 const JEWEL_WORLD_RADIUS = 1.3;
@@ -150,8 +143,8 @@ export const JewelRig: React.FC<JewelRigProps> = ({
 
   /* ---- Engine state: refs only, no React state in the loop ---- */
   // Eased pose in viewport-fraction space (prototype's `cur`).
-  // Starts posed at the hero keyframe (prototype parity — no grow-in).
-  const curRef = useRef({ x: KEYFRAMES[HERO_ID].x, y: KEYFRAMES[HERO_ID].y, s: KEYFRAMES[HERO_ID].s, spin: KEYFRAMES[HERO_ID].spin, p: KEYFRAMES[HERO_ID].p });
+  // Starts at the beat-0 (hero) pose from storyTimeline STOPS[0] — no grow-in.
+  const curRef = useRef({ x: 0.78, y: 0.46, s: 1.10, spin: 0.30, p: 0.50 });
   // Crossfade weights per costume.
   const weightsRef = useRef<Record<ShapeName, number>>({
     ico: 1, octa: 0, sphere: 0, knot: 0, crown: 0, growth: 0, neural: 0,
@@ -183,7 +176,7 @@ export const JewelRig: React.FC<JewelRigProps> = ({
   useEffect(() => {
     const measure = () => {
       const ranges: SectionRange[] = [];
-      for (const id of Object.keys(KEYFRAMES)) {
+      for (const id of BEAT_IDS) {
         const el = document.getElementById(id);
         if (!el) continue;
         // Document coordinates via rect + scrollY: offsetTop would be relative
@@ -299,42 +292,32 @@ export const JewelRig: React.FC<JewelRigProps> = ({
     const vel = velRef.current;
     const m = mouseRef.current;
 
-    // 1. Active chapter — nearest section center to viewport center.
-    //    Reduced motion: park statically at the hero keyframe (no dash).
+    // 1. Scroll progress across the story span (first beat top → last beat bottom).
     const ranges = rangesRef.current;
-    const pick =
-      !reduced && ranges.length > 0
-        ? resolveChapter(sy, ranges, window.innerHeight, lite)
-        : {
-            id: HERO_ID,
-            kf: lite
-              ? { x: KEYFRAMES[HERO_ID].mx, y: KEYFRAMES[HERO_ID].my, s: KEYFRAMES[HERO_ID].ms, shape: 'ico' as ShapeName, spin: KEYFRAMES[HERO_ID].spin, p: KEYFRAMES[HERO_ID].p }
-              : { x: KEYFRAMES[HERO_ID].x, y: KEYFRAMES[HERO_ID].y, s: KEYFRAMES[HERO_ID].s, shape: 'ico' as ShapeName, spin: KEYFRAMES[HERO_ID].spin, p: KEYFRAMES[HERO_ID].p },
-          };
-    const kf = pick.kf;
+    let progress = 0;
+    if (ranges.length > 0) {
+      const top = ranges[0].top;
+      const bottom = ranges[ranges.length - 1].bottom;
+      const span = Math.max(1, bottom - top - window.innerHeight);
+      progress = (sy - top) / span;
+    }
+    const pose = resolvePose(progress, lite);
 
-    // Emit the active chapter to React only on change — drives the DOM label.
-    if (onChapterChange && chapterChanged(lastChapterRef.current, pick.id)) {
-      lastChapterRef.current = pick.id;
-      onChapterChange(pick.id);
+    // Emit the active beat to React only on change — drives the DOM label.
+    const beatId = BEAT_IDS[pose.beat];
+    if (onChapterChange && chapterChanged(lastChapterRef.current, beatId)) {
+      lastChapterRef.current = beatId;
+      onChapterChange(beatId);
     }
 
-    // 2. Dash: adaptive easing in FRACTION space — far = fast, near = soft.
-    const dist = Math.hypot(kf.x - cur.x, kf.y - cur.y);
-    const kDash = Math.min(0.22, 0.06 + dist * 0.5);
-    if (reduced) {
-      cur.x = kf.x;
-      cur.y = kf.y;
-      cur.s = kf.s;
-      cur.spin = 0;
-      cur.p = kf.p;
-    } else {
-      cur.x += (kf.x - cur.x) * kDash;
-      cur.y += (kf.y - cur.y) * kDash;
-      cur.s += (kf.s - cur.s) * Math.max(0.08, kDash * 0.8);
-      cur.spin += (kf.spin - cur.spin) * 0.08;
-      cur.p += (kf.p - cur.p) * 0.08;
-    }
+    // 2. Ease the live pose toward the scrubbed target. Reduced motion snaps.
+    const kEase = reduced ? 1 : 0.18;
+    cur.x += (pose.x - cur.x) * kEase;
+    cur.y += (pose.y - cur.y) * kEase;
+    cur.s += (pose.s - cur.s) * kEase;
+    cur.spin += (pose.spin - cur.spin) * (reduced ? 1 : 0.1);
+    cur.p += (pose.p - cur.p) * (reduced ? 1 : 0.1);
+    const dist = Math.hypot(pose.x - cur.x, pose.y - cur.y);
     const settled = Math.max(0, 1 - dist * 9);
 
     // 3. Fraction -> world position (+ mouse parallax, + settled y-bob).
@@ -373,11 +356,11 @@ export const JewelRig: React.FC<JewelRigProps> = ({
       group.rotation.x = dragTiltXRef.current;
     }
 
-    // 6. Costume crossfade — arrives already transformed (runs DURING the dash).
+    // 6. Costume crossfade — weights scrub directly with scroll progress.
     const w = weightsRef.current;
     for (const name of SHAPE_NAMES) {
-      const target = name === kf.shape ? 1 : 0;
-      w[name] += (target - w[name]) * 0.13;
+      const target = pose.weights[name];
+      w[name] += (target - w[name]) * (reduced ? 1 : 0.13);
       const mesh = shapes[name].mesh;
       mesh.visible = w[name] > 0.015;
       mesh.scale.setScalar(Math.max(0.0001, w[name]));
