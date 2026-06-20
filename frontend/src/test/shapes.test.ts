@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import * as THREE from 'three';
+import { InstancedMesh, LineSegments, Group } from 'three';
 import { buildShapes, SHAPE_NAMES } from '../components/JewelScene/shapes';
 
 describe('shapes', () => {
@@ -16,5 +17,18 @@ describe('shapes', () => {
       radii.add(Math.round(Math.hypot(pa[i], pa[i + 1], pa[i + 2]) * 100) / 100);
     }
     expect(radii.size).toBeGreaterThan(3);
+  });
+});
+
+describe('neural costume', () => {
+  it('builds a Group with instanced nodes + line edges; listed in SHAPE_NAMES', () => {
+    expect(SHAPE_NAMES).toContain('neural');
+    const n = buildShapes().neural.mesh;
+    expect(n).toBeInstanceOf(Group);
+    const inst = n.children.find((c) => c instanceof InstancedMesh) as InstancedMesh;
+    const edges = n.children.find((c) => c instanceof LineSegments);
+    expect(inst).toBeTruthy();
+    expect(inst.count).toBe(12);
+    expect(edges).toBeTruthy();
   });
 });

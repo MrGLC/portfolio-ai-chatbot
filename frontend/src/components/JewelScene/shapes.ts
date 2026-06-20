@@ -11,9 +11,9 @@ import type { ShapeName } from './chapterResolver';
  */
 
 export interface BuiltShape {
-  mesh: THREE.Mesh;
+  mesh: THREE.Object3D;
   /** Crown material exposed for the rig's pulsing-emissive formula. */
-  material: THREE.MeshStandardMaterial;
+  material: THREE.Material;
 }
 
 function mkEdges(geo: THREE.BufferGeometry, color: number, opacity: number): THREE.LineSegments {
@@ -112,6 +112,58 @@ function buildGrowthGeometry(): THREE.BufferGeometry {
 }
 
 /* ------------------------------------------------------------------ */
+/* neural — gold instanced node-spheres on a sphere shell + crimson    */
+/* edge lines to each node's two nearest neighbours. Deterministic     */
+/* Fibonacci-sphere placement (no Math.random).                        */
+/* ------------------------------------------------------------------ */
+
+function buildNeural(): { group: THREE.Group; material: THREE.Material } {
+  const N = 12;
+  const R = 1.3;
+  const pts: THREE.Vector3[] = [];
+  for (let i = 0; i < N; i++) {
+    const phi = Math.acos(1 - (2 * (i + 0.5)) / N);
+    const theta = Math.PI * (1 + Math.sqrt(5)) * i;
+    pts.push(new THREE.Vector3(
+      R * Math.sin(phi) * Math.cos(theta),
+      R * Math.sin(phi) * Math.sin(theta),
+      R * Math.cos(phi),
+    ));
+  }
+  const nodeMat = new THREE.MeshStandardMaterial({
+    color: 0xe6b964, metalness: 0.6, roughness: 0.3,
+    emissive: new THREE.Color(0x7e0a23), emissiveIntensity: 0.15,
+  });
+  const nodes = new THREE.InstancedMesh(new THREE.SphereGeometry(0.14, 12, 12), nodeMat, N);
+  const m = new THREE.Matrix4();
+  pts.forEach((v, i) => { m.makeTranslation(v.x, v.y, v.z); nodes.setMatrixAt(i, m); });
+  nodes.instanceMatrix.needsUpdate = true;
+
+  const linePos: number[] = [];
+  pts.forEach((p, i) => {
+    const near = pts
+      .map((q, j) => ({ j, d: p.distanceTo(q) }))
+      .filter((o) => o.j !== i)
+      .sort((a, b) => a.d - b.d)
+      .slice(0, 2);
+    for (const { j } of near) {
+      linePos.push(p.x, p.y, p.z, pts[j].x, pts[j].y, pts[j].z);
+    }
+  });
+  const lineGeo = new THREE.BufferGeometry();
+  lineGeo.setAttribute('position', new THREE.Float32BufferAttribute(linePos, 3));
+  const edges = new THREE.LineSegments(
+    lineGeo,
+    new THREE.LineBasicMaterial({ color: 0xc10e35, transparent: true, opacity: 0.6 }),
+  );
+
+  const group = new THREE.Group();
+  group.add(nodes);
+  group.add(edges);
+  return { group, material: nodeMat };
+}
+
+/* ------------------------------------------------------------------ */
 /* The cast                                                            */
 /* ------------------------------------------------------------------ */
 
@@ -165,6 +217,9 @@ export function buildShapes(): Record<ShapeName, BuiltShape> {
   const growth = new THREE.Mesh(growthGeo, growthMat);
   growth.add(mkEdges(growthGeo, 0xc2a05c, 0.45));
 
+  // 7. neural — gold instanced node-spheres + crimson edge lines (see buildNeural).
+  const neural = buildNeural();
+
   return {
     ico: { mesh: ico, material: icoMat },
     octa: { mesh: octa, material: octaMat },
@@ -172,7 +227,8 @@ export function buildShapes(): Record<ShapeName, BuiltShape> {
     knot: { mesh: knot, material: knotMat },
     crown: { mesh: crown, material: crownMat },
     growth: { mesh: growth, material: growthMat },
+    neural: { mesh: neural.group, material: neural.material },
   };
 }
 
-export const SHAPE_NAMES: ShapeName[] = ['ico', 'octa', 'sphere', 'knot', 'crown', 'growth'];
+export const SHAPE_NAMES: ShapeName[] = ['ico', 'octa', 'sphere', 'knot', 'crown', 'growth', 'neural'];

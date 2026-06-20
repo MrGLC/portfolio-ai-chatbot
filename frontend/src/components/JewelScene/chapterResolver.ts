@@ -1,5 +1,5 @@
 export interface SectionRange { id: string; top: number; bottom: number; }
-export type ShapeName = 'ico' | 'octa' | 'sphere' | 'knot' | 'crown' | 'growth';
+export type ShapeName = 'ico' | 'octa' | 'sphere' | 'knot' | 'crown' | 'growth' | 'neural';
 
 export interface Keyframe {
   x: number; y: number; s: number;        // viewport fractions + scale (desktop)

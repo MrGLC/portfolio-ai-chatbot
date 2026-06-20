@@ -135,7 +135,7 @@ export const JewelRig: React.FC<JewelRigProps> = ({
       // Dispose GPU resources on unmount (route change away from Home).
       for (const name of SHAPE_NAMES) {
         const { mesh, material } = shapes[name];
-        mesh.geometry.dispose();
+        (mesh as THREE.Mesh).geometry?.dispose();
         material.dispose();
         for (const child of mesh.children) {
           const line = child as THREE.LineSegments;
@@ -154,7 +154,7 @@ export const JewelRig: React.FC<JewelRigProps> = ({
   const curRef = useRef({ x: KEYFRAMES[HERO_ID].x, y: KEYFRAMES[HERO_ID].y, s: KEYFRAMES[HERO_ID].s, spin: KEYFRAMES[HERO_ID].spin, p: KEYFRAMES[HERO_ID].p });
   // Crossfade weights per costume.
   const weightsRef = useRef<Record<ShapeName, number>>({
-    ico: 1, octa: 0, sphere: 0, knot: 0, crown: 0, growth: 0,
+    ico: 1, octa: 0, sphere: 0, knot: 0, crown: 0, growth: 0, neural: 0,
   });
   const elapsedRef = useRef(0);
   const tiltZRef = useRef(0);
@@ -388,7 +388,7 @@ export const JewelRig: React.FC<JewelRigProps> = ({
       shapes.knot.mesh.rotation.x += dt * 0.18;
     }
     // Crown: pulsing crimson emissive, scaled by its crossfade weight.
-    shapes.crown.material.emissiveIntensity =
+    (shapes.crown.material as THREE.MeshStandardMaterial).emissiveIntensity =
       0.18 + w.crown * (0.3 + Math.sin(t * 2.2) * 0.16);
 
     // 7. Dust trails behind its monarch; visible only where it adds (kf.p),
