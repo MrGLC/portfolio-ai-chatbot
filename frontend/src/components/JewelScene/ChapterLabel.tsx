@@ -11,7 +11,7 @@ export interface ChapterLabelProps {
 export const CHAPTER_LABEL_KEY: Record<string, string> = {
   'story-hero': 'rawStone',
   'story-chatbot': 'theModel',
-  'story-portfolio': 'theResults',
+  'story-portfolio': 'theMetrics',
   'story-cta': 'transformed',
 };
 

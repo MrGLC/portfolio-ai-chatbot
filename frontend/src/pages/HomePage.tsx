@@ -401,10 +401,16 @@ export const HomePage: React.FC = () => {
             viewport={{ once: true, margin: "-100px" }}
             variants={scrollReveal}
           >
-            <VStack spacing={20}>
+            <VStack
+              spacing={20}
+              justify="flex-start"
+              pt={{ base: '64px', md: '88px' }}
+              pb={{ base: '40vh', md: '46vh' }}
+            >
               {/* Editorial lane: header hugs the LEFT 64% on desktop — the
                   lattice jewel owns the right lane. The project grid below
-                  stays full width. */}
+                  stays full width. Gem beat-2 poses lower-centre, so content
+                  sits in the top band with the bottom ~45% open for the gem. */}
               <VStack
                 spacing={6}
                 textAlign={{ base: 'center', lg: 'start' }}

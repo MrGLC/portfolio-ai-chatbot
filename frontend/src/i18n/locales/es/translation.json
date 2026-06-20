@@ -87,7 +87,7 @@
       "labels": {
         "rawStone": "Piedra en bruto",
         "theModel": "El modelo",
-        "theResults": "Los resultados",
+        "theMetrics": "Las métricas",
         "transformed": "Transformado"
       }
     },

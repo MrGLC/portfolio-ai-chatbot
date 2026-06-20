@@ -87,7 +87,7 @@
       "labels": {
         "rawStone": "Raw stone",
         "theModel": "The model",
-        "theResults": "The results",
+        "theMetrics": "The metrics",
         "transformed": "Transformed"
       }
     },
