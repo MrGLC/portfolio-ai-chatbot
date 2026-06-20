@@ -42,6 +42,20 @@ const GROWTH_SHRINK = 0.5; // face shrink toward snapped centroid (width ~0.55)
 const GROWTH_Z_SQUASH = 0.4;
 const GROWTH_JITTER = 0.12; // ± x jitter from centroid hash
 
+// Rough crystalline stone: detail-1 icosahedron with deterministic per-vertex
+// radial displacement (no Math.random — geometry identical across loads).
+function buildStoneGeometry(): THREE.BufferGeometry {
+  const geo = new THREE.IcosahedronGeometry(1.7, 1).toNonIndexed();
+  const pos = geo.getAttribute('position').array as Float32Array;
+  for (let i = 0; i < pos.length; i += 3) {
+    const x = pos[i], y = pos[i + 1], z = pos[i + 2];
+    const d = 0.78 + pseudoNoise(x, y, z) * 0.34; // radial scale 0.78..1.12
+    pos[i] = x * d; pos[i + 1] = y * d; pos[i + 2] = z * d;
+  }
+  geo.computeVertexNormals();
+  return geo;
+}
+
 function buildGrowthGeometry(): THREE.BufferGeometry {
   // Source vertices: detail-1 icosahedron, non-indexed so every face owns its
   // vertices (flat shading + per-face freedom) — same base the morph used.
@@ -102,8 +116,8 @@ function buildGrowthGeometry(): THREE.BufferGeometry {
 /* ------------------------------------------------------------------ */
 
 export function buildShapes(): Record<ShapeName, BuiltShape> {
-  // 1. ico — piedra en bruto (hero)
-  const icoGeo = new THREE.IcosahedronGeometry(1.62, 1);
+  // 1. ico — piedra en bruto (hero): roughened crystal
+  const icoGeo = buildStoneGeometry();
   const icoMat = new THREE.MeshStandardMaterial({
     color: 0xc10e35, flatShading: true, metalness: 0.38, roughness: 0.34,
   });
