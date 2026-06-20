@@ -164,6 +164,34 @@ function buildNeural(): { group: THREE.Group; material: THREE.Material } {
 }
 
 /* ------------------------------------------------------------------ */
+/* crown — open cylinder band + radial cone spikes + crimson set-jewels */
+/* The band's gold material carries the emissive the rig pulses.        */
+/* ------------------------------------------------------------------ */
+
+function buildCrown(): { group: THREE.Group; material: THREE.MeshStandardMaterial } {
+  const SPIKES = 8;
+  const RING = 1.0;
+  const gold = new THREE.MeshStandardMaterial({
+    color: 0xe8b765, metalness: 0.85, roughness: 0.3, flatShading: true,
+    emissive: new THREE.Color(0xc10e35), emissiveIntensity: 0.25,
+  });
+  const jewelMat = new THREE.MeshStandardMaterial({ color: 0xc10e35, metalness: 0.4, roughness: 0.2 });
+  const group = new THREE.Group();
+  group.add(new THREE.Mesh(new THREE.CylinderGeometry(RING, RING, 0.8, 12, 1, true), gold)); // band
+  for (let i = 0; i < SPIKES; i++) {
+    const a = (i / SPIKES) * Math.PI * 2;
+    const x = Math.cos(a) * RING, z = Math.sin(a) * RING;
+    const spike = new THREE.Mesh(new THREE.ConeGeometry(0.18, 0.8, 4), gold);
+    spike.position.set(x, 0.6, z);
+    group.add(spike);
+    const jewel = new THREE.Mesh(new THREE.SphereGeometry(0.1, 8, 8), jewelMat);
+    jewel.position.set(x, 1.05, z);
+    group.add(jewel);
+  }
+  return { group, material: gold };
+}
+
+/* ------------------------------------------------------------------ */
 /* The cast                                                            */
 /* ------------------------------------------------------------------ */
 
@@ -199,15 +227,9 @@ export function buildShapes(): Record<ShapeName, BuiltShape> {
   });
   const knot = new THREE.Mesh(knotGeo, knotMat);
 
-  // 5. crown — joya de la corona. The pulsing emissive intensity
+  // 5. crown — joya de la corona: real faceted crown. The pulsing emissive
   // (0.18 + w * (0.3 + sin(t*2.2) * 0.16)) is driven in the rig's loop.
-  const crownGeo = new THREE.IcosahedronGeometry(1.62, 1);
-  const crownMat = new THREE.MeshStandardMaterial({
-    color: 0xe8b765, flatShading: true, metalness: 0.85, roughness: 0.3,
-    emissive: new THREE.Color(0xc10e35), emissiveIntensity: 0.25,
-  });
-  const crown = new THREE.Mesh(crownGeo, crownMat);
-  crown.add(mkEdges(crownGeo, 0xf2c879, 0.5));
+  const crownBuilt = buildCrown();
 
   // 6. growth — our chapter shape: crimson flatShading like ico, gold edges.
   const growthGeo = buildGrowthGeometry();
@@ -225,7 +247,7 @@ export function buildShapes(): Record<ShapeName, BuiltShape> {
     octa: { mesh: octa, material: octaMat },
     sphere: { mesh: sphere, material: sphMat },
     knot: { mesh: knot, material: knotMat },
-    crown: { mesh: crown, material: crownMat },
+    crown: { mesh: crownBuilt.group, material: crownBuilt.material },
     growth: { mesh: growth, material: growthMat },
     neural: { mesh: neural.group, material: neural.material },
   };

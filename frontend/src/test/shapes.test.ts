@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import * as THREE from 'three';
-import { InstancedMesh, LineSegments, Group } from 'three';
+import { InstancedMesh, LineSegments, Group, MeshStandardMaterial } from 'three';
 import { buildShapes, SHAPE_NAMES } from '../components/JewelScene/shapes';
 
 describe('shapes', () => {
@@ -30,5 +30,16 @@ describe('neural costume', () => {
     expect(inst).toBeTruthy();
     expect(inst.count).toBe(12);
     expect(edges).toBeTruthy();
+  });
+});
+
+describe('crown costume', () => {
+  it('is a Group of band + spikes + jewels with a pulsable emissive material', () => {
+    const c = buildShapes().crown;
+    expect(c.mesh).toBeInstanceOf(Group);
+    // 1 band + 8 spikes + 8 jewels = 17 children
+    expect(c.mesh.children.length).toBe(17);
+    expect(c.material).toBeInstanceOf(MeshStandardMaterial);
+    expect((c.material as MeshStandardMaterial).emissive).toBeTruthy();
   });
 });
