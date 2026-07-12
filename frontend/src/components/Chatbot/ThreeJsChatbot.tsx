@@ -224,6 +224,26 @@ export const ThreeJsChatbot: React.FC = () => {
     <Box position="relative" zIndex={3}>
       <Container maxW="1200px">
         <Flex gap={8} align="stretch" minH="600px">
+          {/* Jewel dock — the model. The gem parks here and "powers" the chat. */}
+          <Box
+            data-jewel-anchor="chat"
+            aria-hidden="true"
+            flexShrink={0}
+            w={{ base: '56px', md: '84px' }}
+            h={{ base: '56px', md: '84px' }}
+            alignSelf="flex-start"
+            position="relative"
+            _after={{
+              content: '""',
+              position: 'absolute',
+              right: '-12px',
+              top: '50%',
+              width: '12px',
+              height: '1px',
+              bg: 'rgba(194, 160, 92, 0.55)', // gold hairline into the card body
+            }}
+          />
+
           {/* Chat Interface */}
           {/* Handoff panel re-dress: bg-card surface + gold hairline border */}
           <Box

@@ -108,6 +108,21 @@ export const HomePage: React.FC = () => {
           zIndex={1}
         />
 
+        {/* Jewel dock — hero. Reserves the right column the gem occupies; the canvas
+            draws OVER this box (canvas stays fixed), but the box is real layout, so
+            the gem is always inside a space the section actually reserved. */}
+        <Box
+          data-jewel-anchor="hero"
+          aria-hidden="true"
+          position="absolute"
+          right={{ base: '4%', md: '8%' }}
+          top="50%"
+          transform="translateY(-50%)"
+          w={{ base: '38vw', md: 'min(34vw, 460px)' }}
+          h={{ base: '38vw', md: 'min(34vw, 460px)' }}
+          pointerEvents="none"
+        />
+
         {/* pointerEvents none on the full-height wrapper so touches in the gem's
             area fall through to the canvas; the text/CTA stack re-enables them */}
         <Container maxW="1180px" px="clamp(20px, 5vw, 40px)" position="relative" zIndex={2} h="calc(100vh - 92px)" pointerEvents="none">
@@ -548,6 +563,16 @@ export const HomePage: React.FC = () => {
             variants={scrollReveal}
           >
             <VStack spacing={10}>
+              {/* Crown slot — reserved height, so the crown NEVER overlaps title/copy/buttons */}
+              <Box
+                data-jewel-anchor="cta"
+                aria-hidden="true"
+                mx="auto"
+                w={{ base: '120px', md: '180px' }}
+                h={{ base: '120px', md: '180px' }}
+                mb={{ base: 2, md: 4 }}
+                pointerEvents="none"
+              />
               <VStack spacing={6} maxW="900px" mx="auto">
                 <Heading
                   textStyle="sectionTitle"

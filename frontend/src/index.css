@@ -231,3 +231,10 @@ body {
 button, a, input, textarea, select {
   min-height: 44px;
 }
+
+/* Jewel engine v2 — WebGL-off collapse. When the scene fails (no WebGL),
+   the reserved anchor slots (hero column, chat dock, CTA crown row) have
+   nothing drawing into them, so collapse them instead of leaving gaps. */
+html[data-jewel-off='1'] [data-jewel-anchor] {
+  display: none;
+}

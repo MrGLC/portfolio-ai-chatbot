@@ -15,6 +15,9 @@ class SceneErrorBoundary extends React.Component<
 > {
   state = { failed: false };
   static getDerivedStateFromError() {
+    // Flag the document so the reserved (now-empty) jewel anchor slots
+    // collapse instead of leaving dead gaps across the sections below.
+    document.documentElement.dataset.jewelOff = '1';
     return { failed: true };
   }
   render() {
