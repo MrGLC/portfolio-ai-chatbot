@@ -589,8 +589,6 @@ export const HomePage: React.FC = () => {
                 </Text>
               </VStack>
 
-              <BadgeCloud />
-
               <HStack spacing={6} wrap="wrap" justify="center">
                 <Button
                   as={RouterLink}
@@ -644,7 +642,9 @@ export const HomePage: React.FC = () => {
                   Learn About Us
                 </Button>
               </HStack>
-              
+
+              <BadgeCloud />
+
               {/* Trust indicators */}
               <HStack spacing={10} mt={10} opacity={0.8}>
                 <VStack spacing={1}>
