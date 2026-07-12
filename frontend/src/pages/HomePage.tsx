@@ -572,8 +572,8 @@ export const HomePage: React.FC = () => {
                 data-jewel-anchor="cta"
                 aria-hidden="true"
                 mx="auto"
-                w={{ base: '120px', md: '180px' }}
-                h={{ base: '120px', md: '180px' }}
+                w={{ base: '170px', md: '180px' }}
+                h={{ base: '170px', md: '180px' }}
                 mb={{ base: 2, md: 4 }}
                 pointerEvents="none"
               />

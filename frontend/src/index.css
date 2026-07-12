@@ -246,10 +246,3 @@ html[data-jewel-reduced='1'] [data-jewel-anchor]:not([data-jewel-anchor='hero'])
   display: none;
 }
 
-/* Lite tier (<768px) has no multiply engine — don't reserve empty chart rows.
-   (Spec's "one shared mobile chart" is deferred to visual tuning.) */
-@media (max-width: 767px) {
-  [data-jewel-anchor^='project-'] {
-    display: none;
-  }
-}

@@ -500,7 +500,7 @@ export const JewelRig: React.FC<JewelRigProps> = ({
 
       <primitive object={dust} />
 
-      {!lite && <GrowthInstances />}
+      <GrowthInstances />
     </>
   );
 };

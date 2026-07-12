@@ -45,8 +45,12 @@ export function resolvePose(progress: number, mobile = false): Pose {
 
   const weights = {} as Record<ShapeName, number>;
   for (const name of SHAPE_NAMES) weights[name] = 0;
-  weights[a.shape] += 1 - t;
-  weights[b.shape] += t;                   // same shape on both stops sums to 1
+  // Sharpened blend: pure shape while a beat holds focus, morph confined to a
+  // short window around the boundary — continuous scrubbing left the previous
+  // costume visibly mixed in while docked (Luis: "se ve la piedra en medio").
+  const tW = t < 0.35 ? 0 : t > 0.65 ? 1 : (t - 0.35) / 0.3;
+  weights[a.shape] += 1 - tW;
+  weights[b.shape] += tW;                  // same shape on both stops sums to 1
 
   return {
     x: lerp(mobile ? a.mx : a.x, mobile ? b.mx : b.x, t),
