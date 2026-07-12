@@ -20,6 +20,7 @@ import { ArrowForwardIcon } from '@chakra-ui/icons';
 import { keyframes } from '@emotion/react';
 import { useTranslation } from 'react-i18next';
 import { chatbotAPI } from '../../services/api';
+import { jewelBus } from '../JewelScene/jewelBus';
 
 const MotionBox = motion.create(Box);
 
@@ -171,6 +172,11 @@ export const ThreeJsChatbot: React.FC = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
   }, [messages, isTyping]);
 
+  // Cleanup: ensure idle on unmount
+  useEffect(() => {
+    return () => jewelBus.set('idle');
+  }, []);
+
   const sampleQuestions = [
     t('home.chatbot.sampleQuestions.skills'),
     t('home.chatbot.sampleQuestions.projects'),
@@ -190,13 +196,16 @@ export const ThreeJsChatbot: React.FC = () => {
 
     setMessages(prev => [...prev, { id: Date.now(), text: message, isUser: true }]);
     setInput('');
+    jewelBus.set('thinking');
 
     const canned = cannedFor(message);
     if (canned) {
       setIsTyping(true);
       setTimeout(() => {
+        jewelBus.set('answering');
         setMessages(prev => [...prev, { id: Date.now(), text: canned, isUser: false }]);
         setIsTyping(false);
+        window.setTimeout(() => jewelBus.set('idle'), 900);
       }, 800);
       return;
     }
@@ -206,17 +215,21 @@ export const ThreeJsChatbot: React.FC = () => {
       .then((res: { data: { response?: string; message?: string } }) => {
         const responseText = res.data.response ?? res.data.message ?? t('home.chatbot.errorFallback');
         setIsTyping(false);
+        jewelBus.set('answering');
         setHasNewMessage(true);
         setMessages(prev => [...prev, { id: Date.now(), text: responseText, isUser: false }]);
         setTimeout(() => setHasNewMessage(false), 1000);
+        window.setTimeout(() => jewelBus.set('idle'), 900);
       })
       .catch(() => {
         setIsTyping(false);
+        jewelBus.set('answering');
         setMessages(prev => [...prev, {
           id: Date.now(),
           text: t('home.chatbot.errorGeneric'),
           isUser: false,
         }]);
+        window.setTimeout(() => jewelBus.set('idle'), 900);
       });
   };
 
