@@ -16,6 +16,7 @@ import { fractionToWorld } from './chapterResolver';
 import { rectToPose } from './anchorPose';
 
 const BAR_COUNT = 3;
+const MAX_INSTANCES = 12; // up to 4 cards × 3 bars
 const GOLD = new THREE.Color('#c2a05c');
 const CRIMSON = new THREE.Color('#8a1626');
 
@@ -25,6 +26,7 @@ export const GrowthInstances: React.FC = () => {
   sizeRef.current = size;
 
   const slotsRef = useRef<HTMLElement[]>([]);
+  const rectsRef = useRef<DOMRect[]>([]); // cached per-slot rects (useJewelAnchors pattern)
   const grownRef = useRef<number[]>([]); // 0..1 growth per card
   const visibleRef = useRef(false);
 
@@ -32,8 +34,12 @@ export const GrowthInstances: React.FC = () => {
     const geo = new THREE.BoxGeometry(0.16, 1, 0.16);
     geo.translate(0, 0.5, 0); // grow upward from the baseline
     const mat = new THREE.MeshStandardMaterial({ metalness: 0.6, roughness: 0.3 });
-    const m = new THREE.InstancedMesh(geo, mat, 12); // up to 4 cards × 3 bars
+    const m = new THREE.InstancedMesh(geo, mat, MAX_INSTANCES);
     m.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+    // Pre-allocate instanceColor: setColorAt would lazily create it with
+    // StaticDrawUsage, but colors are rewritten every frame.
+    m.instanceColor = new THREE.InstancedBufferAttribute(new Float32Array(MAX_INSTANCES * 3), 3);
+    m.instanceColor.setUsage(THREE.DynamicDrawUsage);
     m.count = 0;
     m.frustumCulled = false;
     return m;
@@ -42,9 +48,27 @@ export const GrowthInstances: React.FC = () => {
   useEffect(() => () => { mesh.geometry.dispose(); (mesh.material as THREE.Material).dispose(); }, [mesh]);
 
   useEffect(() => {
-    const slots = Array.from(document.querySelectorAll<HTMLElement>('[data-jewel-anchor^="project-"]'));
+    // Clamp discovery to the instance budget: a 5th card (i18n-only change)
+    // must never overflow the buffer silently.
+    const slots = Array.from(document.querySelectorAll<HTMLElement>('[data-jewel-anchor^="project-"]'))
+      .slice(0, Math.floor(MAX_INSTANCES / BAR_COUNT));
     slotsRef.current = slots;
     grownRef.current = slots.map(() => 0);
+
+    // Rect cache: measured once on discovery, then rAF-batched on scroll/resize
+    // (same discipline as useJewelAnchors) — useFrame reads only the cache.
+    let rafPending = false;
+    const measure = () => {
+      rafPending = false;
+      rectsRef.current = slotsRef.current.map((el) => el.getBoundingClientRect());
+    };
+    const requestMeasure = () => {
+      if (rafPending) return;
+      rafPending = true;
+      requestAnimationFrame(measure);
+    };
+    measure();
+
     const ios = slots.map((el, i) => {
       const io = new IntersectionObserver(([e]) => { if (e.isIntersecting) grownRef.current[i] = grownRef.current[i] || 0.001; },
         { threshold: 0.4 });
@@ -57,7 +81,14 @@ export const GrowthInstances: React.FC = () => {
       sectionIo = new IntersectionObserver(([e]) => { visibleRef.current = e.isIntersecting; }, { threshold: 0.05 });
       sectionIo.observe(section);
     }
-    return () => { ios.forEach((io) => io.disconnect()); sectionIo?.disconnect(); };
+    window.addEventListener('scroll', requestMeasure, { passive: true });
+    window.addEventListener('resize', requestMeasure);
+    return () => {
+      window.removeEventListener('scroll', requestMeasure);
+      window.removeEventListener('resize', requestMeasure);
+      ios.forEach((io) => io.disconnect());
+      sectionIo?.disconnect();
+    };
   }, []);
 
   const dummy = useMemo(() => new THREE.Object3D(), []);
@@ -71,9 +102,9 @@ export const GrowthInstances: React.FC = () => {
     if (!visibleRef.current || slots.length === 0) { mesh.count = 0; return; }
 
     let idx = 0;
-    slots.forEach((el, i) => {
-      const rect = el.getBoundingClientRect();
-      if (rect.width <= 0) return;
+    slots.forEach((_el, i) => {
+      const rect = rectsRef.current[i];
+      if (!rect || rect.width <= 0 || rect.height <= 0) return;
       // ease growth once triggered
       if (grownRef.current[i] > 0) {
         grownRef.current[i] = Math.min(1, grownRef.current[i] + dt * 1.6);
