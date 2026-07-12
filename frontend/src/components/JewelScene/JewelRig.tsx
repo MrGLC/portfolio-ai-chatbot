@@ -180,9 +180,13 @@ export const JewelRig: React.FC<JewelRigProps> = ({
   const elapsedRef = useRef(0);
   const tiltZRef = useRef(0);
 
-  // Scroll: passive listener + moving-average velocity.
-  const scrollRef = useRef(typeof window !== 'undefined' ? window.scrollY : 0);
-  const lastSyRef = useRef(scrollRef.current);
+  // Scroll (official-fix 2026-07-12, drei ScrollControls pattern): read
+  // window.scrollY fresh EVERY FRAME (scroll events lag the compositor on
+  // mobile momentum — Mozilla scroll-linked-effects), damp ONE scalar, and
+  // derive everything (progress, anchor targets, velocity) from the smoothed
+  // value so the gem rides a continuous curve instead of stepped events.
+  const smoothYRef = useRef({ y: typeof window !== 'undefined' ? window.scrollY : 0 });
+  const lastSyRef = useRef(smoothYRef.current.y);
   const velRef = useRef(0);
 
   // Mouse, centered (-0.5..0.5) — parallax + tilt.
@@ -215,25 +219,20 @@ export const JewelRig: React.FC<JewelRigProps> = ({
       }
       rangesRef.current = ranges;
     };
-    const onScroll = () => {
-      scrollRef.current = window.scrollY;
-    };
+
     const onPointerMove = (e: PointerEvent) => {
       mouseRef.current.x = e.clientX / window.innerWidth - 0.5;
       mouseRef.current.y = e.clientY / window.innerHeight - 0.5;
     };
-    onScroll();
     measure();
     // Lazy-loaded content (chatbot canvas chunk) shifts section offsets after
     // mount — re-measure once the layout has had time to settle.
     const remeasure = window.setTimeout(measure, 1500);
     window.addEventListener('resize', measure);
-    window.addEventListener('scroll', onScroll, { passive: true });
     window.addEventListener('pointermove', onPointerMove, { passive: true });
     return () => {
       window.clearTimeout(remeasure);
       window.removeEventListener('resize', measure);
-      window.removeEventListener('scroll', onScroll);
       window.removeEventListener('pointermove', onPointerMove);
     };
   }, []);
@@ -313,8 +312,13 @@ export const JewelRig: React.FC<JewelRigProps> = ({
     const { width, height } = sizeRef.current;
     const aspect = width / Math.max(1, height);
 
-    // Scroll velocity: moving average of the per-frame delta.
-    const sy = scrollRef.current;
+    // One damped scroll scalar (smoothTime 0.25 per maath docs: SMALLER is
+    // FASTER — our old mobile 0.2 was accidentally the nervous one). Raw
+    // scrollY is read fresh this frame; everything downstream consumes smooth.
+    const rawSy = window.scrollY;
+    easing.damp(smoothYRef.current, 'y', rawSy, 0.25, dt);
+    // Scroll velocity: moving average of the per-frame delta (of the smooth).
+    const sy = smoothYRef.current.y;
     velRef.current = velRef.current * 0.92 + (sy - lastSyRef.current) * 0.08;
     lastSyRef.current = sy;
     const vel = velRef.current;
@@ -343,10 +347,14 @@ export const JewelRig: React.FC<JewelRigProps> = ({
     // mounted yet). Shape weights/spin/particles always come from the timeline.
     const anchorName = BEAT_ANCHOR[pose.beat];
     let anchored = false; // true only when a DOM rect actually resolved this frame
+    // getRect derives top from RAW scrollY; shift by (raw - smooth) so the gem
+    // tracks the damped scalar — continuous cinematic trail, not event steps.
+    const scrollLag = rawSy - sy;
     let target = { x: pose.x, y: pose.y, s: pose.s };
     if (anchorName) {
       const rect = getRect(anchorName);
       if (rect) {
+        rect.top += scrollLag;
         target = rectToPose(rect, width, height);
         anchored = true;
       }
@@ -355,6 +363,7 @@ export const JewelRig: React.FC<JewelRigProps> = ({
       // anchor at reduced scale so the handoff to instances reads as an exit.
       const ctaRect = getRect('cta');
       if (ctaRect) {
+        ctaRect.top += scrollLag;
         const p = rectToPose(ctaRect, width, height);
         target = { x: p.x, y: p.y, s: p.s * 0.4 };
         anchored = true;
@@ -367,10 +376,12 @@ export const JewelRig: React.FC<JewelRigProps> = ({
     if (reduced) {
       cur.x = target.x; cur.y = target.y; cur.s = target.s; cur.spin = pose.spin; cur.p = pose.p;
     } else {
-      // Mobile (lite): tighter damp — thumb-scroll covers beats in a flick and
-      // the 0.34 desktop glide left the gem trailing over unrelated content.
-      const kPos = lite ? 0.2 : 0.34;
-      const kScl = lite ? 0.32 : 0.5;
+      // smoothTime semantics (maath): SMALLER = FASTER. The old mobile 0.2
+      // was accidentally the nervous one — official-fix research. Targets now
+      // ride the damped scroll scalar, so stepping is gone at the source;
+      // these just shape the flight feel.
+      const kPos = lite ? 0.3 : 0.34;
+      const kScl = lite ? 0.4 : 0.5;
       easing.damp(cur, 'x', target.x, kPos, dt);
       easing.damp(cur, 'y', target.y, kPos, dt);
       easing.damp(cur, 's', target.s, kScl, dt);

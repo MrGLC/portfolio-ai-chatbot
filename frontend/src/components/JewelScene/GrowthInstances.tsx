@@ -26,7 +26,10 @@ export const GrowthInstances: React.FC = () => {
   sizeRef.current = size;
 
   const slotsRef = useRef<HTMLElement[]>([]);
-  const rectsRef = useRef<DOMRect[]>([]); // cached per-slot rects (useJewelAnchors pattern)
+  interface SlotDocRect { left: number; docTop: number; width: number; height: number }
+  const rectsRef = useRef<SlotDocRect[]>([]); // document-space; viewport top derived per frame
+  // scratch rect for rectToPose — reused, never allocated in the loop
+  const scratchRect = useRef({ left: 0, top: 0, width: 0, height: 0 });
   const grownRef = useRef<number[]>([]); // 0..1 growth per card
   const visibleRef = useRef(false);
 
@@ -48,21 +51,21 @@ export const GrowthInstances: React.FC = () => {
   useEffect(() => () => { mesh.geometry.dispose(); (mesh.material as THREE.Material).dispose(); }, [mesh]);
 
   useEffect(() => {
-    // Rect cache: measured once on discovery, then rAF-batched on scroll/resize
-    // (same discipline as useJewelAnchors) — useFrame reads only the cache.
-    let rafPending = false;
+    // Rect cache v2 (official-fix 2026-07-12): DOCUMENT-space tops measured on
+    // discovery + ResizeObserver/visualViewport only — never on scroll. The
+    // frame loop derives viewport tops as docTop - window.scrollY, so bars
+    // stay glued to their cards through compositor momentum scrolling.
     let retryId: number | undefined;
     let ios: IntersectionObserver[] = [];
     let sectionIo: IntersectionObserver | undefined;
+    let ro: ResizeObserver | undefined;
 
     const measure = () => {
-      rafPending = false;
-      rectsRef.current = slotsRef.current.map((el) => el.getBoundingClientRect());
-    };
-    const requestMeasure = () => {
-      if (rafPending) return;
-      rafPending = true;
-      requestAnimationFrame(measure);
+      const sy = window.scrollY;
+      rectsRef.current = slotsRef.current.map((el) => {
+        const r = el.getBoundingClientRect();
+        return { left: r.left, docTop: r.top + sy, width: r.width, height: r.height };
+      });
     };
 
     const discover = () => {
@@ -79,6 +82,9 @@ export const GrowthInstances: React.FC = () => {
       slotsRef.current = slots;
       grownRef.current = slots.map(() => 0);
       measure();
+      ro = new ResizeObserver(measure);
+      slots.forEach((el) => ro!.observe(el));
+      ro.observe(document.body); // content height changes above the cards move docTops
 
       // IO attachment only happens once slots are actually found, so we never
       // observe a stale empty slot list.
@@ -96,12 +102,13 @@ export const GrowthInstances: React.FC = () => {
     };
 
     discover();
-    window.addEventListener('scroll', requestMeasure, { passive: true });
-    window.addEventListener('resize', requestMeasure);
+    window.addEventListener('resize', measure);
+    window.visualViewport?.addEventListener('resize', measure);
     return () => {
       window.clearTimeout(retryId);
-      window.removeEventListener('scroll', requestMeasure);
-      window.removeEventListener('resize', requestMeasure);
+      window.removeEventListener('resize', measure);
+      window.visualViewport?.removeEventListener('resize', measure);
+      ro?.disconnect();
       ios.forEach((io) => io.disconnect());
       sectionIo?.disconnect();
     };
@@ -118,15 +125,18 @@ export const GrowthInstances: React.FC = () => {
     if (!visibleRef.current || slots.length === 0) { mesh.count = 0; return; }
 
     let idx = 0;
+    const sy = window.scrollY; // fresh per frame — bars stay glued to cards
     slots.forEach((_el, i) => {
-      const rect = rectsRef.current[i];
-      if (!rect || rect.width <= 0 || rect.height <= 0) return;
+      const d = rectsRef.current[i];
+      if (!d || d.width <= 0 || d.height <= 0) return;
       // ease growth once triggered
       if (grownRef.current[i] > 0) {
         grownRef.current[i] = Math.min(1, grownRef.current[i] + dt * 1.6);
       }
       // easing.linear is the identity — skip the maath call and read the ref directly.
       const g = grownRef.current[i]; // 0..1
+      const rect = scratchRect.current;
+      rect.left = d.left; rect.top = d.docTop - sy; rect.width = d.width; rect.height = d.height;
       const pose = rectToPose(rect, width, height);
       const world = fractionToWorld(pose.x, pose.y, aspect);
       const slotWorldH = pose.s * 2.6; // rectToPose fit: world size of the slot
