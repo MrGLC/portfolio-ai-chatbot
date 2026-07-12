@@ -320,17 +320,22 @@ export const JewelRig: React.FC<JewelRigProps> = ({
     // the anchor rect drives x/y/s; timeline x/y/s is the fallback (anchor not
     // mounted yet). Shape weights/spin/particles always come from the timeline.
     const anchorName = BEAT_ANCHOR[pose.beat];
+    let anchored = false; // true only when a DOM rect actually resolved this frame
     let target = { x: pose.x, y: pose.y, s: pose.s };
     if (anchorName) {
       const rect = getRect(anchorName);
-      if (rect) target = rectToPose(rect, width, height);
+      if (rect) {
+        target = rectToPose(rect, width, height);
+        anchored = true;
+      }
     } else {
       // Beat without main-gem anchor (projects): glide toward the NEXT beat's
       // anchor at reduced scale so the handoff to instances reads as an exit.
-      const next = getRect('cta');
-      if (next) {
-        const p = rectToPose(next, width, height);
+      const ctaRect = getRect('cta');
+      if (ctaRect) {
+        const p = rectToPose(ctaRect, width, height);
         target = { x: p.x, y: p.y, s: p.s * 0.4 };
+        anchored = true;
       }
     }
 
@@ -358,7 +363,9 @@ export const JewelRig: React.FC<JewelRigProps> = ({
     // 4. Yields in transit (shrinks), breathes when settled; tap pulse on top.
     //    vpScale keeps the gem from overflowing small/short viewports (it was
     //    near full-height at 1080p) — shrinks below ~900px min dimension.
-    const vpScale = anchorName || getRect('cta') ? 1 : Math.min(1, Math.max(0.55, Math.min(width, height) / 900));
+    //    Anchored poses are viewport-correct by construction (rectToPose), so
+    //    the clamp only applies on the timeline-fallback path (anchor unresolved).
+    const vpScale = anchored ? 1 : Math.min(1, Math.max(0.55, Math.min(width, height) / 900));
     const yieldF = 1 - Math.min(0.3, dist * 1.25);
     const breath = reduced ? 1 : 1 + Math.sin(t * 1.15) * 0.028 * settled;
     // Chat "power" pulse — only while docked at the chat anchor.
