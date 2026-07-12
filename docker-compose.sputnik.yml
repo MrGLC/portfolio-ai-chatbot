@@ -1,0 +1,9 @@
+# Sputnik overlay: local hosting while the VPS/domain are down (2026-07).
+# Publishes the prod frontend on loopback only — Caddy terminates TLS at
+# https://realeza.lab and reverse-proxies here. Nothing listens on the LAN.
+#
+#   docker compose -f docker-compose.prod.yml -f docker-compose.sputnik.yml -p realeza up -d --build
+services:
+  frontend:
+    ports:
+      - "127.0.0.1:8093:80"
