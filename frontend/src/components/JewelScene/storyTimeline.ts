@@ -3,6 +3,10 @@ import { SHAPE_NAMES } from './shapes';
 
 export const BEAT_IDS = ['story-hero', 'story-chatbot', 'story-portfolio', 'story-cta'];
 
+/** DOM anchor consumed per beat; null = the multiply engine owns this beat
+ *  (main gem exits: it damps toward the NEXT anchor while instances play). */
+export const BEAT_ANCHOR: (string | null)[] = ['hero', 'chat', null, 'cta'];
+
 interface Stop {
   x: number; y: number; s: number; shape: ShapeName; spin: number; p: number;
   mx: number; my: number; ms: number; // mobile pose variants

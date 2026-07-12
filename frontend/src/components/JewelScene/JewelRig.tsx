@@ -10,8 +10,11 @@ import {
   VIS_H,
 } from './chapterResolver';
 import type { SectionRange, ShapeName } from './chapterResolver';
-import { resolvePose, BEAT_IDS } from './storyTimeline';
+import { resolvePose, BEAT_IDS, BEAT_ANCHOR } from './storyTimeline';
 import { buildShapes, SHAPE_NAMES } from './shapes';
+import { useJewelAnchors } from './useJewelAnchors';
+import { rectToPose } from './anchorPose';
+import { jewelBus } from './jewelBus';
 
 /**
  * JewelRig — sticky-scrub engine (jewel engine v3, storyTimeline choreography).
@@ -81,6 +84,7 @@ export const JewelRig: React.FC<JewelRigProps> = ({
   const size = useThree((state) => state.size);
   const sizeRef = useRef(size);
   sizeRef.current = size;
+  const { getRect } = useJewelAnchors();
 
   const lite = profile.tier === 'lite';
   const reduced = !profile.animate;
@@ -312,19 +316,37 @@ export const JewelRig: React.FC<JewelRigProps> = ({
       onChapterChange(beatId);
     }
 
+    // Anchor override: when the active beat has a DOM anchor and it measures,
+    // the anchor rect drives x/y/s; timeline x/y/s is the fallback (anchor not
+    // mounted yet). Shape weights/spin/particles always come from the timeline.
+    const anchorName = BEAT_ANCHOR[pose.beat];
+    let target = { x: pose.x, y: pose.y, s: pose.s };
+    if (anchorName) {
+      const rect = getRect(anchorName);
+      if (rect) target = rectToPose(rect, width, height);
+    } else {
+      // Beat without main-gem anchor (projects): glide toward the NEXT beat's
+      // anchor at reduced scale so the handoff to instances reads as an exit.
+      const next = getRect('cta');
+      if (next) {
+        const p = rectToPose(next, width, height);
+        target = { x: p.x, y: p.y, s: p.s * 0.4 };
+      }
+    }
+
     // 2. Cinematic damp toward the scrubbed pose: maath's frame-rate-independent
     //    exponential easing (smooth attack, long gentle settle, interruptible) —
     //    replaces the old linear lerp that felt mechanical. Reduced motion snaps.
     if (reduced) {
-      cur.x = pose.x; cur.y = pose.y; cur.s = pose.s; cur.spin = pose.spin; cur.p = pose.p;
+      cur.x = target.x; cur.y = target.y; cur.s = target.s; cur.spin = pose.spin; cur.p = pose.p;
     } else {
-      easing.damp(cur, 'x', pose.x, 0.34, dt);
-      easing.damp(cur, 'y', pose.y, 0.34, dt);
-      easing.damp(cur, 's', pose.s, 0.5, dt);
+      easing.damp(cur, 'x', target.x, 0.34, dt);
+      easing.damp(cur, 'y', target.y, 0.34, dt);
+      easing.damp(cur, 's', target.s, 0.5, dt);
       easing.damp(cur, 'spin', pose.spin, 0.5, dt);
       easing.damp(cur, 'p', pose.p, 0.5, dt);
     }
-    const dist = Math.hypot(pose.x - cur.x, pose.y - cur.y);
+    const dist = Math.hypot(target.x - cur.x, target.y - cur.y);
     const settled = Math.max(0, 1 - dist * 9);
 
     // 3. Fraction -> world position (+ mouse parallax, + settled y-bob).
@@ -336,10 +358,18 @@ export const JewelRig: React.FC<JewelRigProps> = ({
     // 4. Yields in transit (shrinks), breathes when settled; tap pulse on top.
     //    vpScale keeps the gem from overflowing small/short viewports (it was
     //    near full-height at 1080p) — shrinks below ~900px min dimension.
-    const vpScale = Math.min(1, Math.max(0.55, Math.min(width, height) / 900));
+    const vpScale = anchorName || getRect('cta') ? 1 : Math.min(1, Math.max(0.55, Math.min(width, height) / 900));
     const yieldF = 1 - Math.min(0.3, dist * 1.25);
     const breath = reduced ? 1 : 1 + Math.sin(t * 1.15) * 0.028 * settled;
-    group.scale.setScalar(Math.max(0.0001, cur.s * vpScale * yieldF * breath * (1 + pulseRef.current * 0.12)));
+    // Chat "power" pulse — only while docked at the chat anchor.
+    let power = 1;
+    if (anchorName === 'chat') {
+      const activity = jewelBus.get();
+      if (activity === 'thinking') power = 1 + Math.sin(t * 9) * 0.05;
+      else if (activity === 'answering') power = 1.1; // brief flash; bus resets to idle
+      else power = 1 + Math.sin(t * 2.2) * 0.02; // idle slow pulse
+    }
+    group.scale.setScalar(Math.max(0.0001, cur.s * vpScale * yieldF * breath * power * (1 + pulseRef.current * 0.12)));
     pulseRef.current *= Math.pow(0.85, dt * 60);
 
     // 5. Spin: rest drift + scroll impulse + extra while dashing; mouse tilt;
@@ -383,6 +413,14 @@ export const JewelRig: React.FC<JewelRigProps> = ({
     // Crown: pulsing crimson emissive, scaled by its crossfade weight.
     (shapes.crown.material as THREE.MeshStandardMaterial).emissiveIntensity =
       0.18 + w.crown * (0.3 + Math.sin(t * 2.2) * 0.16);
+    // Neural: emissive flares while the gem is docked at chat and the bot thinks.
+    const neuralMat = shapes.neural.material as THREE.MeshStandardMaterial;
+    if (neuralMat.emissive !== undefined) {
+      neuralMat.emissiveIntensity =
+        anchorName === 'chat' && jewelBus.get() === 'thinking'
+          ? 0.35 + Math.sin(t * 9) * 0.2
+          : 0.15;
+    }
 
     // 7. Dust trails behind its monarch; visible only where it adds (kf.p),
     //    dimmed further while in transit.

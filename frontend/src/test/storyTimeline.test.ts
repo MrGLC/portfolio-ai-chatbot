@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { resolvePose, activeBeat, BEAT_IDS } from '../components/JewelScene/storyTimeline';
+import { resolvePose, activeBeat, BEAT_IDS, BEAT_ANCHOR } from '../components/JewelScene/storyTimeline';
 
 describe('storyTimeline', () => {
   it('beat0 at progress 0: stone dominant, anchored right', () => {
@@ -34,5 +34,10 @@ describe('storyTimeline', () => {
     expect(activeBeat(0)).toBe(0);
     expect(activeBeat(0.5)).toBe(2);
     expect(activeBeat(1)).toBe(3);
+  });
+  it('BEAT_ANCHOR maps 4 beats to their DOM anchor, beat 2 (projects) has none', () => {
+    expect(BEAT_ANCHOR).toHaveLength(4);
+    expect(BEAT_ANCHOR[2]).toBeNull();
+    expect(BEAT_ANCHOR).toEqual(['hero', 'chat', null, 'cta']);
   });
 });
