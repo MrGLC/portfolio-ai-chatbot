@@ -7,6 +7,21 @@ export const BEAT_IDS = ['story-hero', 'story-chatbot', 'story-portfolio', 'stor
  *  (main gem exits: it damps toward the NEXT anchor while instances play). */
 export const BEAT_ANCHOR: (string | null)[] = ['hero', 'chat', null, 'cta'];
 
+/** Mobile (lite tier): the gem does NOT track DOM anchors — compositor-thread
+ *  momentum scrolling makes JS tracking wobble (official-fix research). Each
+ *  beat gets a FIXED viewport pose; the gem holds rock-still while scrolling
+ *  and flies only on beat change. x/y viewport fractions, s world scale.
+ *  0: hero — big centered background ornament (rig dims it to 30%)
+ *  1: chat — small profile mark, top-right (over the card's corner slot zone)
+ *  2: projects — near-vanish; the per-card growth instances own this beat
+ *  3: cta — crown, centered upper area (over the reserved slot zone) */
+export const MOBILE_POSES: { x: number; y: number; s: number }[] = [
+  { x: 0.5, y: 0.32, s: 0.8 },
+  { x: 0.82, y: 0.14, s: 0.17 },
+  { x: 0.5, y: 0.5, s: 0.05 },
+  { x: 0.5, y: 0.3, s: 0.5 },
+];
+
 interface Stop {
   x: number; y: number; s: number; shape: ShapeName; spin: number; p: number;
   mx: number; my: number; ms: number; // mobile pose variants

@@ -11,7 +11,7 @@ import {
   VIS_H,
 } from './chapterResolver';
 import type { SectionRange, ShapeName } from './chapterResolver';
-import { resolvePose, BEAT_IDS, BEAT_ANCHOR } from './storyTimeline';
+import { resolvePose, BEAT_IDS, BEAT_ANCHOR, MOBILE_POSES } from './storyTimeline';
 import { buildShapes, SHAPE_NAMES } from './shapes';
 import { useJewelAnchors } from './useJewelAnchors';
 import { rectToPose } from './anchorPose';
@@ -351,7 +351,13 @@ export const JewelRig: React.FC<JewelRigProps> = ({
     // tracks the damped scalar — continuous cinematic trail, not event steps.
     const scrollLag = rawSy - sy;
     let target = { x: pose.x, y: pose.y, s: pose.s };
-    if (anchorName) {
+    if (lite) {
+      // Mobile: viewport-FIXED pose per beat (no DOM tracking — see
+      // MOBILE_POSES). Rock-still during scroll; damp animates beat flights.
+      const snap = MOBILE_POSES[pose.beat];
+      target = { x: snap.x, y: snap.y, s: snap.s };
+      anchored = true; // viewport-correct by design
+    } else if (anchorName) {
       const rect = getRect(anchorName);
       if (rect) {
         rect.top += scrollLag;
