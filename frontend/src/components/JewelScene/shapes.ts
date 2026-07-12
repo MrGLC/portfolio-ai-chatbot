@@ -16,6 +16,51 @@ export interface BuiltShape {
   material: THREE.Material;
 }
 
+/** Perf-tier quality knob for costume materials — see buildShapes(). */
+export type ShapeQuality = 'full' | 'lite';
+
+interface CostumeMaterialParams {
+  color: number;
+  flatShading?: boolean;
+  metalness: number;
+  roughness: number;
+  emissive?: number;
+  emissiveIntensity?: number;
+}
+
+/**
+ * Builds each costume's face material. `lite` returns exactly the plain
+ * MeshStandardMaterial this file always used (no regression on mobile/
+ * reduced-motion). `full` upgrades to MeshPhysicalMaterial with a fixed
+ * clearcoat recipe (handoff quality-pass spec) — metalness/roughness/
+ * clearcoat are uniform across costumes; color/emissive stay per-shape.
+ */
+function buildMaterial(
+  quality: ShapeQuality,
+  { color, flatShading, metalness, roughness, emissive, emissiveIntensity }: CostumeMaterialParams
+): THREE.MeshStandardMaterial {
+  // Three.js's Material.setValues() warns on any key whose value is
+  // undefined, so optional params (flatShading/emissive/emissiveIntensity)
+  // are only included when actually set — not just passed as `undefined`.
+  const optional: Partial<THREE.MeshPhysicalMaterialParameters> = {};
+  if (flatShading !== undefined) optional.flatShading = flatShading;
+  if (emissive !== undefined) optional.emissive = emissive;
+  if (emissiveIntensity !== undefined) optional.emissiveIntensity = emissiveIntensity;
+
+  if (quality === 'lite') {
+    return new THREE.MeshStandardMaterial({ color, metalness, roughness, ...optional });
+  }
+  return new THREE.MeshPhysicalMaterial({
+    color,
+    metalness: 0.85,
+    roughness: 0.22,
+    clearcoat: 0.6,
+    clearcoatRoughness: 0.25,
+    envMapIntensity: 1.1,
+    ...optional,
+  });
+}
+
 function mkEdges(geo: THREE.BufferGeometry, color: number, opacity: number): THREE.LineSegments {
   return new THREE.LineSegments(
     new THREE.EdgesGeometry(geo),
@@ -117,7 +162,7 @@ function buildGrowthGeometry(): THREE.BufferGeometry {
 /* Fibonacci-sphere placement (no Math.random).                        */
 /* ------------------------------------------------------------------ */
 
-function buildNeural(): { group: THREE.Group; material: THREE.Material } {
+function buildNeural(quality: ShapeQuality): { group: THREE.Group; material: THREE.Material } {
   const N = 12;
   const R = 1.3;
   const pts: THREE.Vector3[] = [];
@@ -130,9 +175,9 @@ function buildNeural(): { group: THREE.Group; material: THREE.Material } {
       R * Math.cos(phi),
     ));
   }
-  const nodeMat = new THREE.MeshStandardMaterial({
+  const nodeMat = buildMaterial(quality, {
     color: 0xe6b964, metalness: 0.6, roughness: 0.3,
-    emissive: new THREE.Color(0x7e0a23), emissiveIntensity: 0.15,
+    emissive: 0x7e0a23, emissiveIntensity: 0.15,
   });
   const nodes = new THREE.InstancedMesh(new THREE.SphereGeometry(0.14, 12, 12), nodeMat, N);
   const m = new THREE.Matrix4();
@@ -168,14 +213,14 @@ function buildNeural(): { group: THREE.Group; material: THREE.Material } {
 /* The band's gold material carries the emissive the rig pulses.        */
 /* ------------------------------------------------------------------ */
 
-function buildCrown(): { group: THREE.Group; material: THREE.MeshStandardMaterial } {
+function buildCrown(quality: ShapeQuality): { group: THREE.Group; material: THREE.MeshStandardMaterial } {
   const SPIKES = 8;
   const RING = 1.0;
-  const gold = new THREE.MeshStandardMaterial({
+  const gold = buildMaterial(quality, {
     color: 0xe8b765, metalness: 0.85, roughness: 0.3, flatShading: true,
-    emissive: new THREE.Color(0xc10e35), emissiveIntensity: 0.25,
+    emissive: 0xc10e35, emissiveIntensity: 0.25,
   });
-  const jewelMat = new THREE.MeshStandardMaterial({ color: 0xc10e35, metalness: 0.4, roughness: 0.2 });
+  const jewelMat = buildMaterial(quality, { color: 0xc10e35, metalness: 0.4, roughness: 0.2 });
   const group = new THREE.Group();
   group.add(new THREE.Mesh(new THREE.CylinderGeometry(RING, RING, 0.8, 12, 1, true), gold)); // band
   for (let i = 0; i < SPIKES; i++) {
@@ -198,16 +243,16 @@ function buildCrown(): { group: THREE.Group; material: THREE.MeshStandardMateria
 // Metrics: a clean ascending bar chart — 5 crimson columns of growing height on
 // a common baseline, each gold-capped. Reads instantly as "results / metrics",
 // unlike the old face-bucketed blob.
-function buildMetricsBars(): { group: THREE.Group; material: THREE.MeshStandardMaterial } {
+function buildMetricsBars(quality: ShapeQuality): { group: THREE.Group; material: THREE.MeshStandardMaterial } {
   const heights = [0.8, 1.25, 1.75, 2.3, 2.9];
   const W = 0.42, GAP = 0.16, D = 0.42;
   const n = heights.length;
   const totalW = n * W + (n - 1) * GAP;
   const baseY = -1.3;
-  const bar = new THREE.MeshStandardMaterial({
+  const bar = buildMaterial(quality, {
     color: 0xc10e35, flatShading: true, metalness: 0.4, roughness: 0.32,
   });
-  const cap = new THREE.MeshStandardMaterial({
+  const cap = buildMaterial(quality, {
     color: 0xe8b765, flatShading: true, metalness: 0.7, roughness: 0.3,
   });
   const group = new THREE.Group();
@@ -224,10 +269,10 @@ function buildMetricsBars(): { group: THREE.Group; material: THREE.MeshStandardM
   return { group, material: bar };
 }
 
-export function buildShapes(): Record<ShapeName, BuiltShape> {
+export function buildShapes(quality: ShapeQuality = 'full'): Record<ShapeName, BuiltShape> {
   // 1. ico — piedra en bruto (hero): roughened crystal
   const icoGeo = buildStoneGeometry();
-  const icoMat = new THREE.MeshStandardMaterial({
+  const icoMat = buildMaterial(quality, {
     color: 0xc10e35, flatShading: true, metalness: 0.38, roughness: 0.34,
   });
   const ico = new THREE.Mesh(icoGeo, icoMat);
@@ -236,7 +281,7 @@ export function buildShapes(): Record<ShapeName, BuiltShape> {
   // 2. octa — diamante tallado
   const octaGeo = new THREE.OctahedronGeometry(1.5, 0);
   octaGeo.scale(1, 1.32, 1);
-  const octaMat = new THREE.MeshStandardMaterial({
+  const octaMat = buildMaterial(quality, {
     color: 0xc10e35, flatShading: true, metalness: 0.55, roughness: 0.22,
   });
   const octa = new THREE.Mesh(octaGeo, octaMat);
@@ -244,27 +289,27 @@ export function buildShapes(): Record<ShapeName, BuiltShape> {
 
   // 3. sphere — esfera pulida (smooth: no flatShading, no edges)
   const sphGeo = new THREE.IcosahedronGeometry(1.42, 3);
-  const sphMat = new THREE.MeshStandardMaterial({
+  const sphMat = buildMaterial(quality, {
     color: 0xc10e35, metalness: 0.72, roughness: 0.14,
   });
   const sphere = new THREE.Mesh(sphGeo, sphMat);
 
   // 4. knot — nudo de ingeniería
   const knotGeo = new THREE.TorusKnotGeometry(0.92, 0.27, 160, 24);
-  const knotMat = new THREE.MeshStandardMaterial({
+  const knotMat = buildMaterial(quality, {
     color: 0xc2a05c, metalness: 0.9, roughness: 0.26,
   });
   const knot = new THREE.Mesh(knotGeo, knotMat);
 
   // 5. crown — joya de la corona: real faceted crown. The pulsing emissive
   // (0.18 + w * (0.3 + sin(t*2.2) * 0.16)) is driven in the rig's loop.
-  const crownBuilt = buildCrown();
+  const crownBuilt = buildCrown(quality);
 
   // 6. growth — ascending metrics bar chart (clean gold-capped columns).
-  const growthBuilt = buildMetricsBars();
+  const growthBuilt = buildMetricsBars(quality);
 
   // 7. neural — gold instanced node-spheres + crimson edge lines (see buildNeural).
-  const neural = buildNeural();
+  const neural = buildNeural(quality);
 
   return {
     ico: { mesh: ico, material: icoMat },

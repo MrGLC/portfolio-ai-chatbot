@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useRef } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
+import { Environment, Lightformer } from '@react-three/drei';
 import * as THREE from 'three';
 import { easing } from 'maath';
 import { usePerfProfile } from '../../hooks/usePerfProfile';
@@ -93,7 +94,10 @@ export const JewelRig: React.FC<JewelRigProps> = ({
   const groupRef = useRef<THREE.Group>(null);
 
   /* ---- The cast: six meshes + dust, built once ---- */
-  const shapes = useMemo(() => buildShapes(), []);
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- costumes are
+  // built once at mount from the tier known then; deliberately not rebuilt
+  // on later tier flips (matches the `dust` useMemo below).
+  const shapes = useMemo(() => buildShapes(profile.tier), []);
   const dust = useMemo(() => {
     // Gold-dust court: 200 points on a flattened spherical shell (y * 0.72),
     // 50/50 gold #e6b964 / crimson #d11e44, size 0.042 (handoff spec).
@@ -461,6 +465,23 @@ export const JewelRig: React.FC<JewelRigProps> = ({
       <directionalLight color="#fff1d6" intensity={1.5} position={[-3, 4, 5]} />
       <pointLight color="#e8b765" intensity={1.25} distance={22} position={[-2.6, 2.6, 3.2]} />
       <directionalLight color="#ff5a7a" intensity={0.75} position={[4, -2, -3]} />
+
+      {/* Procedural studio env (full tier only) — Lightformers render once
+          into a 256px cube map (frames={1}), zero network fetches. This is
+          what makes the faceted/clearcoat materials pick up real reflections
+          instead of reading flat. No ContactShadows here (see JewelRig
+          module comment / Task 7 commit): the canvas is one viewport-fixed
+          overlay and the gem's world position is re-anchored per DOM slot
+          (hero pedestal → chat card → project cards → CTA) — a shadow plane
+          pinned to a fixed world Y would visually detach from the gem the
+          moment it docks somewhere else, so it was dropped. */}
+      {!lite && (
+        <Environment resolution={256} frames={1}>
+          <Lightformer intensity={1.4} position={[0, 3, 4]} scale={[6, 3, 1]} />
+          <Lightformer intensity={0.8} color="#e8b765" position={[-4, 1, 2]} scale={[3, 3, 1]} />
+          <Lightformer intensity={0.5} color="#9db8ff" position={[4, -1, -3]} scale={[3, 3, 1]} />
+        </Environment>
+      )}
 
       <group ref={groupRef}>
         {SHAPE_NAMES.map((name) => (
