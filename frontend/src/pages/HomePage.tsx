@@ -115,11 +115,14 @@ export const HomePage: React.FC = () => {
           data-jewel-anchor="hero"
           aria-hidden="true"
           position="absolute"
-          right={{ base: '4%', md: '8%' }}
-          top="50%"
-          transform="translateY(-50%)"
-          w={{ base: '38vw', md: 'min(34vw, 460px)' }}
-          h={{ base: '38vw', md: 'min(34vw, 460px)' }}
+          /* Mobile: centered below the title block (spec §6 stacked layout) —
+             the desktop right-margin pose shrunk into a corner on phones. */
+          left={{ base: '50%', md: 'auto' }}
+          right={{ base: 'auto', md: '8%' }}
+          top={{ base: '44%', md: '50%' }}
+          transform={{ base: 'translateX(-50%)', md: 'translateY(-50%)' }}
+          w={{ base: '44vw', md: 'min(34vw, 460px)' }}
+          h={{ base: '44vw', md: 'min(34vw, 460px)' }}
           pointerEvents="none"
         />
 

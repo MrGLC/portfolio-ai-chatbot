@@ -350,9 +350,13 @@ export const JewelRig: React.FC<JewelRigProps> = ({
     if (reduced) {
       cur.x = target.x; cur.y = target.y; cur.s = target.s; cur.spin = pose.spin; cur.p = pose.p;
     } else {
-      easing.damp(cur, 'x', target.x, 0.34, dt);
-      easing.damp(cur, 'y', target.y, 0.34, dt);
-      easing.damp(cur, 's', target.s, 0.5, dt);
+      // Mobile (lite): tighter damp — thumb-scroll covers beats in a flick and
+      // the 0.34 desktop glide left the gem trailing over unrelated content.
+      const kPos = lite ? 0.2 : 0.34;
+      const kScl = lite ? 0.32 : 0.5;
+      easing.damp(cur, 'x', target.x, kPos, dt);
+      easing.damp(cur, 'y', target.y, kPos, dt);
+      easing.damp(cur, 's', target.s, kScl, dt);
       easing.damp(cur, 'spin', pose.spin, 0.5, dt);
       easing.damp(cur, 'p', pose.p, 0.5, dt);
     }
@@ -371,7 +375,12 @@ export const JewelRig: React.FC<JewelRigProps> = ({
     //    Anchored poses are viewport-correct by construction (rectToPose), so
     //    the clamp only applies on the timeline-fallback path (anchor unresolved).
     const vpScale = anchored ? 1 : Math.min(1, Math.max(0.55, Math.min(width, height) / 900));
-    const yieldF = 1 - Math.min(0.3, dist * 1.25);
+    // Transit yield: desktop shrinks a little mid-flight; mobile shrinks HARD
+    // (near-vanish) so beat changes read as depart→arrive instead of a gem
+    // dragging across the copy on a small screen.
+    const yieldF = lite
+      ? 1 - Math.min(0.85, dist * 4)
+      : 1 - Math.min(0.3, dist * 1.25);
     const breath = reduced ? 1 : 1 + Math.sin(t * 1.15) * 0.028 * settled;
     // Chat "power" pulse — only while docked at the chat anchor.
     let power = 1;

@@ -250,8 +250,8 @@ export const ThreeJsChatbot: React.FC = () => {
             data-jewel-anchor="chat"
             aria-hidden="true"
             flexShrink={0}
-            w={{ base: '56px', md: '84px' }}
-            h={{ base: '56px', md: '84px' }}
+            w={{ base: '68px', md: '84px' }}
+            h={{ base: '68px', md: '84px' }}
             alignSelf="flex-start"
             position="relative"
             _after={{
