@@ -151,6 +151,23 @@ export const JewelRig: React.FC<JewelRigProps> = ({
     };
   }, [shapes, dust]);
 
+  /* ---- Mobile-hero fade: flat list of every costume material (mesh +
+     wireframe children) so the loop can dim the gem to a background ornament
+     while beat 0 holds focus on phones. Built once; lite tier only uses it. */
+  const fadeMats = useMemo(() => {
+    const mats: THREE.Material[] = [];
+    for (const name of SHAPE_NAMES) {
+      const { mesh, material } = shapes[name];
+      mats.push(material);
+      for (const child of mesh.children) {
+        const m = (child as THREE.LineSegments).material as THREE.Material;
+        if (m) mats.push(m);
+      }
+    }
+    return mats;
+  }, [shapes]);
+  const matOpacityRef = useRef(1);
+
   /* ---- Engine state: refs only, no React state in the loop ---- */
   // Eased pose in viewport-fraction space (prototype's `cur`).
   // Starts at the beat-0 (hero) pose from storyTimeline STOPS[0] — no grow-in.
@@ -441,6 +458,18 @@ export const JewelRig: React.FC<JewelRigProps> = ({
         anchorName === 'chat' && jewelBus.get() === 'thinking'
           ? 0.35 + Math.sin(t * 9) * 0.2
           : 0.15;
+    }
+
+    // 6.5 Mobile hero: the gem reads as a BACKGROUND ornament behind the copy
+    //     (Luis: "estorba mucho, debería estar como en el fondo") — dim all
+    //     costume materials while beat 0 holds focus; full opacity elsewhere.
+    if (lite) {
+      const targetOp = pose.beat === 0 ? 0.3 : 1;
+      matOpacityRef.current += (targetOp - matOpacityRef.current) * (reduced ? 1 : 0.12);
+      for (const fm of fadeMats) {
+        fm.transparent = true;
+        fm.opacity = matOpacityRef.current;
+      }
     }
 
     // 7. Dust trails behind its monarch; visible only where it adds (kf.p),

@@ -244,16 +244,21 @@ export const ThreeJsChatbot: React.FC = () => {
   return (
     <Box position="relative" zIndex={3}>
       <Container maxW="1200px">
-        <Flex gap={8} align="stretch" minH="600px">
-          {/* Jewel dock — the model. The gem parks here and "powers" the chat. */}
+        <Flex gap={8} align="stretch" minH="600px" position="relative">
+          {/* Jewel dock — the model. Desktop: side column beside the card.
+              Mobile: the card takes the full width and the gem docks INSIDE
+              it as the bot's profile mark (top-right of the header). */}
           <Box
             data-jewel-anchor="chat"
             aria-hidden="true"
             flexShrink={0}
-            w={{ base: '104px', md: '136px' }}
-            h={{ base: '104px', md: '136px' }}
-            alignSelf="flex-start"
-            position="relative"
+            position={{ base: 'absolute', md: 'relative' }}
+            top={{ base: '6px', md: 'auto' }}
+            right={{ base: '10px', md: 'auto' }}
+            zIndex={{ base: 3, md: 'auto' }}
+            w={{ base: '52px', md: '136px' }}
+            h={{ base: '52px', md: '136px' }}
+            alignSelf={{ md: 'flex-start' }}
             _after={{
               content: '""',
               position: 'absolute',
@@ -262,6 +267,7 @@ export const ThreeJsChatbot: React.FC = () => {
               width: '12px',
               height: '1px',
               bg: 'rgba(194, 160, 92, 0.55)', // gold hairline into the card body
+              display: { base: 'none', md: 'block' },
             }}
           />
 

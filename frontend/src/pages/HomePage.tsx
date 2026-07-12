@@ -119,10 +119,10 @@ export const HomePage: React.FC = () => {
              the desktop right-margin pose shrunk into a corner on phones. */
           left={{ base: '50%', md: 'auto' }}
           right={{ base: 'auto', md: '8%' }}
-          top={{ base: '44%', md: '50%' }}
+          top={{ base: '30%', md: '50%' }}
           transform={{ base: 'translateX(-50%)', md: 'translateY(-50%)' }}
-          w={{ base: '44vw', md: 'min(34vw, 460px)' }}
-          h={{ base: '44vw', md: 'min(34vw, 460px)' }}
+          w={{ base: '72vw', md: 'min(34vw, 460px)' }}
+          h={{ base: '72vw', md: 'min(34vw, 460px)' }}
           pointerEvents="none"
         />
 
