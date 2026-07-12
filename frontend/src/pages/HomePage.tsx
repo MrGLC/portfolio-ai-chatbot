@@ -463,9 +463,10 @@ export const HomePage: React.FC = () => {
 
               {/* Real project cards from i18n */}
               <SimpleGrid columns={{ base: 1, md: 2 }} spacing={6} w="full">
-                {(t('home.proof.projects', { returnObjects: true }) as Array<{ name: string; line: string; stats: string[] }>).map((proj) => (
+                {(t('home.proof.projects', { returnObjects: true }) as Array<{ name: string; line: string; stats: string[] }>).map((proj, index) => (
                   <Card key={proj.name} variant="royal">
                     <CardBody>
+                      <Box data-jewel-anchor={`project-${index}`} aria-hidden="true" h="72px" w="100%" pointerEvents="none" />
                       <Heading as="h3" textStyle="cardTitle" color="brand.text" mb={1}>
                         {proj.name}
                       </Heading>

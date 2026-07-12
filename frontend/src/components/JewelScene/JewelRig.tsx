@@ -15,6 +15,7 @@ import { buildShapes, SHAPE_NAMES } from './shapes';
 import { useJewelAnchors } from './useJewelAnchors';
 import { rectToPose } from './anchorPose';
 import { jewelBus } from './jewelBus';
+import { GrowthInstances } from './GrowthInstances';
 
 /**
  * JewelRig — sticky-scrub engine (jewel engine v3, storyTimeline choreography).
@@ -468,6 +469,8 @@ export const JewelRig: React.FC<JewelRigProps> = ({
       </group>
 
       <primitive object={dust} />
+
+      {!lite && <GrowthInstances />}
     </>
   );
 };
