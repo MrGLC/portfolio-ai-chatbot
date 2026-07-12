@@ -161,6 +161,7 @@ export const ThreeJsChatbot: React.FC = () => {
   const [hasNewMessage, setHasNewMessage] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const hasInteracted = useRef(false);
+  const idleTimerRef = useRef<number | undefined>(undefined);
 
   useEffect(() => {
     // Skip the mount run — scrolling the welcome message into view would
@@ -172,9 +173,13 @@ export const ThreeJsChatbot: React.FC = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
   }, [messages, isTyping]);
 
-  // Cleanup: ensure idle on unmount
+  // Cleanup: clear any pending idle timer (it would force-idle a remounted
+  // instance mid-answer otherwise) and ensure idle on unmount.
   useEffect(() => {
-    return () => jewelBus.set('idle');
+    return () => {
+      window.clearTimeout(idleTimerRef.current);
+      jewelBus.set('idle');
+    };
   }, []);
 
   const sampleQuestions = [
@@ -205,7 +210,8 @@ export const ThreeJsChatbot: React.FC = () => {
         jewelBus.set('answering');
         setMessages(prev => [...prev, { id: Date.now(), text: canned, isUser: false }]);
         setIsTyping(false);
-        window.setTimeout(() => jewelBus.set('idle'), 900);
+        window.clearTimeout(idleTimerRef.current);
+        idleTimerRef.current = window.setTimeout(() => jewelBus.set('idle'), 900);
       }, 800);
       return;
     }
@@ -219,7 +225,8 @@ export const ThreeJsChatbot: React.FC = () => {
         setHasNewMessage(true);
         setMessages(prev => [...prev, { id: Date.now(), text: responseText, isUser: false }]);
         setTimeout(() => setHasNewMessage(false), 1000);
-        window.setTimeout(() => jewelBus.set('idle'), 900);
+        window.clearTimeout(idleTimerRef.current);
+        idleTimerRef.current = window.setTimeout(() => jewelBus.set('idle'), 900);
       })
       .catch(() => {
         setIsTyping(false);
@@ -229,7 +236,8 @@ export const ThreeJsChatbot: React.FC = () => {
           text: t('home.chatbot.errorGeneric'),
           isUser: false,
         }]);
-        window.setTimeout(() => jewelBus.set('idle'), 900);
+        window.clearTimeout(idleTimerRef.current);
+        idleTimerRef.current = window.setTimeout(() => jewelBus.set('idle'), 900);
       });
   };
 
