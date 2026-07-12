@@ -27,6 +27,7 @@ import {
   WrapItem,
 } from '@chakra-ui/react';
 import { ExternalLinkIcon } from '@chakra-ui/icons';
+import { Link as RouterLink } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { durations, easings, delays, variants, transitions, createHoverAnimation } from '../theme/animations';
@@ -45,6 +46,8 @@ interface Project {
   categoryKey: string;
   gradient: string;
   techStack: string[];
+  /** External proof link (paper, repo) — modal renders it only when present */
+  link?: { labelKey: string; url: string };
 }
 
 export const ProjectsPage: React.FC = () => {
@@ -53,106 +56,109 @@ export const ProjectsPage: React.FC = () => {
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const { isOpen, onOpen, onClose } = useDisclosure();
 
+  // Real, shipped systems only — no agency filler. Proof links where they exist.
   const projects: Project[] = [
     {
       id: 1,
-      titleKey: 'projects.projectList.aiChatbot.title',
-      descriptionKey: 'projects.projectList.aiChatbot.description',
-      fullDescriptionKey: 'projects.projectList.aiChatbot.fullDescription',
+      titleKey: 'projects.projectList.primeroTrader.title',
+      descriptionKey: 'projects.projectList.primeroTrader.description',
+      fullDescriptionKey: 'projects.projectList.primeroTrader.fullDescription',
       technologiesKeys: [
-        'projects.projectList.aiChatbot.technologies.nlp',
-        'projects.projectList.aiChatbot.technologies.conversationalAi',
-        'projects.projectList.aiChatbot.technologies.multilingual'
+        'projects.projectList.primeroTrader.technologies.mcp',
+        'projects.projectList.primeroTrader.technologies.eventDriven',
+        'projects.projectList.primeroTrader.technologies.finetuning'
       ],
-      category: 'NLP',
-      categoryKey: 'projects.filters.nlp',
+      category: 'LLM & Agents',
+      categoryKey: 'projects.filters.llmAgents',
       gradient: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-      techStack: ['Python', 'Transformers', 'FastAPI', 'Redis', 'Docker'],
+      techStack: ['Python', 'FastAPI', 'Valkey', 'MCP', 'SageMaker', 'Docker'],
     },
     {
       id: 2,
-      titleKey: 'projects.projectList.medicalImage.title',
-      descriptionKey: 'projects.projectList.medicalImage.description',
-      fullDescriptionKey: 'projects.projectList.medicalImage.fullDescription',
+      titleKey: 'projects.projectList.voiceInterview.title',
+      descriptionKey: 'projects.projectList.voiceInterview.description',
+      fullDescriptionKey: 'projects.projectList.voiceInterview.fullDescription',
       technologiesKeys: [
-        'projects.projectList.medicalImage.technologies.medicalAi',
-        'projects.projectList.medicalImage.technologies.deepLearning',
-        'projects.projectList.medicalImage.technologies.diagnosticImaging'
+        'projects.projectList.voiceInterview.technologies.rag',
+        'projects.projectList.voiceInterview.technologies.voice',
+        'projects.projectList.voiceInterview.technologies.evals'
       ],
-      category: 'Computer Vision',
-      categoryKey: 'projects.filters.computerVision',
+      category: 'LLM & Agents',
+      categoryKey: 'projects.filters.llmAgents',
       gradient: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
-      techStack: ['PyTorch', 'OpenCV', 'DICOM', 'AWS HealthLake', 'Kubernetes'],
+      techStack: ['AWS Bedrock', 'OpenSearch', 'OpenAI Realtime', 'Python', 'OpenTelemetry'],
     },
     {
       id: 3,
-      titleKey: 'projects.projectList.salesPrediction.title',
-      descriptionKey: 'projects.projectList.salesPrediction.description',
-      fullDescriptionKey: 'projects.projectList.salesPrediction.fullDescription',
+      titleKey: 'projects.projectList.sputnik.title',
+      descriptionKey: 'projects.projectList.sputnik.description',
+      fullDescriptionKey: 'projects.projectList.sputnik.fullDescription',
       technologiesKeys: [
-        'projects.projectList.salesPrediction.technologies.predictiveAnalytics',
-        'projects.projectList.salesPrediction.technologies.timeSeries',
-        'projects.projectList.salesPrediction.technologies.autoML'
+        'projects.projectList.sputnik.technologies.iac',
+        'projects.projectList.sputnik.technologies.observability',
+        'projects.projectList.sputnik.technologies.orchestration'
       ],
-      category: 'Machine Learning',
-      categoryKey: 'projects.filters.machineLearning',
+      category: 'Infrastructure',
+      categoryKey: 'projects.filters.infrastructure',
       gradient: 'linear-gradient(135deg, #fa709a 0%, #fee140 100%)',
-      techStack: ['Scikit-learn', 'XGBoost', 'Airflow', 'PostgreSQL', 'Grafana'],
+      techStack: ['NixOS', 'Docker', 'Caddy', 'Prometheus', 'Grafana', 'FastAPI'],
     },
     {
       id: 4,
-      titleKey: 'projects.projectList.documentProcessing.title',
-      descriptionKey: 'projects.projectList.documentProcessing.description',
-      fullDescriptionKey: 'projects.projectList.documentProcessing.fullDescription',
+      titleKey: 'projects.projectList.tonyAssistant.title',
+      descriptionKey: 'projects.projectList.tonyAssistant.description',
+      fullDescriptionKey: 'projects.projectList.tonyAssistant.fullDescription',
       technologiesKeys: [
-        'projects.projectList.documentProcessing.technologies.documentAi',
-        'projects.projectList.documentProcessing.technologies.ocr',
-        'projects.projectList.documentProcessing.technologies.informationExtraction'
+        'projects.projectList.tonyAssistant.technologies.rag',
+        'projects.projectList.tonyAssistant.technologies.vector',
+        'projects.projectList.tonyAssistant.technologies.mcp'
       ],
-      category: 'NLP',
-      categoryKey: 'projects.filters.nlp',
+      category: 'LLM & Agents',
+      categoryKey: 'projects.filters.llmAgents',
       gradient: 'linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)',
-      techStack: ['Tesseract', 'spaCy', 'TensorFlow', 'MongoDB', 'RabbitMQ'],
+      techStack: ['Python', 'ChromaDB', 'MCP', 'FastAPI', 'Docker'],
     },
     {
       id: 5,
-      titleKey: 'projects.projectList.inventoryOptimization.title',
-      descriptionKey: 'projects.projectList.inventoryOptimization.description',
-      fullDescriptionKey: 'projects.projectList.inventoryOptimization.fullDescription',
+      titleKey: 'projects.projectList.hemorrhageCnn.title',
+      descriptionKey: 'projects.projectList.hemorrhageCnn.description',
+      fullDescriptionKey: 'projects.projectList.hemorrhageCnn.fullDescription',
       technologiesKeys: [
-        'projects.projectList.inventoryOptimization.technologies.reinforcementLearning',
-        'projects.projectList.inventoryOptimization.technologies.supplyChain',
-        'projects.projectList.inventoryOptimization.technologies.optimization'
+        'projects.projectList.hemorrhageCnn.technologies.cnn',
+        'projects.projectList.hemorrhageCnn.technologies.medicalImaging',
+        'projects.projectList.hemorrhageCnn.technologies.research'
       ],
-      category: 'Machine Learning',
-      categoryKey: 'projects.filters.machineLearning',
+      category: 'Computer Vision',
+      categoryKey: 'projects.filters.computerVision',
       gradient: 'linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%)',
-      techStack: ['TensorFlow', 'OR-Tools', 'Apache Spark', 'Cassandra', 'Tableau'],
+      techStack: ['PyTorch', 'ResNet', 'OpenCV', 'Python'],
+      link: {
+        labelKey: 'projects.buttons.viewPaper',
+        url: 'https://link.springer.com/chapter/10.1007/978-3-031-46933-6_6',
+      },
     },
     {
       id: 6,
-      titleKey: 'projects.projectList.customerSegmentation.title',
-      descriptionKey: 'projects.projectList.customerSegmentation.description',
-      fullDescriptionKey: 'projects.projectList.customerSegmentation.fullDescription',
+      titleKey: 'projects.projectList.codexFusion.title',
+      descriptionKey: 'projects.projectList.codexFusion.description',
+      fullDescriptionKey: 'projects.projectList.codexFusion.fullDescription',
       technologiesKeys: [
-        'projects.projectList.customerSegmentation.technologies.clustering',
-        'projects.projectList.customerSegmentation.technologies.behavioralAnalytics',
-        'projects.projectList.customerSegmentation.technologies.marketingAi'
+        'projects.projectList.codexFusion.technologies.mcp',
+        'projects.projectList.codexFusion.technologies.multiModel',
+        'projects.projectList.codexFusion.technologies.tdd'
       ],
-      category: 'Data Analysis',
-      categoryKey: 'projects.filters.dataAnalysis',
+      category: 'LLM & Agents',
+      categoryKey: 'projects.filters.llmAgents',
       gradient: 'linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%)',
-      techStack: ['Python', 'Pandas', 'Plotly', 'BigQuery', 'Looker'],
+      techStack: ['Python', 'FastMCP', 'uv', 'pytest'],
     },
   ];
 
   const categories = [
     { value: 'All', key: 'projects.filters.all' },
-    { value: 'Machine Learning', key: 'projects.filters.machineLearning' },
+    { value: 'LLM & Agents', key: 'projects.filters.llmAgents' },
     { value: 'Computer Vision', key: 'projects.filters.computerVision' },
-    { value: 'NLP', key: 'projects.filters.nlp' },
-    { value: 'Data Analysis', key: 'projects.filters.dataAnalysis' },
-    { value: 'Full Stack', key: 'projects.filters.fullStack' }
+    { value: 'Infrastructure', key: 'projects.filters.infrastructure' }
   ];
 
   const filteredProjects = selectedCategory === 'All' 
@@ -507,6 +513,8 @@ export const ProjectsPage: React.FC = () => {
 
                   <Flex gap={3} pt={4}>
                     <Button
+                      as={RouterLink}
+                      to="/contact"
                       colorScheme="red"
                       bg="red.600"
                       _hover={{ bg: 'red.700' }}
@@ -515,14 +523,21 @@ export const ProjectsPage: React.FC = () => {
                     >
                       {t('projects.buttons.requestCaseStudy')}
                     </Button>
-                    <Button
-                      variant="outline"
-                      colorScheme="gray"
-                      size="lg"
-                      flex={1}
-                    >
-                      {t('projects.buttons.viewDemo')}
-                    </Button>
+                    {selectedProject.link && (
+                      <Button
+                        as="a"
+                        href={selectedProject.link.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        variant="outline"
+                        colorScheme="gray"
+                        size="lg"
+                        flex={1}
+                        rightIcon={<ExternalLinkIcon />}
+                      >
+                        {t(selectedProject.link.labelKey)}
+                      </Button>
+                    )}
                   </Flex>
                 </VStack>
               </ModalBody>

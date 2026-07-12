@@ -75,28 +75,78 @@
     },
     "proof": {
       "heroStats": [
-        { "figure": "3+", "caption": "years of AI in production" },
-        { "figure": "5", "caption": "AI roles — fintech, health, data" },
-        { "figure": "100+", "caption": "concurrent users in production" },
-        { "figure": "250K+", "caption": "contributors/month served" },
-        { "figure": "9.01", "caption": "GPA — Biomedical Engineering" }
+        {
+          "figure": "3+",
+          "caption": "years of AI in production"
+        },
+        {
+          "figure": "5",
+          "caption": "AI roles — fintech, health, data"
+        },
+        {
+          "figure": "100+",
+          "caption": "concurrent users in production"
+        },
+        {
+          "figure": "250K+",
+          "caption": "contributors/month served"
+        },
+        {
+          "figure": "9.01",
+          "caption": "GPA — Biomedical Engineering"
+        }
       ],
       "modelLines": [
         "Primero Trader — transformer fine-tuning on SageMaker, drift retraining, a live MCP ecosystem.",
         "Appen — a two-agent voice interviewer (AWS Strands + Bedrock), RAG-grounded scorecards."
       ],
       "projects": [
-        { "name": "Primero Trader", "line": "\"TradingView of MCPs\" — real-time market intelligence",
-          "stats": ["Monolith → event-driven microservices", "Redis → Valkey, zero-downtime", "~60% cache hit · 300+ fields/ticker"] },
-        { "name": "Appen", "line": "AI that interviews the global workforce",
-          "stats": ["250K+ contributors/month", "Two-agent voice (Strands + Bedrock)", "P99 < 500ms (designed for)"] },
-        { "name": "Clinical CV", "line": "Hemorrhage detection from medical imaging",
-          "stats": ["87% precision / 83% recall", "10,000+ medical images", "Springer publication"] },
-        { "name": "Interaction AI", "line": "Multimodal intent on the edge",
-          "stats": ["78% accuracy", "YOLOv5 + speech-to-text", "Deployed on Raspberry Pi"] }
+        {
+          "name": "Primero Trader",
+          "line": "\"TradingView of MCPs\" — real-time market intelligence",
+          "stats": [
+            "Monolith → event-driven microservices",
+            "Redis → Valkey, zero-downtime",
+            "~60% cache hit · 300+ fields/ticker"
+          ]
+        },
+        {
+          "name": "Appen",
+          "line": "AI that interviews the global workforce",
+          "stats": [
+            "250K+ contributors/month",
+            "Two-agent voice (Strands + Bedrock)",
+            "P99 < 500ms (designed for)"
+          ]
+        },
+        {
+          "name": "Clinical CV",
+          "line": "Hemorrhage detection from medical imaging",
+          "stats": [
+            "87% precision / 83% recall",
+            "10,000+ medical images",
+            "Springer publication"
+          ]
+        },
+        {
+          "name": "Interaction AI",
+          "line": "Multimodal intent on the edge",
+          "stats": [
+            "78% accuracy",
+            "YOLOv5 + speech-to-text",
+            "Deployed on Raspberry Pi"
+          ]
+        }
       ],
       "synthesis": "From the human body to financial markets — the same systems brain.",
-      "domains": ["Finance", "Health", "Workforce eval", "Voice AI", "Computer Vision", "Edge"]
+      "domains": [
+        "Finance",
+        "Health",
+        "Workforce eval",
+        "Voice AI",
+        "Computer Vision",
+        "Edge"
+      ]
     },
     "cta": {
       "title": "Let's build your edge",
@@ -467,76 +517,74 @@
   "projects": {
     "hero": {
       "title": "Royal AI Solutions Portfolio",
-      "description": "Transforming businesses with cutting-edge artificial intelligence solutions. Explore our collection of innovative projects across multiple domains.",
+      "description": "Production AI systems I have designed and shipped — from a financial multi-agent platform and voice interview pipelines to self-hosted infrastructure and published medical-imaging research.",
       "kicker": "Portfolio"
     },
     "filters": {
       "all": "All",
-      "machineLearning": "Machine Learning",
+      "llmAgents": "LLM & Agents",
       "computerVision": "Computer Vision",
-      "nlp": "NLP",
-      "dataAnalysis": "Data Analysis",
-      "fullStack": "Full Stack"
+      "infrastructure": "Infrastructure"
     },
     "projectList": {
-      "aiChatbot": {
-        "title": "AI Chatbot Platform",
-        "description": "Advanced conversational AI platform with natural language understanding and multi-channel support.",
-        "fullDescription": "This platform leverages state-of-the-art NLP models to provide intelligent conversational experiences. Built with transformer-based architectures, it supports multiple languages and can be deployed across various channels including web, mobile, and voice assistants.",
+      "primeroTrader": {
+        "title": "Primero Trader — AI Financial Analysis Platform",
+        "description": "Event-driven multi-agent platform — the \"TradingView of MCPs\" — serving 100+ concurrent users with real-time streamed analysis.",
+        "fullDescription": "As lead engineer I architected the migration from a Flask monolith to event-driven microservices (FastAPI, WebSocket, Valkey pub/sub) and designed its MCP ecosystem: dynamic tool discovery, routing and result aggregation across financial data providers, with per-user isolated MCP runtimes. Includes a fine-tuned news-sentiment model deployed on SageMaker with drift-triggered retraining, and a CI/CD pipeline with change-detection builds and a pull-based deploy reconciler.",
         "technologies": {
-          "nlp": "Natural Language Processing",
-          "conversationalAi": "Conversational AI",
-          "multilingual": "Multi-lingual"
+          "mcp": "Model Context Protocol",
+          "eventDriven": "Event-Driven Microservices",
+          "finetuning": "Fine-Tuned Sentiment Models"
         }
       },
-      "medicalImage": {
-        "title": "Medical Image Analysis",
-        "description": "Deep learning system for automated medical image diagnosis with high accuracy and explainability.",
-        "fullDescription": "A sophisticated computer vision system designed for medical professionals. It uses convolutional neural networks to analyze X-rays, MRIs, and CT scans, providing detailed analysis and highlighting areas of concern with explainable AI techniques.",
+      "voiceInterview": {
+        "title": "LLM Voice-Interview Pipeline",
+        "description": "RAG-grounded voice agent that interviews and scores contributors for a workforce platform with 250K+ monthly users.",
+        "fullDescription": "An LLM-orchestrated pipeline on AWS Bedrock: RAG over a Knowledge Base (OpenSearch Serverless) pulls each contributor's history and a skills taxonomy, generates a tailored interview prompt, conducts a real-time voice interview (OpenAI Realtime API over WebRTC) and scores the transcript into a structured scorecard — language level (A1–C2), skills and red flags. Production prompts are selected through blind A/B evaluations, and every agent is instrumented with OpenTelemetry.",
         "technologies": {
-          "medicalAi": "Medical AI",
-          "deepLearning": "Deep Learning",
-          "diagnosticImaging": "Diagnostic Imaging"
+          "rag": "RAG",
+          "voice": "Real-Time Voice (WebRTC)",
+          "evals": "LLM Evals & A/B Testing"
         }
       },
-      "salesPrediction": {
-        "title": "Sales Prediction Model",
-        "description": "Machine learning model for accurate sales forecasting using historical data and market indicators.",
-        "fullDescription": "This predictive analytics solution combines time series analysis with external market indicators to forecast sales with high accuracy. It includes automated feature engineering and model retraining pipelines.",
+      "sputnik": {
+        "title": "Sputnik — Self-Hosted AI Platform",
+        "description": "24/7 homelab as declarative infrastructure: 25+ services, full observability and a custom on-demand orchestrator on a 16 GB budget.",
+        "fullDescription": "A production-grade personal platform run as code (NixOS): 25+ Docker services behind a Caddy reverse proxy with an internal CA, Tailscale private networking and recursive DNS. Reliability engineering end-to-end — Prometheus/Grafana/Alertmanager push alerting, SMART disk monitoring, systemd watchdogs, versioned restic backups — plus a custom FastAPI orchestrator that sleeps and wakes container stacks on demand to fit a 16 GB RAM budget. It also hosts local LLM inference and MCP servers.",
         "technologies": {
-          "predictiveAnalytics": "Predictive Analytics",
-          "timeSeries": "Time Series",
-          "autoML": "AutoML"
+          "iac": "Declarative IaC (NixOS)",
+          "observability": "Observability & Alerting",
+          "orchestration": "On-Demand Service Orchestration"
         }
       },
-      "documentProcessing": {
-        "title": "Document Processing System",
-        "description": "Intelligent document understanding system for automated data extraction and classification.",
-        "fullDescription": "An end-to-end document processing pipeline that uses OCR, NLP, and machine learning to extract, classify, and validate information from various document types including invoices, contracts, and forms.",
+      "tonyAssistant": {
+        "title": "Tony — Personal AI Assistant over Obsidian",
+        "description": "A personal assistant with real memory: semantic search over a life-long Obsidian vault, exposed to LLMs through MCP.",
+        "fullDescription": "A self-hosted assistant stack that turns a personal Obsidian vault into a queryable knowledge base: an indexing pipeline embeds notes into ChromaDB with multilingual embeddings, an MCP server exposes semantic search and note retrieval to any LLM client, and the assistant uses it for context-aware answers grounded in years of personal notes — running fully local on my own server.",
         "technologies": {
-          "documentAi": "Document AI",
-          "ocr": "OCR",
-          "informationExtraction": "Information Extraction"
+          "rag": "Personal RAG",
+          "vector": "Vector Search (ChromaDB)",
+          "mcp": "MCP Server"
         }
       },
-      "inventoryOptimization": {
-        "title": "Inventory Optimization",
-        "description": "AI-driven inventory management system reducing costs while maintaining optimal stock levels.",
-        "fullDescription": "This system uses reinforcement learning and demand forecasting to optimize inventory levels across multiple warehouses. It considers factors like seasonality, lead times, and storage costs to minimize holding costs while preventing stockouts.",
+      "hemorrhageCnn": {
+        "title": "Hemorrhage Detection CNN — Published Research",
+        "description": "Deep-learning diagnostic aid for medical imaging — 87% precision / 83% recall — with peer-reviewed publication in Springer.",
+        "fullDescription": "A ResNet-based convolutional network trained on 10,000+ augmented medical images to detect hemorrhages as an assistive diagnostic tool, developed with \"Los Angeles\" Hospital in Chihuahua and meeting the clinical bar set by the medical team. The research line on thoracic-disease classification was published as a Springer book chapter (Gómez-Celaya et al., 2023).",
         "technologies": {
-          "reinforcementLearning": "Reinforcement Learning",
-          "supplyChain": "Supply Chain",
-          "optimization": "Optimization"
+          "cnn": "Convolutional Neural Networks",
+          "medicalImaging": "Medical Imaging",
+          "research": "Peer-Reviewed Research"
         }
       },
-      "customerSegmentation": {
-        "title": "Customer Segmentation",
-        "description": "Advanced clustering algorithms for precise customer segmentation and personalized marketing.",
-        "fullDescription": "Using unsupervised learning techniques, this system analyzes customer behavior patterns to create meaningful segments. It integrates with marketing platforms to enable personalized campaigns and improve customer engagement.",
+      "codexFusion": {
+        "title": "codex-fusion — Multi-Model MCP Server",
+        "description": "An MCP server that lets one AI agent consult another — fusing Claude and GPT into a single second-opinion workflow.",
+        "fullDescription": "A lightweight Python MCP server (FastMCP) that shells out to the Codex CLI in a read-only sandbox so a Claude agent can request an independent GPT diagnosis of the same codebase — disagreements surface explicitly instead of being averaged away. Hardened subprocess lifecycle (process groups, timeout kill-trees, stdio-safe pipes) and test-driven with a stubbed CLI.",
         "technologies": {
-          "clustering": "Clustering",
-          "behavioralAnalytics": "Behavioral Analytics",
-          "marketingAi": "Marketing AI"
+          "mcp": "MCP Server",
+          "multiModel": "Multi-Model Orchestration",
+          "tdd": "Test-Driven Development"
         }
       }
     },
@@ -546,7 +594,8 @@
     "buttons": {
       "viewDetails": "View Details",
       "requestCaseStudy": "Request Case Study",
-      "viewDemo": "View Demo"
+      "viewDemo": "View Demo",
+      "viewPaper": "Read the Paper"
     },
     "modal": {
       "keyTechnologies": "Key Technologies",

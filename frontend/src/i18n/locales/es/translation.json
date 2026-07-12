@@ -75,28 +75,78 @@
     },
     "proof": {
       "heroStats": [
-        { "figure": "3+", "caption": "años de IA en producción" },
-        { "figure": "5", "caption": "roles de IA — fintech, salud, datos" },
-        { "figure": "100+", "caption": "usuarios concurrentes en producción" },
-        { "figure": "250K+", "caption": "contribuidores/mes atendidos" },
-        { "figure": "9.01", "caption": "promedio — Ingeniería Biomédica" }
+        {
+          "figure": "3+",
+          "caption": "años de IA en producción"
+        },
+        {
+          "figure": "5",
+          "caption": "roles de IA — fintech, salud, datos"
+        },
+        {
+          "figure": "100+",
+          "caption": "usuarios concurrentes en producción"
+        },
+        {
+          "figure": "250K+",
+          "caption": "contribuidores/mes atendidos"
+        },
+        {
+          "figure": "9.01",
+          "caption": "promedio — Ingeniería Biomédica"
+        }
       ],
       "modelLines": [
         "Primero Trader — fine-tuning de transformers en SageMaker, reentrenamiento por drift, ecosistema MCP en vivo.",
         "Appen — entrevistador de voz de dos agentes (AWS Strands + Bedrock), scorecards con RAG."
       ],
       "projects": [
-        { "name": "Primero Trader", "line": "\"TradingView de MCPs\" — inteligencia de mercado en tiempo real",
-          "stats": ["Monolito → microservicios event-driven", "Redis → Valkey, sin downtime", "~60% cache hit · 300+ campos/ticker"] },
-        { "name": "Appen", "line": "IA que entrevista a la fuerza laboral global",
-          "stats": ["250K+ contribuidores/mes", "Voz de dos agentes (Strands + Bedrock)", "P99 < 500ms (designed for)"] },
-        { "name": "Clinical CV", "line": "Detección de hemorragias en imagen médica",
-          "stats": ["87% precisión / 83% recall", "10,000+ imágenes médicas", "Publicación Springer"] },
-        { "name": "Interaction AI", "line": "Intención multimodal en el edge",
-          "stats": ["78% accuracy", "YOLOv5 + speech-to-text", "Desplegado en Raspberry Pi"] }
+        {
+          "name": "Primero Trader",
+          "line": "\"TradingView de MCPs\" — inteligencia de mercado en tiempo real",
+          "stats": [
+            "Monolito → microservicios event-driven",
+            "Redis → Valkey, sin downtime",
+            "~60% cache hit · 300+ campos/ticker"
+          ]
+        },
+        {
+          "name": "Appen",
+          "line": "IA que entrevista a la fuerza laboral global",
+          "stats": [
+            "250K+ contribuidores/mes",
+            "Voz de dos agentes (Strands + Bedrock)",
+            "P99 < 500ms (designed for)"
+          ]
+        },
+        {
+          "name": "Clinical CV",
+          "line": "Detección de hemorragias en imagen médica",
+          "stats": [
+            "87% precisión / 83% recall",
+            "10,000+ imágenes médicas",
+            "Publicación Springer"
+          ]
+        },
+        {
+          "name": "Interaction AI",
+          "line": "Intención multimodal en el edge",
+          "stats": [
+            "78% accuracy",
+            "YOLOv5 + speech-to-text",
+            "Desplegado en Raspberry Pi"
+          ]
+        }
       ],
       "synthesis": "Del cuerpo humano a los mercados financieros — el mismo cerebro de sistemas.",
-      "domains": ["Finanzas", "Salud", "Evaluación de fuerza laboral", "Voice AI", "Computer Vision", "Edge"]
+      "domains": [
+        "Finanzas",
+        "Salud",
+        "Evaluación de fuerza laboral",
+        "Voice AI",
+        "Computer Vision",
+        "Edge"
+      ]
     },
     "cta": {
       "title": "Construyamos tu ventaja",
@@ -467,76 +517,74 @@
   "projects": {
     "hero": {
       "title": "Portafolio de Soluciones de IA Reales",
-      "description": "Transformando negocios con soluciones de inteligencia artificial de vanguardia. Explora nuestra colección de proyectos innovadores en múltiples dominios.",
+      "description": "Sistemas de IA en producción que he diseñado y enviado — desde una plataforma financiera multi-agente y pipelines de entrevistas por voz hasta infraestructura auto-hospedada e investigación publicada en imagen médica.",
       "kicker": "Portafolio"
     },
     "filters": {
       "all": "Todos",
-      "machineLearning": "Aprendizaje Automático",
-      "computerVision": "Visión por Computadora",
-      "nlp": "PLN",
-      "dataAnalysis": "Análisis de Datos",
-      "fullStack": "Full Stack"
+      "llmAgents": "LLM y Agentes",
+      "computerVision": "Visión Computacional",
+      "infrastructure": "Infraestructura"
     },
     "projectList": {
-      "aiChatbot": {
-        "title": "Plataforma de Chatbot IA",
-        "description": "Plataforma avanzada de IA conversacional con comprensión del lenguaje natural y soporte multicanal.",
-        "fullDescription": "Esta plataforma aprovecha modelos de PLN de última generación para proporcionar experiencias conversacionales inteligentes. Construida con arquitecturas basadas en transformers, admite múltiples idiomas y se puede implementar en varios canales, incluidos web, móvil y asistentes de voz.",
+      "primeroTrader": {
+        "title": "Primero Trader — Plataforma de Análisis Financiero con IA",
+        "description": "Plataforma multi-agente orientada a eventos — el \"TradingView de los MCPs\" — sirviendo a 100+ usuarios concurrentes con análisis en tiempo real.",
+        "fullDescription": "Como ingeniero líder diseñé la migración de un monolito Flask a microservicios orientados a eventos (FastAPI, WebSocket, Valkey pub/sub) y su ecosistema MCP: descubrimiento dinámico de herramientas, ruteo y agregación de resultados entre proveedores de datos financieros, con runtimes MCP aislados por usuario. Incluye un modelo de sentimiento de noticias fine-tuneado desplegado en SageMaker con reentrenamiento por drift, y una pipeline CI/CD con builds por detección de cambios y un reconciliador de deploys pull-based.",
         "technologies": {
-          "nlp": "Procesamiento de Lenguaje Natural",
-          "conversationalAi": "IA Conversacional",
-          "multilingual": "Multilingüe"
+          "mcp": "Model Context Protocol",
+          "eventDriven": "Microservicios Orientados a Eventos",
+          "finetuning": "Modelos de Sentimiento Fine-Tuneados"
         }
       },
-      "medicalImage": {
-        "title": "Análisis de Imágenes Médicas",
-        "description": "Sistema de aprendizaje profundo para diagnóstico automatizado de imágenes médicas con alta precisión y explicabilidad.",
-        "fullDescription": "Un sofisticado sistema de visión por computadora diseñado para profesionales médicos. Utiliza redes neuronales convolucionales para analizar rayos X, resonancias magnéticas y tomografías computarizadas, proporcionando análisis detallados y destacando áreas de interés con técnicas de IA explicable.",
+      "voiceInterview": {
+        "title": "Pipeline de Entrevistas por Voz con LLMs",
+        "description": "Agente de voz con RAG que entrevista y califica contribuidores en una plataforma con 250K+ usuarios mensuales.",
+        "fullDescription": "Pipeline orquestada por LLMs sobre AWS Bedrock: RAG sobre una Knowledge Base (OpenSearch Serverless) trae el historial del contribuidor y una taxonomía de habilidades, genera un prompt de entrevista a la medida, conduce una entrevista de voz en tiempo real (OpenAI Realtime API sobre WebRTC) y califica la transcripción en un scorecard estructurado — nivel de idioma (A1–C2), habilidades y red flags. Los prompts de producción se seleccionan con evaluaciones A/B ciegas y cada agente está instrumentado con OpenTelemetry.",
         "technologies": {
-          "medicalAi": "IA Médica",
-          "deepLearning": "Aprendizaje Profundo",
-          "diagnosticImaging": "Imágenes de Diagnóstico"
+          "rag": "RAG",
+          "voice": "Voz en Tiempo Real (WebRTC)",
+          "evals": "Evals de LLM y A/B Testing"
         }
       },
-      "salesPrediction": {
-        "title": "Modelo de Predicción de Ventas",
-        "description": "Modelo de aprendizaje automático para pronóstico preciso de ventas usando datos históricos e indicadores de mercado.",
-        "fullDescription": "Esta solución de análisis predictivo combina análisis de series temporales con indicadores externos del mercado para pronosticar ventas con alta precisión. Incluye ingeniería de características automatizada y pipelines de reentrenamiento de modelos.",
+      "sputnik": {
+        "title": "Sputnik — Plataforma de IA Auto-Hospedada",
+        "description": "Homelab 24/7 como infraestructura declarativa: 25+ servicios, observabilidad completa y un orquestador on-demand propio en 16 GB.",
+        "fullDescription": "Plataforma personal grado producción manejada como código (NixOS): 25+ servicios Docker detrás de un reverse proxy Caddy con CA interna, red privada Tailscale y DNS recursivo. Ingeniería de confiabilidad de punta a punta — alertas push con Prometheus/Grafana/Alertmanager, monitoreo SMART de discos, watchdogs de systemd, backups versionados con restic — más un orquestador propio en FastAPI que duerme y despierta stacks de contenedores bajo demanda para caber en 16 GB de RAM. También hospeda inferencia local de LLMs y servidores MCP.",
         "technologies": {
-          "predictiveAnalytics": "Análisis Predictivo",
-          "timeSeries": "Series Temporales",
-          "autoML": "AutoML"
+          "iac": "IaC Declarativa (NixOS)",
+          "observability": "Observabilidad y Alertas",
+          "orchestration": "Orquestación de Servicios On-Demand"
         }
       },
-      "documentProcessing": {
-        "title": "Sistema de Procesamiento de Documentos",
-        "description": "Sistema inteligente de comprensión de documentos para extracción y clasificación automatizada de datos.",
-        "fullDescription": "Un pipeline de procesamiento de documentos de extremo a extremo que utiliza OCR, PLN y aprendizaje automático para extraer, clasificar y validar información de varios tipos de documentos, incluidas facturas, contratos y formularios.",
+      "tonyAssistant": {
+        "title": "Tony — Asistente Personal de IA sobre Obsidian",
+        "description": "Un asistente con memoria real: búsqueda semántica sobre un vault de Obsidian de años, expuesta a LLMs vía MCP.",
+        "fullDescription": "Stack auto-hospedado que convierte un vault personal de Obsidian en una base de conocimiento consultable: una pipeline de indexado embebe las notas en ChromaDB con embeddings multilingües, un servidor MCP expone búsqueda semántica y recuperación de notas a cualquier cliente LLM, y el asistente lo usa para responder con contexto anclado en años de notas personales — corriendo totalmente local en mi propio servidor.",
         "technologies": {
-          "documentAi": "IA de Documentos",
-          "ocr": "OCR",
-          "informationExtraction": "Extracción de Información"
+          "rag": "RAG Personal",
+          "vector": "Búsqueda Vectorial (ChromaDB)",
+          "mcp": "Servidor MCP"
         }
       },
-      "inventoryOptimization": {
-        "title": "Optimización de Inventario",
-        "description": "Sistema de gestión de inventario impulsado por IA que reduce costos mientras mantiene niveles óptimos de stock.",
-        "fullDescription": "Este sistema utiliza aprendizaje por refuerzo y pronóstico de demanda para optimizar los niveles de inventario en múltiples almacenes. Considera factores como la estacionalidad, los plazos de entrega y los costos de almacenamiento para minimizar los costos de mantenimiento mientras previene la escasez de existencias.",
+      "hemorrhageCnn": {
+        "title": "CNN de Detección de Hemorragias — Investigación Publicada",
+        "description": "Asistente diagnóstico con deep learning para imagen médica — 87% precisión / 83% recall — con publicación arbitrada en Springer.",
+        "fullDescription": "Red convolucional basada en ResNet entrenada con 10,000+ imágenes médicas aumentadas para detectar hemorragias como herramienta diagnóstica asistiva, desarrollada con el Hospital \"Los Ángeles\" de Chihuahua y cumpliendo el estándar clínico del equipo médico. La línea de investigación sobre clasificación de enfermedades torácicas se publicó como capítulo de libro en Springer (Gómez-Celaya et al., 2023).",
         "technologies": {
-          "reinforcementLearning": "Aprendizaje por Refuerzo",
-          "supplyChain": "Cadena de Suministro",
-          "optimization": "Optimización"
+          "cnn": "Redes Neuronales Convolucionales",
+          "medicalImaging": "Imagen Médica",
+          "research": "Investigación Arbitrada"
         }
       },
-      "customerSegmentation": {
-        "title": "Segmentación de Clientes",
-        "description": "Algoritmos de clustering avanzados para segmentación precisa de clientes y marketing personalizado.",
-        "fullDescription": "Utilizando técnicas de aprendizaje no supervisado, este sistema analiza patrones de comportamiento del cliente para crear segmentos significativos. Se integra con plataformas de marketing para permitir campañas personalizadas y mejorar el compromiso del cliente.",
+      "codexFusion": {
+        "title": "codex-fusion — Servidor MCP Multi-Modelo",
+        "description": "Un servidor MCP que deja a un agente de IA consultar a otro — fusionando Claude y GPT en un flujo de segunda opinión.",
+        "fullDescription": "Servidor MCP ligero en Python (FastMCP) que invoca el Codex CLI en un sandbox de solo lectura para que un agente Claude pida un diagnóstico independiente de GPT sobre el mismo código — los desacuerdos salen a la luz explícitamente en vez de promediarse. Ciclo de vida de subprocesos endurecido (process groups, kill-trees por timeout, pipes seguros para stdio) y desarrollado con TDD sobre un CLI stub.",
         "technologies": {
-          "clustering": "Clustering",
-          "behavioralAnalytics": "Análisis de Comportamiento",
-          "marketingAi": "IA de Marketing"
+          "mcp": "Servidor MCP",
+          "multiModel": "Orquestación Multi-Modelo",
+          "tdd": "Desarrollo Guiado por Tests"
         }
       }
     },
@@ -546,7 +594,8 @@
     "buttons": {
       "viewDetails": "Ver Detalles",
       "requestCaseStudy": "Solicitar Caso de Estudio",
-      "viewDemo": "Ver Demo"
+      "viewDemo": "Ver Demo",
+      "viewPaper": "Leer el Paper"
     },
     "modal": {
       "keyTechnologies": "Tecnologías Clave",
