@@ -48,16 +48,13 @@ export const GrowthInstances: React.FC = () => {
   useEffect(() => () => { mesh.geometry.dispose(); (mesh.material as THREE.Material).dispose(); }, [mesh]);
 
   useEffect(() => {
-    // Clamp discovery to the instance budget: a 5th card (i18n-only change)
-    // must never overflow the buffer silently.
-    const slots = Array.from(document.querySelectorAll<HTMLElement>('[data-jewel-anchor^="project-"]'))
-      .slice(0, Math.floor(MAX_INSTANCES / BAR_COUNT));
-    slotsRef.current = slots;
-    grownRef.current = slots.map(() => 0);
-
     // Rect cache: measured once on discovery, then rAF-batched on scroll/resize
     // (same discipline as useJewelAnchors) — useFrame reads only the cache.
     let rafPending = false;
+    let retryId: number | undefined;
+    let ios: IntersectionObserver[] = [];
+    let sectionIo: IntersectionObserver | undefined;
+
     const measure = () => {
       rafPending = false;
       rectsRef.current = slotsRef.current.map((el) => el.getBoundingClientRect());
@@ -67,23 +64,42 @@ export const GrowthInstances: React.FC = () => {
       rafPending = true;
       requestAnimationFrame(measure);
     };
-    measure();
 
-    const ios = slots.map((el, i) => {
-      const io = new IntersectionObserver(([e]) => { if (e.isIntersecting) grownRef.current[i] = grownRef.current[i] || 0.001; },
-        { threshold: 0.4 });
-      io.observe(el);
-      return io;
-    });
-    const section = document.getElementById('story-portfolio');
-    let sectionIo: IntersectionObserver | undefined;
-    if (section) {
-      sectionIo = new IntersectionObserver(([e]) => { visibleRef.current = e.isIntersecting; }, { threshold: 0.05 });
-      sectionIo.observe(section);
-    }
+    const discover = () => {
+      // Clamp discovery to the instance budget: a 5th card (i18n-only change)
+      // must never overflow the buffer silently.
+      const slots = Array.from(document.querySelectorAll<HTMLElement>('[data-jewel-anchor^="project-"]'))
+        .slice(0, Math.floor(MAX_INSTANCES / BAR_COUNT));
+      if (slots.length === 0) {
+        // HomePage is lazy: the project cards may not exist yet — keep retrying
+        // (mirrors useJewelAnchors' discovery retry).
+        retryId = window.setTimeout(discover, 500);
+        return;
+      }
+      slotsRef.current = slots;
+      grownRef.current = slots.map(() => 0);
+      measure();
+
+      // IO attachment only happens once slots are actually found, so we never
+      // observe a stale empty slot list.
+      ios = slots.map((el, i) => {
+        const io = new IntersectionObserver(([e]) => { if (e.isIntersecting) grownRef.current[i] = grownRef.current[i] || 0.001; },
+          { threshold: 0.4 });
+        io.observe(el);
+        return io;
+      });
+      const section = document.getElementById('story-portfolio');
+      if (section) {
+        sectionIo = new IntersectionObserver(([e]) => { visibleRef.current = e.isIntersecting; }, { threshold: 0.05 });
+        sectionIo.observe(section);
+      }
+    };
+
+    discover();
     window.addEventListener('scroll', requestMeasure, { passive: true });
     window.addEventListener('resize', requestMeasure);
     return () => {
+      window.clearTimeout(retryId);
       window.removeEventListener('scroll', requestMeasure);
       window.removeEventListener('resize', requestMeasure);
       ios.forEach((io) => io.disconnect());

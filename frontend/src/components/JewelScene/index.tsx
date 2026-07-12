@@ -58,6 +58,22 @@ export const JewelScene: React.FC = () => {
   const fixed = profile.animate;
   const { t } = useTranslation();
 
+  // Reduced motion: the canvas runs frameloop 'never' with an absolute
+  // (non-fixed) wrapper — it scrolls away with the hero, leaving the
+  // downstream dock slots (chat, cta, project-*) with nothing drawing into
+  // them. Flag the document so index.css can collapse them, mirroring the
+  // data-jewel-off (WebGL-unavailable) pattern above.
+  useEffect(() => {
+    if (!profile.animate) {
+      document.documentElement.dataset.jewelReduced = '1';
+    } else {
+      delete document.documentElement.dataset.jewelReduced;
+    }
+    return () => {
+      delete document.documentElement.dataset.jewelReduced;
+    };
+  }, [profile.animate]);
+
   // Hint pill state: visible while hero is in view AND not yet dismissed.
   const [heroVisible, setHeroVisible] = useState(false);
   const [hintDismissed, setHintDismissed] = useState(() => {
