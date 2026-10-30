@@ -160,6 +160,9 @@ export const ThreeJsChatbot: React.FC = () => {
   const [hasNewMessage, setHasNewMessage] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const hasInteracted = useRef(false);
+  const pendingRef = useRef(false);
+  const cannedTimer = useRef<ReturnType<typeof setTimeout>>();
+  useEffect(() => () => clearTimeout(cannedTimer.current), []);
 
   useEffect(() => {
     // Skip the mount run — scrolling the welcome message into view would
@@ -186,7 +189,8 @@ export const ThreeJsChatbot: React.FC = () => {
 
   const handleSend = (text?: string) => {
     const message = (text ?? input).trim();
-    if (!message) return;
+    if (!message || pendingRef.current) return;
+    pendingRef.current = true;
 
     setMessages(prev => [...prev, { id: Date.now(), text: message, isUser: true }]);
     setInput('');
@@ -194,9 +198,10 @@ export const ThreeJsChatbot: React.FC = () => {
     const canned = cannedFor(message);
     if (canned) {
       setIsTyping(true);
-      setTimeout(() => {
+      cannedTimer.current = setTimeout(() => {
         setMessages(prev => [...prev, { id: Date.now(), text: canned, isUser: false }]);
         setIsTyping(false);
+        pendingRef.current = false;
       }, 800);
       return;
     }
@@ -205,12 +210,14 @@ export const ThreeJsChatbot: React.FC = () => {
     chatbotAPI.sendMessage(message)
       .then((res: { data: { response?: string; message?: string } }) => {
         const responseText = res.data.response ?? res.data.message ?? t('home.chatbot.errorFallback');
+        pendingRef.current = false;
         setIsTyping(false);
         setHasNewMessage(true);
         setMessages(prev => [...prev, { id: Date.now(), text: responseText, isUser: false }]);
         setTimeout(() => setHasNewMessage(false), 1000);
       })
       .catch(() => {
+        pendingRef.current = false;
         setIsTyping(false);
         setMessages(prev => [...prev, {
           id: Date.now(),
@@ -432,6 +439,7 @@ export const ThreeJsChatbot: React.FC = () => {
                             boxShadow: '0 10px 22px -14px rgba(193, 14, 53, 0.5)',
                           }}
                           onClick={() => handleSend(question)}
+                          isDisabled={isTyping}
                         >
                           <Text flex={1}>{question}</Text>
                         </Button>
@@ -495,6 +503,7 @@ export const ThreeJsChatbot: React.FC = () => {
                     >
                       <Button
                         onClick={() => handleSend()}
+                        isDisabled={isTyping}
                         aria-label={t('home.chatbot.send')}
                         variant="primary"
                         size="md"
