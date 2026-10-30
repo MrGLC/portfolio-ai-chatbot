@@ -46,7 +46,7 @@ class SceneErrorBoundary extends React.Component<
  * coordinate origin in both wrapper modes (fixed / reduced-motion absolute).
  *
  * Frameloop: rAF already pauses when document.hidden, so 'always' is safe;
- * reduced-motion gets 'never' plus an absolute (non-fixed) wrapper so the
+ * reduced-motion gets 'demand' plus an absolute (non-fixed) wrapper so the
  * static first frame scrolls away with the hero instead of sticking to the
  * viewport over later sections (drag still re-renders via invalidate()).
  */
@@ -152,7 +152,7 @@ export const JewelScene: React.FC = () => {
         <SceneErrorBoundary>
           <Canvas
             dpr={profile.dpr}
-            frameloop={profile.animate ? 'always' : 'never'}
+            frameloop={profile.animate ? 'always' : 'demand'}
             gl={{ antialias: profile.tier === 'full', alpha: true, powerPreference: 'high-performance' }}
             camera={{ position: [0, 0, CAMERA_Z], fov: CAMERA_FOV }}
             onCreated={() => setReady(true)}
