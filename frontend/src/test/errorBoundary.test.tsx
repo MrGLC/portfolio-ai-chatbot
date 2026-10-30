@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { ChakraProvider } from '@chakra-ui/react';
 import { MemoryRouter } from 'react-router-dom';
@@ -32,5 +32,21 @@ describe('ErrorBoundary', () => {
     shouldThrow = false;
     fireEvent.click(screen.getByRole('button', { name: /try again/i }));
     expect(screen.getByText(/recovered/i)).toBeInTheDocument();
+  });
+});
+
+describe('App global boundary', () => {
+  it('shows the fallback with a working home link when the shell throws', async () => {
+    vi.resetModules();
+    vi.doMock('../components/Layout', () => ({
+      Layout: () => {
+        throw new Error('shell boom');
+      },
+    }));
+    const { default: App } = await import('../App');
+    render(<App />);
+    expect(screen.getByText(/something broke/i)).toBeInTheDocument();
+    expect(screen.getAllByRole('link').length).toBeGreaterThan(0);
+    vi.doUnmock('../components/Layout');
   });
 });
