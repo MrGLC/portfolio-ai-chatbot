@@ -20,6 +20,7 @@
     }
   },
   "home": {
+    "scrollHint": "Desplázate para explorar",
     "hero": {
       "luxurySubtitle": "Soluciones de IA de Lujo Redefinidas",
       "modernTitle": "IA que se gana su lugar en tu negocio",
@@ -151,6 +152,7 @@
     "cta": {
       "title": "Construyamos tu ventaja",
       "description": "La piedra en bruto, tallada y engastada — tu negocio, transformado. Cuéntame qué estás construyendo.",
+      "secondary": "Conocer más sobre mí",
       "button": "Comienza tu Proyecto"
     },
     "jewel": {

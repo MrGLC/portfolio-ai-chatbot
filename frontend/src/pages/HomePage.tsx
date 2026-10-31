@@ -290,7 +290,7 @@ export const HomePage: React.FC = () => {
           <MotionBox variants={staggerAnimation.child} pointerEvents="auto">
             <Box
               as="button"
-              aria-label="Scroll to explore"
+              aria-label={t('home.scrollHint')}
               onClick={() => window.scrollTo({ top: window.innerHeight, behavior: 'smooth' })}
               display="flex"
               alignItems="center"
@@ -643,27 +643,11 @@ export const HomePage: React.FC = () => {
                     boxShadow: '0 20px 40px rgba(0,0,0,0.1)',
                   }}
                 >
-                  Learn About Us
+                  {t('home.cta.secondary')}
                 </Button>
               </HStack>
 
               <BadgeCloud />
-
-              {/* Trust indicators */}
-              <HStack spacing={10} mt={10} opacity={0.8}>
-                <VStack spacing={1}>
-                  <Text fontSize="3xl" fontWeight="bold" color="brand.text">100+</Text>
-                  <Text fontSize="sm" color="brand.textSecondary">Projects Completed</Text>
-                </VStack>
-                <VStack spacing={1}>
-                  <Text fontSize="3xl" fontWeight="bold" color="brand.text">50+</Text>
-                  <Text fontSize="sm" color="brand.textSecondary">Happy Clients</Text>
-                </VStack>
-                <VStack spacing={1}>
-                  <Text fontSize="3xl" fontWeight="bold" color="brand.text">5★</Text>
-                  <Text fontSize="sm" color="brand.textSecondary">Average Rating</Text>
-                </VStack>
-              </HStack>
             </VStack>
           </MotionBox>
         </Container>

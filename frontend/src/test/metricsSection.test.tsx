@@ -32,4 +32,16 @@ describe('metrics section', () => {
     expect(screen.queryByText(/Web Design/i)).not.toBeInTheDocument();
     expect(screen.queryByText(/^Project 1$/)).not.toBeInTheDocument();
   });
+
+  it.each([
+    ['en', 'Learn About Me', 'Scroll to explore'],
+    ['es', 'Conocer más sobre mí', 'Desplázate para explorar'],
+  ])('closing has no legacy metrics and is localized (%s)', async (lng, button, hint) => {
+    await i18n.changeLanguage(lng);
+    renderHome();
+    expect(await screen.findByText(button)).toBeInTheDocument();
+    expect(screen.getByLabelText(hint)).toBeInTheDocument();
+    expect(screen.queryByText(/Projects Completed|Happy Clients|Average Rating|^5★$/)).not.toBeInTheDocument();
+    await i18n.changeLanguage('en');
+  });
 });

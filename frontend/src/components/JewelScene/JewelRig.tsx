@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useRef } from 'react';
+import { observeSections } from './observeSections';
 import { useFrame, useThree } from '@react-three/fiber';
 import { Environment, Lightformer } from '@react-three/drei';
 import * as THREE from 'three';
@@ -228,10 +229,12 @@ export const JewelRig: React.FC<JewelRigProps> = ({
     // Lazy-loaded content (chatbot canvas chunk) shifts section offsets after
     // mount — re-measure once the layout has had time to settle.
     const remeasure = window.setTimeout(measure, 1500);
+    const stopObserving = observeSections(BEAT_IDS, measure);
     window.addEventListener('resize', measure);
     window.addEventListener('pointermove', onPointerMove, { passive: true });
     return () => {
       window.clearTimeout(remeasure);
+      stopObserving();
       window.removeEventListener('resize', measure);
       window.removeEventListener('pointermove', onPointerMove);
     };

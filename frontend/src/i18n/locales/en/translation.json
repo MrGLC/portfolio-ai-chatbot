@@ -20,6 +20,7 @@
     }
   },
   "home": {
+    "scrollHint": "Scroll to explore",
     "hero": {
       "luxurySubtitle": "Luxury AI Solutions Redefined",
       "modernTitle": "AI that earns its place in your business",
@@ -151,6 +152,7 @@
     "cta": {
       "title": "Let's build your edge",
       "description": "The raw stone, cut and set — your business, transformed. Tell me what you're building.",
+      "secondary": "Learn About Me",
       "button": "Start Your Project"
     },
     "jewel": {
