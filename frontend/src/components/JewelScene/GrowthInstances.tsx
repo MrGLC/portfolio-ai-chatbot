@@ -13,7 +13,7 @@ import React, { useEffect, useMemo, useRef } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
 import * as THREE from 'three';
 import { fractionToWorld } from './chapterResolver';
-import { rectToPose } from './anchorPose';
+import { rectToPose, REMEASURE_EVENT } from './anchorPose';
 
 const BAR_COUNT = 3;
 const MAX_INSTANCES = 12; // up to 4 cards × 3 bars
@@ -103,10 +103,12 @@ export const GrowthInstances: React.FC = () => {
 
     discover();
     window.addEventListener('resize', measure);
+    window.addEventListener(REMEASURE_EVENT, measure);
     window.visualViewport?.addEventListener('resize', measure);
     return () => {
       window.clearTimeout(retryId);
       window.removeEventListener('resize', measure);
+      window.removeEventListener(REMEASURE_EVENT, measure);
       window.visualViewport?.removeEventListener('resize', measure);
       ro?.disconnect();
       ios.forEach((io) => io.disconnect());

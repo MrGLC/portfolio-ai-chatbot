@@ -3,6 +3,9 @@
 import { VIS_H } from './chapterResolver';
 
 export const ANCHOR_NAMES = ['hero', 'chat', 'cta'] as const;
+// Fired when a transformed ancestor finishes its reveal: layout didn't change, so
+// ResizeObserver stays silent, but the visual rects did.
+export const REMEASURE_EVENT = 'jewel:remeasure';
 export type AnchorName = (typeof ANCHOR_NAMES)[number];
 
 /** Jewel world diameter (2 × JEWEL_WORLD_RADIUS in JewelRig). */

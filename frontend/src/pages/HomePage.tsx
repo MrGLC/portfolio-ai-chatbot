@@ -23,6 +23,7 @@ import {
   ChevronDownIcon
 } from '@chakra-ui/icons';
 import { variants, durations, easings, delays, springs, createStaggerAnimation } from '../theme/animations';
+import { REMEASURE_EVENT } from '../components/JewelScene/anchorPose';
 import { Kicker } from '../components/Kicker';
 import { StatStrip } from './home/StatStrip';
 import { BadgeCloud } from './home/BadgeCloud';
@@ -32,6 +33,7 @@ const ThreeJsChatbot = lazy(() =>
 );
 
 const MotionBox = motion.create(Box);
+const remeasureAnchors = () => window.dispatchEvent(new Event(REMEASURE_EVENT));
 const MotionHeading = motion.h1;
 const MotionText = motion.p;
 
@@ -356,6 +358,7 @@ export const HomePage: React.FC = () => {
             whileInView="visible"
             viewport={{ once: true, margin: "-100px" }}
             variants={scrollReveal}
+            onAnimationComplete={remeasureAnchors}
           >
             <VStack spacing={16}>
               {/* Enhanced section header */}
@@ -432,6 +435,7 @@ export const HomePage: React.FC = () => {
             whileInView="visible"
             viewport={{ once: true, margin: "-100px" }}
             variants={scrollReveal}
+            onAnimationComplete={remeasureAnchors}
           >
             <VStack
               spacing={20}
@@ -565,6 +569,7 @@ export const HomePage: React.FC = () => {
             whileInView="visible"
             viewport={{ once: true, margin: "-100px" }}
             variants={scrollReveal}
+            onAnimationComplete={remeasureAnchors}
           >
             <VStack spacing={10}>
               {/* Crown slot — reserved height, so the crown NEVER overlaps title/copy/buttons */}

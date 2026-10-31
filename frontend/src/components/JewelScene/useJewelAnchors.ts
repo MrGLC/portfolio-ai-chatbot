@@ -10,7 +10,7 @@
 // re-measure only when layout actually changes (ResizeObserver /
 // visualViewport resize) — never on scroll.
 import { useCallback, useEffect, useRef } from 'react';
-import { ANCHOR_NAMES } from './anchorPose';
+import { ANCHOR_NAMES, REMEASURE_EVENT } from './anchorPose';
 import type { RectLike } from './anchorPose';
 
 interface DocRect {
@@ -62,6 +62,7 @@ export function useJewelAnchors(): { getRect: (name: string) => RectLike | null 
 
     discover();
     window.addEventListener('resize', measure);
+    window.addEventListener(REMEASURE_EVENT, measure);
     // URL bar show/hide + on-screen keyboard change the visual viewport without
     // a layout resize — MDN VisualViewport. Re-measure so docTops stay honest.
     window.visualViewport?.addEventListener('resize', measure);
@@ -69,6 +70,7 @@ export function useJewelAnchors(): { getRect: (name: string) => RectLike | null 
       window.clearTimeout(retryId);
       ro?.disconnect();
       window.removeEventListener('resize', measure);
+      window.removeEventListener(REMEASURE_EVENT, measure);
       window.visualViewport?.removeEventListener('resize', measure);
     };
   }, []);
