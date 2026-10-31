@@ -37,8 +37,8 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <ChakraProvider theme={theme}>
-        <ErrorBoundary homeHref="/">
-          <Router>
+        <Router>
+          <ErrorBoundary homeHref="/">
             <ScrollRestoration />
             <Layout>
               <Suspense fallback={<RouteFallback />}>
@@ -53,8 +53,8 @@ function App() {
                 </AnimatePresence>
               </Suspense>
             </Layout>
-          </Router>
-        </ErrorBoundary>
+          </ErrorBoundary>
+        </Router>
       </ChakraProvider>
     </QueryClientProvider>
   );

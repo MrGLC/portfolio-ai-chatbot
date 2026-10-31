@@ -269,7 +269,7 @@ export const JewelRig: React.FC<JewelRigProps> = ({
         angularVelRef.current = { x: dy * 0.002, y: dx * 0.002 };
         drag.lastX = e.clientX;
         drag.lastY = e.clientY;
-        invalidate(); // reduced motion runs frameloop 'never' — render the drag
+        invalidate(); // reduced motion runs frameloop 'demand' (no 'never': nothing would advance it) — render the drag
       },
       up: (e, el) => {
         const drag = dragRef.current;
