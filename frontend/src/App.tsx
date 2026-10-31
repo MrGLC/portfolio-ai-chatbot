@@ -29,8 +29,9 @@ const queryClient = new QueryClient({
 
 // Wrap a lazy page in a per-route boundary so a crash on one page renders the
 // explained ErrorState in place instead of blanking the whole shell.
-const route = (element: React.ReactNode) => (
-  <ErrorBoundary homeHref="/">{element}</ErrorBoundary>
+// The key gives each route its own boundary, so a stuck error never survives navigation.
+const route = (path: string, element: React.ReactNode) => (
+  <ErrorBoundary key={path} homeHref="/">{element}</ErrorBoundary>
 );
 
 function App() {
@@ -44,11 +45,11 @@ function App() {
               <Suspense fallback={<RouteFallback />}>
                 <AnimatePresence mode="wait">
                   <Routes>
-                    <Route path="/" element={route(<HomePage />)} />
-                    <Route path="/about" element={route(<AboutPage />)} />
-                    <Route path="/projects" element={route(<ProjectsPage />)} />
-                    <Route path="/consulting" element={route(<ConsultingPage />)} />
-                    <Route path="/contact" element={route(<ContactPage />)} />
+                    <Route path="/" element={route("/", <HomePage />)} />
+                    <Route path="/about" element={route("/about", <AboutPage />)} />
+                    <Route path="/projects" element={route("/projects", <ProjectsPage />)} />
+                    <Route path="/consulting" element={route("/consulting", <ConsultingPage />)} />
+                    <Route path="/contact" element={route("/contact", <ContactPage />)} />
                   </Routes>
                 </AnimatePresence>
               </Suspense>

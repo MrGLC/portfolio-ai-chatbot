@@ -2,10 +2,13 @@ import axios from 'axios';
 
 // Default to relative URLs: dev server and production nginx both proxy /api to the backend.
 const API_URL = import.meta.env.VITE_API_URL || '';
+// A hung backend must reject so the chat panel can recover instead of typing forever.
+const REQUEST_TIMEOUT_MS = 15000;
 const CHATBOT_API_URL = import.meta.env.VITE_CHATBOT_API_URL || '';
 
 const api = axios.create({
   baseURL: API_URL,
+  timeout: REQUEST_TIMEOUT_MS,
   headers: {
     'Content-Type': 'application/json',
   },
@@ -13,6 +16,7 @@ const api = axios.create({
 
 const chatbotApi = axios.create({
   baseURL: CHATBOT_API_URL,
+  timeout: REQUEST_TIMEOUT_MS,
   headers: {
     'Content-Type': 'application/json',
   },
