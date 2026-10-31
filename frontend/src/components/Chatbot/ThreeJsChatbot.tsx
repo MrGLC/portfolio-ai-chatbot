@@ -163,6 +163,8 @@ export const ThreeJsChatbot: React.FC = () => {
   const hasInteracted = useRef(false);
   const idleTimerRef = useRef<number | undefined>(undefined);
   const pendingRef = useRef(false);
+  // False after unmount: late HTTP callbacks of a dead instance must not touch the shared jewelBus.
+  const aliveRef = useRef(true);
   const cannedTimer = useRef<ReturnType<typeof setTimeout>>();
   useEffect(() => () => clearTimeout(cannedTimer.current), []);
 
@@ -179,7 +181,9 @@ export const ThreeJsChatbot: React.FC = () => {
   // Cleanup: clear any pending idle timer (it would force-idle a remounted
   // instance mid-answer otherwise) and ensure idle on unmount.
   useEffect(() => {
+    aliveRef.current = true; // StrictMode re-runs setup after its simulated cleanup
     return () => {
+      aliveRef.current = false;
       window.clearTimeout(idleTimerRef.current);
       jewelBus.set('idle');
     };
@@ -202,6 +206,7 @@ export const ThreeJsChatbot: React.FC = () => {
     const message = (text ?? input).trim();
     if (!message || pendingRef.current) return;
     pendingRef.current = true;
+    window.clearTimeout(idleTimerRef.current); // a previous answer's idle must not cut this turn short
 
     setMessages(prev => [...prev, { id: Date.now(), text: message, isUser: true }]);
     setInput('');
@@ -224,6 +229,7 @@ export const ThreeJsChatbot: React.FC = () => {
     setIsTyping(true);
     chatbotAPI.sendMessage(message)
       .then((res: { data: { response?: string; message?: string } }) => {
+        if (!aliveRef.current) return;
         const responseText = res.data.response ?? res.data.message ?? t('home.chatbot.errorFallback');
         pendingRef.current = false;
         setIsTyping(false);
@@ -235,6 +241,7 @@ export const ThreeJsChatbot: React.FC = () => {
         idleTimerRef.current = window.setTimeout(() => jewelBus.set('idle'), 900);
       })
       .catch(() => {
+        if (!aliveRef.current) return;
         pendingRef.current = false;
         setIsTyping(false);
         jewelBus.set('answering');
